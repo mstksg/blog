@@ -4,6 +4,7 @@ module Web.Blog.Views.Layout (viewLayout, viewLayoutEmpty) where
 
 import Control.Applicative                   ((<$>))
 import Control.Monad.Reader
+import Data.Maybe
 import Data.Monoid
 import Text.Blaze.Html5                      ((!))
 import Web.Blog.Render
@@ -22,6 +23,8 @@ viewLayout body = do
   navBarHtml <- navBar
   title <- createTitle
   socialFollowsHtml <- viewSocialFollow
+  currUrl <- lift $ getCurrUrl
+  photoUrl <- renderUrl "/img/photo_square.jpg"
 
   let
     cssList = [ "/css/toast.css"
@@ -31,6 +34,23 @@ viewLayout body = do
               , T.append "//s7.addthis.com/js/300/addthis_widget.js#pubid=" $
                   developerAPIsAddThis $ siteDataDeveloperAPIs siteData
               ]
+    rawTitle = fromMaybe (siteDataTitle siteData) (pageDataTitle pageData')
+    metaList = [ (MetaDataName "twitter:card","summary")
+               -- , (MetaDataName "twitter:site","")
+               , (MetaDataName "twitter:creator","@mstk")
+               , (MetaDataProperty "og:url",currUrl)
+               , (MetaDataProperty "og:title",rawTitle)
+               , (MetaDataProperty "og:description","hey")
+               , (MetaDataProperty "og:image",photoUrl)
+               ]
+
+-- <meta name="twitter:card" content="summary">
+-- <meta name="twitter:site" content="@nytimesbits">
+-- <meta name="twitter:creator" content="@nickbilton">
+-- <meta property="og:url" content="http://bits.blogs.nytimes.com/2011/12/08/a-twitter-for-my-sister/">
+-- <meta property="og:title" content="A Twitter for My Sister">
+-- <meta property="og:description" content="In the early days, Twitter grew so quickly that it was almost impossible to add new features because engineers spent their time trying to keep the rocket ship from stalling.">
+-- <meta property="og:image" content="http://graphics8.nytimes.com/images/2011/12/08/technology/bits-newtwitter/bits-newtwitter-tmagArticle.jpg">
 
   cssUrlList <- mapM renderUrl $ cssList ++ pageDataCss pageData'
   jsUrlList <- mapM renderUrl $ jsList ++ pageDataJs pageData'

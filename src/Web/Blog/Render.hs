@@ -36,6 +36,7 @@ pageData =  PageData
             { pageDataTitle   = Nothing
             , pageDataCss     = []
             , pageDataJs      = []
+            , pageDataMetas   = []
             , pageDataHeaders = []
             , pageDataMap     = M.empty
             , pageSiteData    = siteData

@@ -3,6 +3,7 @@ module Web.Blog.Types (
   , DeveloperAPIs(..)
   , SiteRender
   , PageDataMap
+  , MetaDataIdentifier(..)
   , PageData(..)
   , RouteEither
   , error404
@@ -38,10 +39,13 @@ type SiteRender a = ReaderT PageData S.ActionM a
 
 type PageDataMap = M.Map T.Text T.Text
 
+data MetaDataIdentifier = MetaDataName T.Text | MetaDataProperty T.Text
+
 data PageData = PageData
                 { pageDataTitle   :: Maybe T.Text
                 , pageDataCss     :: [T.Text]
-                , pageDataJs     :: [T.Text]
+                , pageDataJs      :: [T.Text]
+                , pageDataMetas   :: [(MetaDataIdentifier,T.Text)]
                 , pageDataHeaders :: [H.Html]
                 , pageDataMap     :: PageDataMap
                 , pageSiteData    :: SiteData
