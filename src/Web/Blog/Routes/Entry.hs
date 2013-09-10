@@ -2,6 +2,7 @@
 
 module Web.Blog.Routes.Entry (routeEntrySlug, routeEntryId) where
 
+-- import qualified Web.Scotty               as S
 import Control.Applicative                   ((<$>))
 import Control.Monad.IO.Class
 import Control.Monad.State
@@ -17,14 +18,13 @@ import qualified Data.Map                    as M
 import qualified Data.Text                   as T
 import qualified Data.Text.Lazy              as L
 import qualified Database.Persist.Postgresql as D
-import qualified Web.Scotty                  as S
 
-routeEntrySlug :: RouteEither
-routeEntrySlug = do
-  eIdent <- S.param "entryIdent"
+routeEntrySlug :: T.Text -> RouteEither
+routeEntrySlug eIdent = do
+  -- eIdent <- S.param "entryIdent"
 
   eKey <- liftIO $ runDB $ do
-    slug <- D.getBy $ UniqueSlug $ T.pack eIdent
+    slug <- D.getBy $ UniqueSlug eIdent
 
     case slug of
       -- Found slug
@@ -51,7 +51,7 @@ routeEntrySlug = do
           case currentSlug of
             -- There is a current slug
             Just (D.Entity _ slug'') ->
-              if slugSlug slug'' == T.pack eIdent
+              if slugSlug slug'' == eIdent
                 then
                   -- It's the right one.
                   routeEntry $ Right $ D.Entity eKey' e'
@@ -71,12 +71,11 @@ routeEntrySlug = do
     Left r ->
       return $ Left r
 
-routeEntryId :: RouteEither
-routeEntryId = do
-  eIdent <- S.param "eId"
+routeEntryId :: Int -> RouteEither
+routeEntryId eId = do
 
   let
-    eKey = D.Key $ D.PersistInt64 (fromIntegral (read eIdent :: Int))
+    eKey = D.Key $ D.PersistInt64 (fromIntegral eId)
 
   e <- liftIO $ runDB $ do
 

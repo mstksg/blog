@@ -2,7 +2,7 @@
 
 module Web.Blog.Routes (route) where
 
--- import Control.Applicative     ((<$>))
+import Control.Applicative     ((<$>))
 -- import Data.List               (isSuffixOf)
 -- import System.Directory        (doesFileExist)
 -- import System.FilePath
@@ -65,11 +65,13 @@ entryRoutes = do
       eIdent <- S.param "entryIdent"
       S.redirect $ red eIdent
 
-  S.get "/entry/id/:eId" $
-    routeEither routeEntryId
+  S.get "/entry/id/:eId" $ do
+    eId <- S.param "eId"
+    routeEither $ routeEntryId eId
 
-  S.get "/entry/:entryIdent" $
-    routeEither routeEntrySlug
+  S.get "/entry/:entryIdent" $ do
+    eIdent <- T.pack <$> S.param "entryIdent"
+    routeEither $ routeEntrySlug eIdent
 
 archiveRoutes :: S.ScottyM ()
 archiveRoutes = do
