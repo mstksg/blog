@@ -7,6 +7,7 @@ import Control.Applicative     ((<$>))
 -- import System.Directory        (doesFileExist)
 -- import System.FilePath
 import Control.Monad.Reader
+import Control.Monad.Trans.Error
 import Development.Blog.Util      (backupEntries)
 import Network.HTTP.Types.Status
 import Web.Blog.Models.Types
@@ -141,15 +142,16 @@ utilRoutes = do
 miscRoutes :: S.ScottyM ()
 miscRoutes = do
   S.get "/not-found" $ do
+    err <- find ((== "err") . fst) <$> S.params
     S.status notFound404
-    routeEither routeNotFound
+    routeEither $ routeNotFound err
 
   S.notFound $
     S.redirect "/not-found"
 
 routeEither :: RouteEither -> S.ActionM ()
 routeEither r = do
-  routeResult <- r
+  routeResult <- liftIO r
   case routeResult of
     Left re ->
       -- TODO: get this status stuff working?

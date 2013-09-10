@@ -15,5 +15,5 @@ routeAbout = do
     pageData' = pageData { pageDataTitle = Just "About Me" 
                          , pageDataCss   = ["/css/page/about.css"] }
 
-  return $ Right (view,pageData')
+  Right (view,pageData')
 

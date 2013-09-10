@@ -14,6 +14,7 @@ main :: IO ()
 main = scotty 4288 $ do
 
   liftIO startupHelpers
+  -- startupApp <- liftIO $ scottyApp startupHelpers'
 
   middleware logStdoutDev
   middleware $ addHeaders [("Cache-Control","max-age=86400")]

@@ -8,6 +8,7 @@ import Control.Monad.IO.Class
 import Web.Blog.Database
 import Web.Blog.Models.Types
 import Web.Blog.Models.Util
+import Control.Monad.Trans.Error
 import Web.Blog.Render
 import Web.Blog.Types
 import Web.Blog.Views.TagIndex
@@ -31,4 +32,4 @@ routeTagIndex tt = do
     pageData' = pageData { pageDataTitle = Just title
                          , pageDataCss   = ["/css/page/archive.css"] }
 
-  return $ Right (view,pageData')
+  ErrorT $ return $ Right (view,pageData')

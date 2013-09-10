@@ -14,6 +14,7 @@ module Web.Blog.Types (
 
 import Control.Monad.Reader
 import qualified Data.Map         as M
+import Control.Monad.Trans.Error
 import qualified Data.Text        as T
 import qualified Data.Text.Lazy   as L
 import qualified Text.Blaze.Html5 as H
@@ -81,7 +82,7 @@ data PageData = PageData
                 , pageSiteData    :: SiteData
                 }
 
-type RouteEither = S.ActionM (Either L.Text (SiteRender H.Html, PageData))
+type RouteEither = ErrorT L.Text IO (SiteRender H.Html, PageData)
 
 error404 :: L.Text -> Either L.Text a
 error404 reason = Left $ L.append "/not-found?err=" reason
