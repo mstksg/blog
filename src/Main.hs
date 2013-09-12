@@ -9,9 +9,15 @@ import Network.Wai.Middleware.RequestLogger
 import Network.Wai.Middleware.Static
 import Web.Blog.Routes
 import Web.Scotty
+import Network.Wai.Handler.CGI
 
 main :: IO ()
-main = scotty 4288 $ do
+main = do
+  a <- scottyApp app
+  run a
+
+app :: ScottyM ()
+app = do
 
   liftIO startupHelpers
 
@@ -22,4 +28,3 @@ main = scotty 4288 $ do
   middleware $ addHeaders [("Cache-Control","max-age=0")]
 
   route
-
