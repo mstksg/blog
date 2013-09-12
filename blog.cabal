@@ -37,7 +37,7 @@ executable blog
                      -- , monad-loops ==0.4.2
                      -- , network ==2.4.1.2
                      -- , old-locale ==1.0.0.5
-                     -- , pandoc ==1.11.1
+                     , pandoc ==1.11.1
                      -- , persistent ==1.2.3.0
                      -- , persistent-postgresql ==1.2.1
                      -- , persistent-template ==1.2.0.2
