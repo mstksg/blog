@@ -18,16 +18,15 @@ executable blog
   main-is:             Main.hs
   hs-source-dirs:      src
   build-depends:       base >= 4 && < 5
+                     -- , blaze-html ==0.6.1.1
+                     -- , blaze-markup ==0.5.1.5
+                     -- , containers ==0.5.3.1
+                     -- , mtl ==2.1.2
+                     , pandoc ==1.11.1
+                     -- , scotty ==0.4.6
+                     -- , text ==0.11.3.1
                      -- , aeson ==0.6.2.0
-                     , blaze-html ==0.6.1.1
-                     , blaze-markup ==0.5.1.5
                      -- , bytestring ==0.10.0.2
-                     , mtl ==2.1.2
-                     , scotty ==0.4.6
-                     , text ==0.11.3.1
-                     -- , wai ==1.4.0.2
-                     -- , wai-extra ==1.3.4.5
-                     , containers ==0.5.3.1
                      -- , directory ==1.2.0.1
                      -- , esqueleto ==1.3.2
                      -- , feed ==0.3.9.1
@@ -37,7 +36,6 @@ executable blog
                      -- , monad-loops ==0.4.2
                      -- , network ==2.4.1.2
                      -- , old-locale ==1.0.0.5
-                     , pandoc ==1.11.1
                      -- , persistent ==1.2.3.0
                      -- , persistent-postgresql ==1.2.1
                      -- , persistent-template ==1.2.0.2
@@ -46,6 +44,8 @@ executable blog
                      -- , transformers ==0.3.0.0
                      -- , utf8-string ==0.3.7
                      -- , vector ==0.10.0.1
+                     -- , wai ==1.4.0.2
+                     -- , wai-extra ==1.3.4.5
                      -- , wai-middleware-headers ==0.1
                      -- , wai-middleware-static ==0.3.2
                      -- , xml ==1.3.13
