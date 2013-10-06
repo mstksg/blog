@@ -5,7 +5,7 @@ import Control.Applicative                    ((<$>), pure)
 import Control.Monad
 import Control.Monad.IO.Class
 import Data.List                              (isPrefixOf)
-import Data.Maybe                             (fromJust, listToMaybe)
+import Data.Maybe                             (fromJust, listToMaybe, catMaybes)
 import Data.Monoid
 import Data.Time
 import System.Directory                       (getDirectoryContents)
@@ -98,7 +98,9 @@ processEntryFile entryFile = do
                   , EntryIdentifier D.=. Nothing
                   ]
 
-    void $ M.traverseWithKey (applyMetas entryEntity) metas
+    entryTags <- join . M.elems <$>
+      M.traverseWithKey (applyMetas entryEntity) metas
+    D.deleteWhere [ EntryTagId D.<-. entryTags ]
 
     liftIO $ print entryFile
 
@@ -123,21 +125,30 @@ processEntryFile entryFile = do
     isDefList _                       = False
     defListList (P.DefinitionList ds) = ds
     defListList _                     = mempty
-    applyMetas _ _ MetaValueNull = return ()
-    applyMetas (D.Entity entryKey _) MetaKeyCreateTime (MetaValueTime t) =
+    applyMetas :: D.Entity Entry -> MetaKey -> MetaValue -> D.SqlPersistM [D.Key EntryTag]
+    applyMetas _ _ MetaValueNull =
+      return mempty
+    applyMetas (D.Entity entryKey _) MetaKeyCreateTime (MetaValueTime t) = do
       void $ D.update entryKey [EntryCreatedAt D.=. Just t]
-    applyMetas (D.Entity entryKey _) MetaKeyPostDate (MetaValueTime t) =
+      return mempty
+    applyMetas (D.Entity entryKey _) MetaKeyPostDate (MetaValueTime t) = do
       void $ D.update entryKey [EntryPostedAt D.=. Just t]
-    applyMetas (D.Entity entryKey _) MetaKeyModifiedTime (MetaValueTime t) =
+      return mempty
+    applyMetas (D.Entity entryKey _) MetaKeyModifiedTime (MetaValueTime t) = do
       void $ D.update entryKey [EntryModifiedAt D.=. Just t]
-    applyMetas (D.Entity entryKey _) MetaKeyIdentifier (MetaValueText i) =
+      return mempty
+    applyMetas (D.Entity entryKey _) MetaKeyIdentifier (MetaValueText i) = do
       void $ D.update entryKey [EntryIdentifier D.=. Just i]
-    applyMetas _ MetaKeyPreviousTitles _ = return ()
-    applyMetas (D.Entity entryKey _) _ mvts =
-      forM_ ts $ \(D.Entity tKey _) ->
-        void $ D.insertUnique $ EntryTag entryKey tKey
-      where
-        MetaValueTags ts = mvts
+      return mempty
+    applyMetas _ MetaKeyPreviousTitles _ =
+      return mempty
+    applyMetas (D.Entity entryKey _) _ (MetaValueTags ts) = do
+      allTags <- forM ts $ \(D.Entity tKey _) -> do
+        void . D.insertUnique $ EntryTag entryKey tKey
+        D.getBy $ UniqueEntryTag entryKey tKey
+      return $ map D.entityKey $ catMaybes allTags
+    applyMetas _ _ _ =
+      return mempty
     findExistingEntry :: T.Text -> M.Map MetaKey MetaValue -> D.SqlPersistM (Maybe (D.Entity Entry))
     findExistingEntry title metas = foldl go (return Nothing) attempts
       where
