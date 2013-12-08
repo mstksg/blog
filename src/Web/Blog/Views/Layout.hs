@@ -30,7 +30,8 @@ viewLayout body = do
   let
     cssList = [ "/css/toast.css"
               , "/css/font.css"
-              , "/css/main.css" ]
+              , "/css/main.css"
+              , "http://fonts.googleapis.com/css?family=Anonymous+Pro" ]
     jsList =  [ "//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"
               -- , "https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
               , T.append "//s7.addthis.com/js/300/addthis_widget.js#pubid=" $
