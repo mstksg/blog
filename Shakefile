@@ -36,6 +36,10 @@ main = shakeArgs opts $ do
         , "blog" ]
     return ()
 
+  "build-blog" ~> do
+    need [bin "blog"]
+    return ()
+
   "configure" ~>
     cmd "cabal configure"
 

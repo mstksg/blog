@@ -50,18 +50,18 @@ getTagsI k = do
 getUrlPathI :: KeyMapKey Entry -> RouteReaderM T.Text
 getUrlPathI k = do
   currSlug <- getCurrentSlugI k
-  case currSlug of
-    Just slug -> return $ T.append "/entry/" (slugSlug slug)
-    Nothing -> return $ T.append "/entry/id/" (T.pack . show . intFromKey $ k)
+  return $ case currSlug of
+    Just slug -> T.append "/entry/" (slugSlug slug)
+    Nothing -> T.append "/entry/id/" (T.pack . show . intFromKey $ k)
 
 intFromKey :: KeyMapKey a -> Int
 intFromKey (D.Key (D.PersistInt64 i)) = fromIntegral i
 intFromKey _ = undefined
 
 getCurrentSlugI :: KeyMapKey Entry -> RouteReaderM (Maybe Slug)
-getCurrentSlugI k = do
-  slugs <- M.elems . siteDatabaseSlugs <$> askDb
-  return $ find ((&&) <$> slugIsCurrent <*> matchingSlug) slugs
+getCurrentSlugI k =
+  find ((&&) <$> slugIsCurrent <*> matchingSlug) .
+    M.elems . siteDatabaseSlugs <$> askDb
   where
     matchingSlug = (== k) . slugEntryId
 
