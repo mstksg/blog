@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Web.Blog.Routes.Archive (
     routeArchiveAll
   , routeArchiveTag

@@ -3,7 +3,7 @@ module Web.Blog.Models.EntryI where
 import Control.Applicative
 import Control.Monad.Reader
 import Data.List                             (find)
-import Data.Maybe                            (mapMaybe, fromJust)
+import Data.Maybe                            (fromJust, catMaybes)
 import Data.Time
 import Web.Blog.Models.Models
 import Web.Blog.Models.Types
@@ -22,10 +22,7 @@ postedEntryCountI :: UTCTime -> RouteReaderM Int
 postedEntryCountI = (M.size <$>) . postedEntriesI
 
 getEntryDataI :: KeyMapKey Entry -> RouteReaderM (T.Text,[Tag])
-getEntryDataI k = do
-  tags    <- getTagsI k
-  urlPath <- getUrlPathI k
-  return (urlPath, tags)
+getEntryDataI k = (,) <$> getUrlPathI k <*> getTagsI k
 
 wrapEntryDataI :: KeyMapKey Entry -> RouteReaderM (KeyMapPair Entry, (T.Text, [Tag]))
 wrapEntryDataI k = do
@@ -35,12 +32,16 @@ wrapEntryDataI k = do
 
 getTagsI :: KeyMapKey Entry -> RouteReaderM [Tag]
 getTagsI k = do
-  (db, _) <- ask
+  entryTags <- M.elems . siteDatabaseEntryTags <$> askDb
   let
-    entryTags = M.elems . siteDatabaseEntryTags $ db
     filtered = filter ((== k) . entryTagEntryId) entryTags
     tagKeys = map entryTagTagId filtered
-    tags = mapMaybe (`M.lookup` siteDatabaseTags db) tagKeys
+
+  maybeTags <- forM tagKeys $ \tk ->
+    M.lookup tk . siteDatabaseTags <$> askDb
+
+  let
+    tags = catMaybes maybeTags
     tagsOf tt = filter ((== tt) . tagType_) tags
 
   return $ concatMap tagsOf [GeneralTag ..]
