@@ -8,6 +8,7 @@ module Web.Blog.Routes.Home (routeHome) where
 -- import qualified Database.Persist.Postgresql as D
 import Config.SiteData
 import Control.Monad.IO.Class
+import Control.Applicative ((<$>))
 import Control.Monad.Reader
 import Control.Monad.State
 import Data.Time
@@ -48,7 +49,7 @@ readerHome now page = do
 
         urlBase = renderUrl' "/home/"
 
-      eList <- mapM wrapEntryDataI (M.keys posteds)
+      eList <- mapM wrapEntryDataI . sortEntries . M.keys $ posteds
 
       let
         pdMap = execState $ do

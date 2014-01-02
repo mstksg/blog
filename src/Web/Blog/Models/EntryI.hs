@@ -2,8 +2,9 @@ module Web.Blog.Models.EntryI where
 
 import Control.Applicative
 import Control.Monad.Reader
-import Data.List                             (find)
+import Data.List                             (find, sortBy)
 import Data.Maybe                            (fromJust, catMaybes)
+import Data.Ord                              (comparing)
 import Data.Time
 import Web.Blog.Models.Entry                 (groupEntries)
 import Web.Blog.Models.Models
@@ -79,3 +80,16 @@ keyToPair :: KeyMapKey Entry -> RouteReaderM (Maybe (KeyMapPair Entry))
 keyToPair k = do
   entries <- siteDatabaseEntries <$> askDb
   return $ (,) k <$> k `M.lookup` entries
+
+sortEntries :: [Entry] -> [Entry]
+sortEntries = sortBy (comparing entryPostedAt)
+
+sortEntryKeys :: [KeyMapKey Entry] -> RouteReaderM [KeyMapKey Entry]
+sortEntryKeys ks =
+  flip sortBy ks . comparing . keyPostedAt . siteDatabaseEntries <$> askDb
+  -- entries <- siteDatabaseEntries <$> askDb
+  -- return $ sortBy (comparing (keyPostedAt entries)) ks
+  where
+    keyPostedAt es k = k `M.lookup` es >>= entryPostedAt
+
+

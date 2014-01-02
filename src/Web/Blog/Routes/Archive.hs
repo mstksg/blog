@@ -6,22 +6,23 @@ module Web.Blog.Routes.Archive (
   ) where
 
 import Control.Monad.IO.Class
+import Control.Monad.Reader
 import Data.Time
 import System.Locale
 import Web.Blog.Database
 import Web.Blog.Models
+import Web.Blog.Models.EntryI
 import Web.Blog.Models.Types
 import Web.Blog.Models.Util
-import Web.Blog.Models.EntryI
-import Control.Monad.Reader
 import Web.Blog.Render
 import Web.Blog.Types
 import Web.Blog.Views.Archive
+import qualified Data.Map                    as M
 import qualified Data.Text                   as T
 import qualified Database.Persist.Postgresql as D
 
-routeArchive :: T.Text -> [KeyMapPair Entry] -> ViewArchiveType -> RouteDatabase
-routeArchive = ((return .) .) . readerArchive
+-- routeArchive :: T.Text -> [KeyMapPair Entry] -> ViewArchiveType -> RouteDatabase
+-- routeArchive = ((return .) .) . readerArchive
   -- let
   --   grouped = groupEntries entries
 
@@ -54,53 +55,68 @@ readerArchive title entries viewType = do
 
   siteRight (view, pageData)
 
-routeArchiveFilters :: T.Text -> [D.Filter Entry] -> ViewArchiveType -> RouteDatabase
-routeArchiveFilters title filters pdMap = do
-  entries <- liftIO $ runDB $
-    postedEntriesFilter filters [ D.Desc EntryPostedAt ]
-  routeArchive title entries pdMap
-
+-- routeArchiveFilters :: T.Text -> [D.Filter Entry] -> ViewArchiveType -> RouteDatabase
+-- routeArchiveFilters title filters pdMap = do
+--   entries <- liftIO $ runDB $
+--     postedEntriesFilter filters [ D.Desc EntryPostedAt ]
+--   routeArchive title entries pdMap
 
 routeArchiveAll :: RouteDatabase
-routeArchiveAll = routeArchiveFilters "History" [] ViewArchiveAll
+routeArchiveAll = do
+  now <- liftIO getCurrentTime
+  return $ readerArchiveAll now
+  -- routeArchiveFilters "History" [] ViewArchiveAll
 
-routeArchiveTag :: TagType -> T.Text -> RouteDatabase
-routeArchiveTag type_ slug = do
-  tag <- liftIO $ runDB $ D.getBy $ UniqueSlugType slug type_
+readerArchiveAll :: UTCTime -> RouteReader
+readerArchiveAll now = do
+  es <- postedEntriesI now
+  readerArchive "History" (M.toList es) ViewArchiveAll
 
-  case tag of
-    Just (D.Entity tagKey tag') -> do
-      entrytags <- liftIO $ runDB $ D.selectList [ EntryTagTagId D.==. tagKey ] []
-      let
-        entryKeys = map (entryTagEntryId . D.entityVal) entrytags
-        viewType = case type_ of
-                GeneralTag  -> ViewArchiveTag
-                CategoryTag -> ViewArchiveCategory
-                SeriesTag   -> ViewArchiveSeries
+-- routeArchiveTag :: TagType -> T.Text -> RouteDatabase
+-- routeArchiveTag type_ slug = do
+--   tag <- liftIO $ runDB $ D.getBy $ UniqueSlugType slug type_
 
-      routeArchiveFilters (tagLabel' tag') [ EntryId D.<-. entryKeys ] $ viewType tag'
+--   case tag of
+--     Just (D.Entity tagKey tag') -> do
+--       entrytags <- liftIO $ runDB $ D.selectList [ EntryTagTagId D.==. tagKey ] []
+--       let
+--         entryKeys = map (entryTagEntryId . D.entityVal) entrytags
+--         viewType = case type_ of
+--                 GeneralTag  -> ViewArchiveTag
+--                 CategoryTag -> ViewArchiveCategory
+--                 SeriesTag   -> ViewArchiveSeries
 
-    Nothing ->
-      return $ error404 "TagNotFound"
+--       routeArchiveFilters (tagLabel' tag') [ EntryId D.<-. entryKeys ] $ viewType tag'
 
+--     Nothing ->
+--       return $ error404 "TagNotFound"
 
-routeArchiveYear :: Int -> RouteDatabase
-routeArchiveYear year = routeArchiveFilters (T.pack $ show year) filters $ ViewArchiveYear year
-  where
-    startTime = buildTime defaultTimeLocale [('Y',show year)] :: UTCTime
-    endTime = buildTime defaultTimeLocale [('Y',show $ year + 1)] :: UTCTime
-    filters = [ EntryPostedAt D.>=. Just startTime
-              , EntryPostedAt D.<=. Just endTime  ]
+readerArchiveTag :: TagType -> T.Text -> RouteDatabase
+readerArchiveTag type_ slug = do
+  db <- askDb
+  let
+    tags = siteDatabaseTags db
+    matchSlug = (== slug) . tagSlug 
+    tag = M.filter matchSlug tags
+  siteLeft ""
 
-routeArchiveMonth :: Int -> Int -> RouteDatabase
-routeArchiveMonth year month = routeArchiveFilters (T.pack timeString) filters $ ViewArchiveMonth year month
-  where
-    startDay = buildTime defaultTimeLocale
-      [('Y',show year),('m',show month)] :: Day
-    endDay = addGregorianMonthsRollOver 1 startDay
-    startTime = UTCTime startDay 0
-    endTime = UTCTime endDay 0
-    filters = [ EntryPostedAt D.>=. Just startTime
-              , EntryPostedAt D.<=. Just endTime  ]
-    timeString = formatTime defaultTimeLocale "%B %Y" startDay
+-- routeArchiveYear :: Int -> RouteDatabase
+-- routeArchiveYear year = routeArchiveFilters (T.pack $ show year) filters $ ViewArchiveYear year
+--   where
+--     startTime = buildTime defaultTimeLocale [('Y',show year)] :: UTCTime
+--     endTime = buildTime defaultTimeLocale [('Y',show $ year + 1)] :: UTCTime
+--     filters = [ EntryPostedAt D.>=. Just startTime
+--               , EntryPostedAt D.<=. Just endTime  ]
+
+-- routeArchiveMonth :: Int -> Int -> RouteDatabase
+-- routeArchiveMonth year month = routeArchiveFilters (T.pack timeString) filters $ ViewArchiveMonth year month
+--   where
+--     startDay = buildTime defaultTimeLocale
+--       [('Y',show year),('m',show month)] :: Day
+--     endDay = addGregorianMonthsRollOver 1 startDay
+--     startTime = UTCTime startDay 0
+--     endTime = UTCTime endDay 0
+--     filters = [ EntryPostedAt D.>=. Just startTime
+--               , EntryPostedAt D.<=. Just endTime  ]
+--     timeString = formatTime defaultTimeLocale "%B %Y" startDay
 
