@@ -35,7 +35,7 @@ data ViewArchiveType = ViewArchiveAll
                      | ViewArchiveSeries Tag
                      deriving (Show)
 
-viewArchive :: [[[(D.Entity Entry,(T.Text,[Tag]))]]] -> ViewArchiveType -> SiteRender H.Html
+viewArchive :: [[[(KeyMapPair Entry,(T.Text,[Tag]))]]] -> ViewArchiveType -> SiteRender H.Html
 viewArchive eListYears viewType = do
   let
     eListMonths = concat eListYears
@@ -145,13 +145,13 @@ viewArchiveSidebar isIndex = do
 
 
 
-viewArchiveFlat :: [(D.Entity Entry,(T.Text,[Tag]))] -> ViewArchiveType -> SiteRender H.Html
+viewArchiveFlat :: [(KeyMapPair Entry,(T.Text,[Tag]))] -> ViewArchiveType -> SiteRender H.Html
 viewArchiveFlat eList viewType = do
   tz <- liftIO getCurrentTimeZone
 
   return $
     H.ul ! A.class_ ulClass $
-      forM_ eList $ \(D.Entity _ e,(u,ts)) -> do
+      forM_ eList $ \((_,e),(u,ts)) -> do
         let
           commentUrl = T.append u "#disqus_thread"
 
@@ -190,12 +190,12 @@ viewArchiveFlat eList viewType = do
         _                     -> const True
 
 
-viewArchiveByMonths :: [[(D.Entity Entry,(T.Text,[Tag]))]] -> ViewArchiveType -> SiteRender H.Html
+viewArchiveByMonths :: [[(KeyMapPair Entry,(T.Text,[Tag]))]] -> ViewArchiveType -> SiteRender H.Html
 viewArchiveByMonths eListMonths viewType = do
   eListHtml <- forM eListMonths $ \eList -> do
     let
-      month = fromJust $ entryPostedAt $ D.entityVal $ fst $
-          head eList
+      ((_,e),_):_ = eList
+      month = fromJust . entryPostedAt $ e
 
     archiveFlatHtml <- viewArchiveFlat eList viewType
 
@@ -216,12 +216,12 @@ viewArchiveByMonths eListMonths viewType = do
         ViewArchiveAll -> "entry-list"
         _ -> "tile entry-list"
 
-viewArchiveByYears :: [[[(D.Entity Entry,(T.Text,[Tag]))]]] -> ViewArchiveType -> SiteRender H.Html
+viewArchiveByYears :: [[[(KeyMapPair Entry,(T.Text,[Tag]))]]] -> ViewArchiveType -> SiteRender H.Html
 viewArchiveByYears eListYears viewType = do
   eListHtml <- forM eListYears $ \eListMonths -> do
     let
-      year = fromJust $ entryPostedAt $
-        D.entityVal $ fst $ head $ head eListMonths
+      (((_,e),_):_):_ = eListMonths
+      year = fromJust . entryPostedAt $ e
 
     archiveMonthsHtml <- viewArchiveByMonths eListMonths viewType
 

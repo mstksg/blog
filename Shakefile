@@ -17,9 +17,6 @@ opts = shakeOptions { shakeFiles    = ".shake/"
                     }
 
 binPath = ".cabal-sandbox/bin"
--- cmdBin = cmd . (++) binPath
--- systemBin = system' . (++) binPath
-
 bin = (binPath </>)
 
 main :: IO ()

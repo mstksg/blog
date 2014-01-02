@@ -5,6 +5,7 @@ import Control.Monad.Reader
 import Data.List                             (find)
 import Data.Maybe                            (fromJust, catMaybes)
 import Data.Time
+import Web.Blog.Models.Entry                 (groupEntries)
 import Web.Blog.Models.Models
 import Web.Blog.Models.Types
 import Web.Blog.Render
@@ -65,4 +66,16 @@ getCurrentSlugI k =
   where
     matchingSlug = (== k) . slugEntryId
 
+groupEntriesI :: [KeyMapPair Entry] -> [[[KeyMapPair Entry]]]
+groupEntriesI = (map . map . map) entityToPair . groupEntries . map pairToEntity
 
+pairToEntity :: KeyMapPair Entry -> D.Entity Entry
+pairToEntity = undefined
+
+entityToPair :: D.Entity Entry -> KeyMapPair Entry
+entityToPair = undefined
+
+keyToPair :: KeyMapKey Entry -> RouteReaderM (Maybe (KeyMapPair Entry))
+keyToPair k = do
+  entries <- siteDatabaseEntries <$> askDb
+  return $ (,) k <$> k `M.lookup` entries

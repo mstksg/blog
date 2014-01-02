@@ -12,27 +12,47 @@ import Web.Blog.Database
 import Web.Blog.Models
 import Web.Blog.Models.Types
 import Web.Blog.Models.Util
+import Web.Blog.Models.EntryI
+import Control.Monad.Reader
 import Web.Blog.Render
 import Web.Blog.Types
 import Web.Blog.Views.Archive
 import qualified Data.Text                   as T
 import qualified Database.Persist.Postgresql as D
 
-routeArchive :: T.Text -> [D.Entity Entry] -> ViewArchiveType -> RouteDatabase
-routeArchive title entries viewType = do
-  let
-    grouped = groupEntries entries
+routeArchive :: T.Text -> [KeyMapPair Entry] -> ViewArchiveType -> RouteDatabase
+routeArchive = ((return .) .) . readerArchive
+  -- let
+  --   grouped = groupEntries entries
 
-  eList' <- liftIO $ runDB $ mapM (mapM (mapM wrapEntryData)) grouped
-  blankPageData <- genPageData
+  -- eList' <- liftIO $ runDB $ mapM (mapM (mapM wrapEntryData)) grouped
+  -- blankPageData <- genPageData
+
+  -- let
+  --   view = viewArchive eList' viewType
+  --   pageData = blankPageData { pageDataTitle = Just title
+  --                            , pageDataCss   = ["/css/page/archive.css"]
+  --                            , pageDataJs    = ["/js/disqus_count.js"] }
+
+  -- return $ siteRight (view, pageData)
+
+readerArchive :: T.Text -> [KeyMapPair Entry] -> ViewArchiveType -> RouteReader
+readerArchive title entries viewType = do
+  (_,blankPageData) <- ask
 
   let
-    view = viewArchive eList' viewType
+    grouped = groupEntriesI entries
+    -- groupedKeys = (map . map . map) fst grouped
+
+  eList <- (mapM . mapM . mapM) (wrapEntryDataI . fst) grouped
+
+  let
+    view = viewArchive eList viewType
     pageData = blankPageData { pageDataTitle = Just title
                              , pageDataCss   = ["/css/page/archive.css"]
                              , pageDataJs    = ["/js/disqus_count.js"] }
 
-  return $ siteRight (view, pageData)
+  siteRight (view, pageData)
 
 routeArchiveFilters :: T.Text -> [D.Filter Entry] -> ViewArchiveType -> RouteDatabase
 routeArchiveFilters title filters pdMap = do
