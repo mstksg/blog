@@ -81,14 +81,13 @@ keyToPair k = do
   entries <- siteDatabaseEntries <$> askDb
   return $ (,) k <$> k `M.lookup` entries
 
-sortEntries :: [Entry] -> [Entry]
-sortEntries = sortBy (comparing entryPostedAt)
+sortEntriesI :: [Entry] -> [Entry]
+sortEntriesI = sortBy (comparing entryPostedAt)
 
-sortEntryKeys :: [KeyMapKey Entry] -> RouteReaderM [KeyMapKey Entry]
-sortEntryKeys ks =
-  flip sortBy ks . comparing . keyPostedAt . siteDatabaseEntries <$> askDb
-  -- entries <- siteDatabaseEntries <$> askDb
-  -- return $ sortBy (comparing (keyPostedAt entries)) ks
+sortEntryKeysI :: [KeyMapKey Entry] -> RouteReaderM [KeyMapKey Entry]
+sortEntryKeysI ks = do
+  entries <- siteDatabaseEntries <$> askDb
+  return $ sortBy (comparing (keyPostedAt entries)) ks
   where
     keyPostedAt es k = k `M.lookup` es >>= entryPostedAt
 

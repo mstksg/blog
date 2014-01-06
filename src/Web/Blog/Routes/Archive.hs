@@ -7,12 +7,15 @@ module Web.Blog.Routes.Archive (
 
 import Control.Monad.IO.Class
 import Control.Monad.Reader
+import Data.Maybe                            (listToMaybe, catMaybes)
 import Data.Time
 import System.Locale
 import Web.Blog.Database
 import Web.Blog.Models
 import Web.Blog.Models.EntryI
 import Web.Blog.Models.Types
+import Control.Applicative ((<$>))
+
 import Web.Blog.Models.Util
 import Web.Blog.Render
 import Web.Blog.Types
@@ -91,13 +94,49 @@ readerArchiveAll now = do
 --     Nothing ->
 --       return $ error404 "TagNotFound"
 
-readerArchiveTag :: TagType -> T.Text -> RouteDatabase
-readerArchiveTag type_ slug = do
-  db <- askDb
+routeArchiveTag :: TagType -> T.Text -> RouteDatabase
+routeArchiveTag type_ slug = do
+  now <- liftIO getCurrentTime
+  return $ readerArchiveTag now type_ slug
+
+readerArchiveTag :: UTCTime -> TagType -> T.Text -> RouteReader
+readerArchiveTag now type_ slug = do
+  tags <- siteDatabaseTags <$> askDb
   let
-    tags = siteDatabaseTags db
     matchSlug = (== slug) . tagSlug 
-    tag = M.filter matchSlug tags
+    tag = listToMaybe . M.toList $ M.filter matchSlug tags
+
+  case tag of
+    Just (tagKey, tag') -> do
+
+      entryTags <- do
+        ets <- siteDatabaseEntryTags <$> askDb
+        let
+          matchEntryTag = (== tagKey) . entryTagTagId
+          entryTags = M.elems $ M.filter matchEntryTag ets
+          entryKeys = map entryTagEntryId entryTags
+
+        alls <- forM entryKeys $ \k ->
+          (k `M.lookup`) . siteDatabaseEntryTags <$> askDb
+
+        let
+          entries = catMaybes alls
+          viewType = case type_ of
+                  GeneralTag  -> ViewArchiveTag
+                  CategoryTag -> ViewArchiveCategory
+                  SeriesTag   -> ViewArchiveSeries
+
+      
+
+        readerArchive (tagLabel' tag') entries (viewType tag')
+
+        
+
+      error404 "ey"
+
+    Nothing -> error404 "TagNotFound"
+  
+
   siteLeft ""
 
 -- routeArchiveYear :: Int -> RouteDatabase
