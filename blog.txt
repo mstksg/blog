@@ -55,17 +55,17 @@ instance GHC.Show.Show Blog.Rule.Archive.Month
 
 module Blog.Types
 data Config
-Config :: Text -> Text -> AuthorInfo -> Text -> Maybe Text -> Maybe Text -> HostInfo -> DeveloperAPIs -> BlogPrefs -> EnvType -> Config
-[confTitle] :: Config -> Text
-[confDesc] :: Config -> Text
-[confAuthorInfo] :: Config -> AuthorInfo
-[confCopyright] :: Config -> Text
-[confBlobs] :: Config -> Maybe Text
-[confInteractive] :: Config -> Maybe Text
-[confHostInfo] :: Config -> HostInfo
-[confDeveloperAPIs] :: Config -> DeveloperAPIs
-[confBlogPrefs] :: Config -> BlogPrefs
-[confEnvType] :: Config -> EnvType
+Config :: !Text -> !Text -> !AuthorInfo -> !Text -> !(Maybe Text) -> !(Maybe Text) -> !HostInfo -> !DeveloperAPIs -> !BlogPrefs -> !EnvType -> Config
+[confTitle] :: Config -> !Text
+[confDesc] :: Config -> !Text
+[confAuthorInfo] :: Config -> !AuthorInfo
+[confCopyright] :: Config -> !Text
+[confBlobs] :: Config -> !(Maybe Text)
+[confInteractive] :: Config -> !(Maybe Text)
+[confHostInfo] :: Config -> !HostInfo
+[confDeveloperAPIs] :: Config -> !DeveloperAPIs
+[confBlogPrefs] :: Config -> !BlogPrefs
+[confEnvType] :: Config -> !EnvType
 data EnvType
 ETDevelopment :: EnvType
 ETProduction :: EnvType
@@ -101,9 +101,10 @@ GeneralTag :: TagType
 CategoryTag :: TagType
 SeriesTag :: TagType
 data Entry
-Entry :: !Text -> !Text -> !Text -> !FilePath -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe Text) -> !(Maybe Text) -> ![Text] -> !(Maybe Int) -> !Identifier -> ![(TagType, Text)] -> Entry
+Entry :: !Text -> !Text -> !Text -> !Text -> !FilePath -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe Text) -> !(Maybe Text) -> ![Text] -> !(Maybe Int) -> !Identifier -> ![(TagType, Text)] -> Entry
 [entryTitle] :: Entry -> !Text
 [entryContents] :: Entry -> !Text
+[entryHTML] :: Entry -> !Text
 [entryLede] :: Entry -> !Text
 [entrySourceFile] :: Entry -> !FilePath
 [entryCreateTime] :: Entry -> !(Maybe LocalTime)
@@ -130,6 +131,7 @@ instance GHC.Generics.Selector Blog.Types.S1_0_1Tag
 instance GHC.Generics.Selector Blog.Types.S1_0_0Tag
 instance GHC.Generics.Constructor Blog.Types.C1_0Tag
 instance GHC.Generics.Datatype Blog.Types.D1Tag
+instance GHC.Generics.Selector Blog.Types.S1_0_13Entry
 instance GHC.Generics.Selector Blog.Types.S1_0_12Entry
 instance GHC.Generics.Selector Blog.Types.S1_0_11Entry
 instance GHC.Generics.Selector Blog.Types.S1_0_10Entry
@@ -230,6 +232,9 @@ compileTag :: TagType -> String -> Pattern -> Compiler (Item Tag)
 tagTypeDescPath :: TagType -> String
 
 module Blog.View.Feed
+viewFeed :: (?config :: Config) => [Entry] -> TimeZone -> UTCTime -> String
+feedRss :: (?config :: Config) => [Entry] -> TimeZone -> UTCTime -> RSS
+dcItemToXml :: DCItem -> Element
 
 module Blog.View.Home
 data HomeInfo
