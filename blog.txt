@@ -12,11 +12,10 @@ module Hakyll.Web.Redirect
 redirectCompiler :: (Identifier -> Text) -> Compiler (Item String)
 redirectHTML :: Text -> Text
 
-module Hakyll.Web.Blaze
-blazeCompiler :: Html -> Compiler (Item String)
-
 module Blog.Util
 renderShortFriendlyTime :: FormatTime t => t -> String
+renderFriendlyTime :: FormatTime t => t -> String
+renderDatetimeTime :: FormatTime t => t -> String
 parseETime :: ParseTime t => String -> Maybe t
 splitTags :: String -> [String]
 genSlug :: Int -> Text -> Text
@@ -24,42 +23,14 @@ genSlug' :: Int -> String -> String
 entryReaderOpts :: ReaderOptions
 entryWriterOpts :: WriterOptions
 
-module Blog.Rule.Archive
-type Year = Integer
-data Month
-JAN :: Month
-FEB :: Month
-MAR :: Month
-APR :: Month
-MAY :: Month
-JUN :: Month
-JUL :: Month
-AUG :: Month
-SEP :: Month
-OCT :: Month
-NOV :: Month
-DEC :: Month
-mInt :: Month -> Int
-data History
-History :: Map Year (Map Month [Identifier]) -> (Year -> Maybe Month -> Identifier) -> Dependency -> History
-[historyMap] :: History -> Map Year (Map Month [Identifier])
-[historyMakeId] :: History -> Year -> Maybe Month -> Identifier
-[historyDependency] :: History -> Dependency
-buildHistoryWith :: MonadMetadata m => (Identifier -> m (Maybe (Year, Month))) -> Pattern -> (Year -> Maybe Month -> Identifier) -> m History
-historyRules :: History -> (Year -> Maybe Month -> Pattern -> Rules ()) -> Rules ()
-ymByField :: MonadMetadata m => Identifier -> m (Maybe (Year, Month))
-instance GHC.Enum.Enum Blog.Rule.Archive.Month
-instance GHC.Classes.Ord Blog.Rule.Archive.Month
-instance GHC.Classes.Eq Blog.Rule.Archive.Month
-instance GHC.Show.Show Blog.Rule.Archive.Month
-
 module Blog.Types
 data Config
-Config :: !Text -> !Text -> !AuthorInfo -> !Text -> !(Maybe Text) -> !(Maybe Text) -> !HostInfo -> !DeveloperAPIs -> !BlogPrefs -> !EnvType -> Config
+Config :: !Text -> !Text -> !AuthorInfo -> !Text -> !Text -> !(Maybe Text) -> !(Maybe Text) -> !HostInfo -> !DeveloperAPIs -> !BlogPrefs -> !EnvType -> Config
 [confTitle] :: Config -> !Text
 [confDesc] :: Config -> !Text
 [confAuthorInfo] :: Config -> !AuthorInfo
 [confCopyright] :: Config -> !Text
+[confFeed] :: Config -> !Text
 [confBlobs] :: Config -> !(Maybe Text)
 [confInteractive] :: Config -> !(Maybe Text)
 [confHostInfo] :: Config -> !HostInfo
@@ -80,9 +51,10 @@ AuthorInfo :: Text -> Text -> Text -> Text -> Text -> Text -> Text -> Text -> Au
 [authorGithub] :: AuthorInfo -> Text
 [authorLinkedIn] :: AuthorInfo -> Text
 data HostInfo
-HostInfo :: Text -> Maybe Int -> HostInfo
+HostInfo :: Text -> Maybe Int -> Maybe Text -> HostInfo
 [hostBase] :: HostInfo -> Text
 [hostPort] :: HostInfo -> Maybe Int
+[hostRoot] :: HostInfo -> Maybe Text
 data DeveloperAPIs
 DeveloperAPIs :: (Text, Text) -> Text -> Text -> Text -> Text -> DeveloperAPIs
 [devAnalytics] :: DeveloperAPIs -> (Text, Text)
@@ -101,10 +73,9 @@ GeneralTag :: TagType
 CategoryTag :: TagType
 SeriesTag :: TagType
 data Entry
-Entry :: !Text -> !Text -> !Text -> !Text -> !FilePath -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe Text) -> !(Maybe Text) -> ![Text] -> !(Maybe Int) -> !Identifier -> ![(TagType, Text)] -> Entry
+Entry :: !Text -> !Text -> !Text -> !FilePath -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe LocalTime) -> !(Maybe Text) -> !(Maybe Text) -> ![Text] -> !(Maybe Int) -> !FilePath -> ![(TagType, Text)] -> Entry
 [entryTitle] :: Entry -> !Text
 [entryContents] :: Entry -> !Text
-[entryHTML] :: Entry -> !Text
 [entryLede] :: Entry -> !Text
 [entrySourceFile] :: Entry -> !FilePath
 [entryCreateTime] :: Entry -> !(Maybe LocalTime)
@@ -114,24 +85,31 @@ Entry :: !Text -> !Text -> !Text -> !Text -> !FilePath -> !(Maybe LocalTime) -> 
 [entrySlug] :: Entry -> !(Maybe Text)
 [entryOldSlugs] :: Entry -> ![Text]
 [entryId] :: Entry -> !(Maybe Int)
-[entryCanonical] :: Entry -> !Identifier
+[entryCanonical] :: Entry -> !FilePath
 [entryTags] :: Entry -> ![(TagType, Text)]
 data Tag
-Tag :: !Text -> !TagType -> !(Maybe Text) -> !Text -> [Entry] -> Tag
+Tag :: !Text -> !TagType -> !(Maybe Text) -> ![Entry] -> Tag
 [tagLabel] :: Tag -> !Text
 [tagType] :: Tag -> !TagType
 [tagDescription] :: Tag -> !(Maybe Text)
-[tagSlug] :: Tag -> !Text
-[tagEntries] :: Tag -> [Entry]
+[tagEntries] :: Tag -> ![Entry]
 tagTypePrefix :: TagType -> Text
-instance GHC.Generics.Selector Blog.Types.S1_0_4Tag
+data PageData
+PD :: !(Maybe Text) -> !(Maybe Text) -> !(Maybe FilePath) -> !(Maybe Text) -> !(Maybe FilePath) -> ![Text] -> ![Text] -> ![Html] -> PageData
+[pageDataTitle] :: PageData -> !(Maybe Text)
+[pageDataDesc] :: PageData -> !(Maybe Text)
+[pageDataImage] :: PageData -> !(Maybe FilePath)
+[pageDataType] :: PageData -> !(Maybe Text)
+[pageDataCanonical] :: PageData -> !(Maybe FilePath)
+[pageDataCss] :: PageData -> ![Text]
+[pageDataJs] :: PageData -> ![Text]
+[pageDataHeaders] :: PageData -> ![Html]
 instance GHC.Generics.Selector Blog.Types.S1_0_3Tag
 instance GHC.Generics.Selector Blog.Types.S1_0_2Tag
 instance GHC.Generics.Selector Blog.Types.S1_0_1Tag
 instance GHC.Generics.Selector Blog.Types.S1_0_0Tag
 instance GHC.Generics.Constructor Blog.Types.C1_0Tag
 instance GHC.Generics.Datatype Blog.Types.D1Tag
-instance GHC.Generics.Selector Blog.Types.S1_0_13Entry
 instance GHC.Generics.Selector Blog.Types.S1_0_12Entry
 instance GHC.Generics.Selector Blog.Types.S1_0_11Entry
 instance GHC.Generics.Selector Blog.Types.S1_0_10Entry
@@ -164,6 +142,7 @@ instance GHC.Generics.Selector Blog.Types.S1_0_1DeveloperAPIs
 instance GHC.Generics.Selector Blog.Types.S1_0_0DeveloperAPIs
 instance GHC.Generics.Constructor Blog.Types.C1_0DeveloperAPIs
 instance GHC.Generics.Datatype Blog.Types.D1DeveloperAPIs
+instance GHC.Generics.Selector Blog.Types.S1_0_2HostInfo
 instance GHC.Generics.Selector Blog.Types.S1_0_1HostInfo
 instance GHC.Generics.Selector Blog.Types.S1_0_0HostInfo
 instance GHC.Generics.Constructor Blog.Types.C1_0HostInfo
@@ -180,6 +159,7 @@ instance GHC.Generics.Constructor Blog.Types.C1_0AuthorInfo
 instance GHC.Generics.Datatype Blog.Types.D1AuthorInfo
 instance GHC.Generics.Generic Blog.Types.Tag
 instance GHC.Show.Show Blog.Types.Tag
+instance GHC.Classes.Eq Blog.Types.Entry
 instance GHC.Generics.Generic Blog.Types.Entry
 instance GHC.Show.Show Blog.Types.Entry
 instance GHC.Generics.Generic Blog.Types.TagType
@@ -215,38 +195,125 @@ instance Data.Aeson.Types.Class.ToJSON Blog.Types.BlogPrefs
 instance Data.Binary.Class.Binary Blog.Types.TagType
 instance Data.Binary.Class.Binary Blog.Types.Entry
 instance Data.Binary.Class.Binary Blog.Types.Tag
+instance Data.Default.Class.Default Blog.Types.PageData
 
 module Blog.View
 mainSection :: Attribute
 renderUrl :: (?config :: Config) => Text -> Text
-urlBase :: Config -> Text
+renderUrl' :: (?config :: Config) => String -> String
+renderBlobUrl :: (?config :: Config) => Text -> Maybe Text
+urlBase :: (?config :: Config) => Text
+copyToHtml :: String -> Html
+copySection :: Text -> Html -> Html
+copyToHtmlString :: String -> String
+stripPandoc :: Pandoc -> Text
 
-module Blog.Compiler.Entry
-compileEntry :: (?config :: Config) => Compiler (Item Entry)
-entryMarkdownCompiler :: (?config :: Config) => Compiler (Item String)
-entryLaTeXCompiler :: (?config :: Config) => String -> Compiler (Item String)
+module Blog.View.Social
+viewSocialShare :: Html
+addThisLine :: Html
+viewSocialFollow :: (?config :: Config) => Html
 
-module Blog.Compiler.Tag
-tagCompiler :: TagType -> String -> Pattern -> Compiler (Item String)
-compileTag :: TagType -> String -> Pattern -> Compiler (Item Tag)
-tagTypeDescPath :: TagType -> String
+module Blog.Render
+renderLayout :: (?config :: Config) => PageData -> Html -> Html
+navBar :: (?config :: Config) => Html
+googleAnalyticsJs :: (?config :: Config) => Html
+facebookSdkJs :: (?config :: Config) => Html
+viewOpenGraphMetas :: (?config :: Config) => PageData -> Html
+
+module Hakyll.Web.Blaze
+blazeCompiler :: (?config :: Config) => PageData -> Html -> Compiler (Item String)
 
 module Blog.View.Feed
 viewFeed :: (?config :: Config) => [Entry] -> TimeZone -> UTCTime -> String
 feedRss :: (?config :: Config) => [Entry] -> TimeZone -> UTCTime -> RSS
 dcItemToXml :: DCItem -> Element
 
+module Blog.Rule.Archive
+type Year = Integer
+data Month
+JAN :: Month
+FEB :: Month
+MAR :: Month
+APR :: Month
+MAY :: Month
+JUN :: Month
+JUL :: Month
+AUG :: Month
+SEP :: Month
+OCT :: Month
+NOV :: Month
+DEC :: Month
+mInt :: Month -> Int
+data History
+History :: Map Year (Map Month [Identifier]) -> (Year -> Maybe Month -> Identifier) -> Dependency -> History
+[historyMap] :: History -> Map Year (Map Month [Identifier])
+[historyMakeId] :: History -> Year -> Maybe Month -> Identifier
+[historyDependency] :: History -> Dependency
+buildHistoryWith :: MonadMetadata m => (Identifier -> m (Maybe (Year, Month))) -> Pattern -> (Year -> Maybe Month -> Identifier) -> m History
+historyRules :: History -> (Year -> Maybe Month -> Pattern -> Rules ()) -> Rules ()
+ymByField :: MonadMetadata m => Identifier -> m (Maybe (Year, Month))
+instance GHC.Enum.Enum Blog.Rule.Archive.Month
+instance GHC.Classes.Ord Blog.Rule.Archive.Month
+instance GHC.Classes.Eq Blog.Rule.Archive.Month
+instance GHC.Show.Show Blog.Rule.Archive.Month
+
+module Blog.Compiler.Tag
+tagCompiler :: TagType -> String -> Pattern -> Compiler (Item String)
+compileTag :: TagType -> String -> Pattern -> Compiler (Item Tag)
+fetchTag :: TagType -> Text -> Compiler Tag
+tagSlug :: Tag -> Text
+tagTypeDescPath :: TagType -> String
+mkTagUrl :: TagType -> String -> FilePath
+tagUrl :: Tag -> FilePath
+tagPrettyLabel :: Tag -> String
+plainDescription :: Tag -> Maybe String
+plainDescription' :: Tag -> String
+filterTags :: TagType -> [Tag] -> [Tag]
+tagLi :: (?config :: Config) => Tag -> Html
+tagLiClass :: Tag -> AttributeValue
+tagLink :: (?config :: Config) => (Tag -> String) -> Tag -> Html
+
+module Blog.View.Entry
+data EntryInfo
+EI :: Entry -> [Tag] -> Maybe Entry -> Maybe Entry -> LocalTime -> EntryInfo
+[eiEntry] :: EntryInfo -> Entry
+[eiTags] :: EntryInfo -> [Tag]
+[eiPrevEntry] :: EntryInfo -> Maybe Entry
+[eiNextEntry] :: EntryInfo -> Maybe Entry
+[eiNow] :: EntryInfo -> LocalTime
+viewEntry :: (?config :: Config) => EntryInfo -> Html
+nextPrevUrl :: (?config :: Config) => Maybe Entry -> Maybe Entry -> Html
+categoryList :: (?config :: Config) => [Tag] -> Html
+seriesLi :: (?config :: Config) => Tag -> Html
+instance GHC.Show.Show Blog.View.Entry.EntryInfo
+
 module Blog.View.Home
 data HomeInfo
-HI :: Int -> Maybe Text -> Maybe Text -> Maybe Html -> [HomeEntry] -> HomeInfo
+HI :: Int -> Maybe FilePath -> Maybe FilePath -> [HomeEntry] -> [Tag] -> String -> String -> HomeInfo
 [hiPageNum] :: HomeInfo -> Int
-[hiPrevPage] :: HomeInfo -> Maybe Text
-[hiNextPage] :: HomeInfo -> Maybe Text
-[hiBanner] :: HomeInfo -> Maybe Html
+[hiPrevPage] :: HomeInfo -> Maybe FilePath
+[hiNextPage] :: HomeInfo -> Maybe FilePath
 [hiEntries] :: HomeInfo -> [HomeEntry]
+[hiAllTags] :: HomeInfo -> [Tag]
+[hiLinksCopy] :: HomeInfo -> String
+[hiBannerCopy] :: HomeInfo -> String
 data HomeEntry
-HE :: Entry -> Text -> [Tag] -> HomeEntry
+HE :: Entry -> [Tag] -> HomeEntry
 [heEntry] :: HomeEntry -> Entry
-[heLink] :: HomeEntry -> Text
 [heTags] :: HomeEntry -> [Tag]
 viewHome :: (?config :: Config) => HomeInfo -> Html
+entryList :: (?config :: Config) => [HomeEntry] -> Maybe FilePath -> Maybe FilePath -> Int -> Html
+viewTags :: (?config :: Config) => [Tag] -> Html
+instance GHC.Show.Show Blog.View.Home.HomeInfo
+instance GHC.Show.Show Blog.View.Home.HomeEntry
+
+module Blog.Compiler.Home
+homeCompiler :: (?config :: Config) => [Int] -> [(TagType, Text)] -> Int -> Pattern -> Compiler (Item String)
+
+module Blog.Compiler.Entry
+compileEntry :: (?config :: Config) => Compiler (Item Entry)
+entryCompiler :: (?config :: Config) => LocalTime -> [((Year, Month), Identifier)] -> [(TagType, Text)] -> Compiler (Item String)
+entryMarkdownCompiler :: (?config :: Config) => Compiler (Item String)
+entryLaTeXCompiler :: (?config :: Config) => String -> Compiler (Item String)
+entryLedeStripped :: Entry -> Text
+mkCanonical :: Maybe Text -> Maybe Text -> FilePath -> FilePath
