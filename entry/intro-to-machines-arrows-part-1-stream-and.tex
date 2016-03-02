@@ -1,0 +1,1218 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Justin Le},
+            pdftitle={Intro to Machines \& Arrows (Part 1)},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+% Make links footnotes instead of hotlinks:
+\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\title{Intro to Machines \& Arrows (Part 1)}
+\author{Justin Le}
+
+\begin{document}
+\maketitle
+
+\emph{Originally posted on \textbf{\href{http://home.jle0.com:4111/}{in
+Code}}.}
+
+So I'm going to be running a series soon on computation and (physical)
+simulations using AFRP (Arrowized Functional Reactive Programming)
+principles.
+
+I consider (A)FRP to actually be a pretty game changing paradigm. It
+provides us with semantics by which to compose and build time-varying,
+reactive behaviors and completely changes the way we approach any sort
+of simulation/state-like project.
+
+However, it's fairly difficult to approach the subject (and not dumb
+things down to the point of magic) without a solid foundation on the
+basic building blocks of AFRP: \textbf{machines}. And so before I get
+started on my simulations in FRP series, here is hopefully a practical
+foundation on the practical usage and construction of the machine design
+pattern that we can build on to get started on our Physics simulation!
+
+This post will assume a somewhat basic knowledge of Haskell. I'll try
+explaining concepts here and there if I feel that they might not be very
+commonly known. But if you have any questions, feel free to leave a
+comment or stop by freenode's \#haskell on irc!
+
+In this post we are going to introduce Streams and (more importantly)
+Autos. In the next, we will be looking at Autos as a member of the
+powerful Category and Arrow typeclasses. Finally, we will bring in the
+final machine, the Wire, to transition into the popular AFRP library
+\href{http://hackage.haskell.org/package/netwire}{netwire}.
+
+\section{Why FRP?}\label{why-frp}
+
+So why do we even bother with FRP? Why not just wrap everything in a
+giant global state monad and program imperatively?
+
+To get to the bottom of this, we must remember why we even bother with
+functional programming in the first place. Think very hard about this
+question, because without a real answer, all of this will be a waste. Is
+it just because it's cool?
+
+The (a?) reason why (pure) functional programming is powerful is because
+is a subset of what can be called
+\textbf{\href{http://www.haskellforall.com/2012/08/the-category-design-pattern.html}{compositional
+programming}}. Almost all of the benefits of functional programming can
+be drawn from its unmatched power of composability. Think of the power
+of unix pipes. We can build programs by the free composition of smaller,
+simpler self-contained programs and concepts that don't have to be aware
+of any other part. Recognizing this completely changes the way we
+approach problems.
+
+So why FRP? FRP provides for us meaningful semantics by which to
+\emph{compose} time-varying and reactive behaviors, and create complex
+ones from smaller ones. You reason about a self-contained behavior
+``wire''\ldots{}and then use tools to build complex behaviors from
+simple ones. You don't specify what happens when, you specify how things
+\emph{should behave}, from a top-down level. And then compose those
+behaviors.
+
+Yadda yadda. I am probably boring you at this point, let's just get
+started and jump into machines!
+
+\section{Streams}\label{streams}
+
+Let's start with streams, one of the simpler of machines.
+
+Streams are basically infinitely long linked lists.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data} \DataTypeTok{Stream} \NormalTok{b }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{(b, }\DataTypeTok{Stream} \NormalTok{b)}
+\end{Highlighting}
+\end{Shaded}
+
+(\texttt{SCons} for ``Stream cons'')
+
+Compare that with the linked list data type, which is a Stream with an
+Ending (\texttt{Nil}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data} \DataTypeTok{List} \NormalTok{a }\FunctionTok{=} \DataTypeTok{Cons} \NormalTok{(a, }\DataTypeTok{List} \NormalTok{a) }\FunctionTok{|} \DataTypeTok{Nil}
+  \KeywordTok{deriving} \NormalTok{(}\DataTypeTok{Show}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+or, as is more traditionally written:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data} \NormalTok{[a] }\FunctionTok{=} \NormalTok{(}\FunctionTok{:}\NormalTok{) a [a] }\FunctionTok{|} \NormalTok{[]}
+\end{Highlighting}
+\end{Shaded}
+
+It's pretty easy to build lists:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myList ::} \DataTypeTok{List} \DataTypeTok{Int}
+\NormalTok{myList }\FunctionTok{=} \DataTypeTok{Cons} \NormalTok{( }\DecValTok{1}\NormalTok{, }\DataTypeTok{Cons} \NormalTok{( }\DecValTok{2}\NormalTok{, }\DataTypeTok{Cons} \NormalTok{(}\DecValTok{3}\NormalTok{, }\DataTypeTok{Nil}\NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+which is just, in the more traditional (infix) form:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myList' ::} \NormalTok{[}\DataTypeTok{Int}\NormalTok{]}
+\NormalTok{myList' }\FunctionTok{=} \DecValTok{1}\FunctionTok{:}\NormalTok{(}\DecValTok{2}\FunctionTok{:}\NormalTok{(}\DecValTok{3}\FunctionTok{:}\NormalTok{[]))}
+\end{Highlighting}
+\end{Shaded}
+
+Let's see if \texttt{myList} does what we want: (a list from 1 to 3):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{Cons} \NormalTok{(x,xs)) }\FunctionTok{=} \NormalTok{myList}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{x}
+\DecValTok{1}
+\NormalTok{λ}\FunctionTok{:} \FunctionTok{:}\NormalTok{t xs}
+\OtherTok{xs ::} \DataTypeTok{List} \DataTypeTok{Int}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{Cons} \NormalTok{(y,ys)) }\FunctionTok{=} \NormalTok{xs}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{y}
+\DecValTok{2}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{Cons} \NormalTok{(z,zs)) }\FunctionTok{=} \NormalTok{ys}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{z}
+\DecValTok{3}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{zs}
+\DataTypeTok{Nil}
+\end{Highlighting}
+\end{Shaded}
+
+Yes! Perfect. We can ``traverse'' down our linked list by repeatedly
+pattern matching out the ``head'' (the \texttt{x}, the first part of the
+tuple) and the ``tail'' (the \texttt{xs}, the second part of the tuple).
+
+But how are we going to build a stream\ldots{}? We don't have access to
+\texttt{Nil}, so do we have to manually type out an infinite stream?
+
+Let's try defining the stream \texttt{{[}1..{]}} --- a stream that
+contains every natural number starting from 1.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myStream' ::} \DataTypeTok{Stream} \DataTypeTok{Int}
+\NormalTok{myStream' }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{( }\DecValTok{1}\NormalTok{, }\DataTypeTok{SCons} \NormalTok{( }\DecValTok{2}\NormalTok{, }\DataTypeTok{SCons} \NormalTok{( }\DecValTok{3}\NormalTok{, }\FunctionTok{...} \NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+Hm. This is going to take a while. I wonder if there's an easier way.
+
+We can take advantage of Haskell's ``lazy-by-default''-ness and leave
+the ``rest'' of the stream as an unevaluated function call. And then we
+can recurse!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myStream ::} \DataTypeTok{Stream} \DataTypeTok{Int}
+\NormalTok{myStream }\FunctionTok{=} \NormalTok{streamFrom }\DecValTok{1}
+  \KeywordTok{where}
+\OtherTok{    streamFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Stream} \DataTypeTok{Int}
+    \NormalTok{streamFrom n }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{( n, streamFrom (n}\FunctionTok{+}\DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+Cool! Let's see if this \texttt{myStream} really does what we want, the
+same way we tested \texttt{myList}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{SCons} \NormalTok{(x, xs)) }\FunctionTok{=} \NormalTok{myStream}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{x}
+\DecValTok{1}
+\NormalTok{λ}\FunctionTok{:} \FunctionTok{:}\NormalTok{t xs}
+\OtherTok{xs ::} \DataTypeTok{Stream} \DataTypeTok{Int}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{SCons} \NormalTok{(y, ys)) }\FunctionTok{=} \NormalTok{xs}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{y}
+\DecValTok{2}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{SCons} \NormalTok{(z, zs)) }\FunctionTok{=} \NormalTok{ys}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{z}
+\DecValTok{3}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{SCons} \NormalTok{(j,js)) }\FunctionTok{=} \NormalTok{zs}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{j}
+\DecValTok{4}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(}\DataTypeTok{SCons} \NormalTok{(k,ks)) }\FunctionTok{=} \NormalTok{js}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{k}
+\DecValTok{5}
+\end{Highlighting}
+\end{Shaded}
+
+Yes, it works perfectly! Just like in the case of List, we can
+``traverse'' down the stream by pattern matching out the ``head'' of the
+stream (the first part of the tuple) and the ``tail'' of the stream (the
+second part of the tuple).
+
+Note that we can use some syntax trickery with our data definition of
+\texttt{Stream} by adding a label to the first (and only) field:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data} \DataTypeTok{Stream} \NormalTok{b }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{\{}\OtherTok{ runStream ::} \NormalTok{(b, }\DataTypeTok{Stream} \NormalTok{b) \}}
+\end{Highlighting}
+\end{Shaded}
+
+and we can do fancy things like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \FunctionTok{:}\NormalTok{t runStream}
+\OtherTok{runStream ::} \DataTypeTok{Stream} \NormalTok{b }\OtherTok{->} \NormalTok{(b, }\DataTypeTok{Stream} \NormalTok{b)}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(x, xs) }\FunctionTok{=} \NormalTok{runStream myStream}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{x}
+\DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+Basically, we get for free the function \texttt{runStream}, a function
+that yanks the tuple out of the stream.
+
+One minor final touch --- because \texttt{Stream} has only one
+constructor and one field, we can make it a \texttt{newtype}, which has
+similar usage patterns/syntax as a \texttt{data}, but which the compiler
+can more easily optimize:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{newtype} \DataTypeTok{Stream} \NormalTok{b }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{\{}\OtherTok{ runStream ::} \NormalTok{(b, }\DataTypeTok{Stream} \NormalTok{b) \}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Automating Traversal}\label{automating-traversal}
+
+The repeated pattern matching is actually kind of tedious, and it'll
+only get more annoying over time, so let's make a function that can
+automate the pattern matching for us really quickly so that we can test
+it more easily.
+
+\texttt{streamToList} will take a Stream and perform the very
+straightforward conversion into an infinite list.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{streamToList ::} \DataTypeTok{Stream} \NormalTok{b }\OtherTok{->} \NormalTok{[b]}
+\NormalTok{streamToList (}\DataTypeTok{SCons} \NormalTok{(x, xs)) }\FunctionTok{=} \NormalTok{x }\FunctionTok{:} \NormalTok{streamToList xs}
+\end{Highlighting}
+\end{Shaded}
+
+So now we can do:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \NormalTok{take }\DecValTok{10} \FunctionTok{$} \NormalTok{streamToList myStream}
+\NormalTok{[}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{9}\NormalTok{,}\DecValTok{10}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Alternatively (and for reasons which will later become clear), we can
+also define \texttt{testStream}, which takes a specified amount of
+elements and returns also the ``resulting'' stream after all of those
+steps, and \texttt{testStream\_}, which is the same thing except that we
+throw away the modified stream.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{testStream ::} \DataTypeTok{Stream} \NormalTok{b }\OtherTok{->} \DataTypeTok{Int} \OtherTok{->} \NormalTok{([b], }\DataTypeTok{Stream} \NormalTok{b)}
+\NormalTok{testStream strm }\DecValTok{0} \FunctionTok{=} \NormalTok{([]  , strm )}
+\NormalTok{testStream strm n }\FunctionTok{=} \NormalTok{(y}\FunctionTok{:}\NormalTok{ys, final)}
+  \KeywordTok{where}
+    \NormalTok{(y , next )   }\FunctionTok{=} \NormalTok{runStream  strm}
+    \NormalTok{(ys, final)   }\FunctionTok{=} \NormalTok{testStream next (n}\FunctionTok{-}\DecValTok{1}\NormalTok{)}
+
+\OtherTok{testStream_ ::} \DataTypeTok{Stream} \NormalTok{b }\OtherTok{->} \DataTypeTok{Int} \OtherTok{->} \NormalTok{[b]}
+\NormalTok{testStream_ }\FunctionTok{=} \NormalTok{(fst }\FunctionTok{.}\NormalTok{) }\FunctionTok{.} \NormalTok{testStream}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \NormalTok{testStream_ myStream }\DecValTok{10}
+\NormalTok{[}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{9}\NormalTok{,}\DecValTok{10}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Streams are nice}\label{streams-are-nice}
+
+Streams are nice! If you've been using Haskell for any stretch of time,
+you'll know that we use infinite lists all the time and to great
+usefulness for the ends of expressiveness and abstraction.
+
+In math, streams are known as a form of
+\href{http://en.wikipedia.org/wiki/Moore_machine}{Moore machines}
+(albeit with potentially infinite sets of state and output values). They
+are machines that basically progress from state to state to state to
+state. They just keep on marching on\ldots{}like a machine. In
+\texttt{myStream}, the initial state is 1. The next state is 2; the next
+is 3, etc. What is important is that the next state \emph{is a function
+of the current state}.
+
+This is made very apparent in our definition of \texttt{streamFrom}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{streamFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Stream} \DataTypeTok{Int}
+\NormalTok{streamFrom n }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{( n, streamFrom (n}\FunctionTok{+}\DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+The ``current state'' whenever we call \texttt{streamFrom\ n} is
+\texttt{n}\ldots{}the ``next state'' (the ``initial state'' of the
+``tail'') is \texttt{n+1}. We could have provided any function
+\texttt{::\ Int\ -\textgreater{}\ Int} there (say, \texttt{n+2}), that
+would be for us our ``next state'' function.
+
+So \texttt{myStream} is a Moore-like machine whose ``next state''
+function is ``the current state plus one''.
+
+\subsubsection{on State}\label{on-state}
+
+Before we move on, let's take a slight diversion --- you can skip this
+whole section if you wish, to get onto the main point.
+
+Notice that in our last example, our ``state'' \texttt{n} was the same
+type as our ``output'' \texttt{n+1}. Is this in general the case?
+
+The type of our stream is \texttt{Stream\ Int}\ldots{}does \texttt{Int}
+refer to the state or the output?
+
+As it turns out, this \texttt{Int} refers to the output --- it is the
+type of the ``head'' of the stream, and all values we will eventually
+grab from it.
+
+Note however that the type of the state is not actually included in the
+type signature, so it can be whatever you want! As a trivial example,
+let's say that \texttt{streamFrom} actually takes a
+\texttt{x\ ::\ Double} instead of an \texttt{n\ ::\ Int}, and rounds it
+before it pops it out as the ``head'':
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myStream' ::} \DataTypeTok{Stream} \DataTypeTok{Int}
+\NormalTok{myStream' }\FunctionTok{=} \NormalTok{streamFrom' }\FloatTok{1.0}
+  \KeywordTok{where}
+\OtherTok{    streamFrom' ::} \DataTypeTok{Double} \OtherTok{->} \DataTypeTok{Stream} \DataTypeTok{Int}
+    \NormalTok{streamFrom' x }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{( round x, streamFrom' (x}\FunctionTok{+}\DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+This function now sorta behaves similarly to our original
+\texttt{streamFrom}\ldots{} \texttt{myStream\textquotesingle{}} would
+still be \texttt{Stream\ Int} and output ints, and we might not ever be
+able to tell that the internal state of
+\texttt{myStream\textquotesingle{}} was ``actually'' a double!
+
+Now also observe that the internal state is actually in general
+\emph{inaccessible} and \emph{opaque} to the outside world. What if we
+had \texttt{streamFrom} simply return whether or not \texttt{n} was
+even?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myBoolStream ::} \DataTypeTok{Stream} \DataTypeTok{Bool}
+\NormalTok{myBoolStream }\FunctionTok{=} \NormalTok{boolStreamFrom }\DecValTok{1}
+  \KeywordTok{where}
+\OtherTok{    boolStreamFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Stream} \DataTypeTok{Bool}
+    \NormalTok{boolStreamFrom n }\FunctionTok{=} \DataTypeTok{SCons} \NormalTok{( even n, boolStreamFrom (n}\FunctionTok{+}\DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \NormalTok{take }\DecValTok{5} \FunctionTok{$} \NormalTok{streamToList myBoolStream}
+\NormalTok{[}\DataTypeTok{False}\NormalTok{,}\DataTypeTok{True}\NormalTok{,}\DataTypeTok{False}\NormalTok{,}\DataTypeTok{True}\NormalTok{,}\DataTypeTok{False}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{myBoolStream} simply cycles between \texttt{False} and
+\texttt{True}. Yet, it has an internal state that is completely closed
+off to us that is an \texttt{Int} counting from \texttt{1} to infinity.
+We might not have ever even known.
+
+This property --- that the states of these types of machines are hidden
+from the world --- is actually going to be very useful. Like I said
+before, every machine can really be considered self-contained. This is
+unlike using a State monad-based loop, where all internal state is more
+or less freely viewable manipulatable by anyone. Here, every machine is
+truly its own little world.
+
+In fact, because the type of the state is unknown and
+unpredictable\ldots{}even if we could ``force'' the state out of a
+stream somehow, we wouldn't even be able to work with it in a type safe
+way. The type is truly dynamic and the type of the nth state of a stream
+is unknowable at compile time.
+
+Here is a stream whose state switches from an \texttt{Int} to a
+\texttt{Bool} dynamically.
+
+\begin{verbatim}
+wackyStateStream :: Stream (Maybe Int)
+wackyStateStream = wackyStateBool True
+  where
+    wackyStateBool :: Bool -> Stream (Maybe Int)
+    wakcyStateBool False  = SCons (Nothing , wackyStateBool True)
+    wackyStateBool True   = SCons (Just 100, wackyStateInt 8)
+
+    wackyStateInt :: Int -> Stream (Maybe Int)
+    wackyStateInt n
+        | n `mod` 7 == 0  = SCons (Just n, wackyStateBool True)
+        | otherwise       = SCons (Just (n+2), wackyStateInt (n+3))
+
+λ: take 7 $ streamToList wackyStateStream
+[Nothing, Just 100, Just 8, Just 11, Just 16, Nothing, Just 100]
+\end{verbatim}
+
+\subsection{Continuing on}\label{continuing-on}
+
+The problem with streams, as you might have guessed, is that you can't
+really affect their progress once they start. Once you start
+\texttt{myStream}, it'll keep on marching on, and on, and on\ldots{}you
+have no way to ``influence'' its progression \emph{during} its march.
+The \emph{behavior} of our stream \emph{can't be influenced} by the
+outside world in any way, once it has started. This is a bit limiting,
+because we want behaviors that we can have interact with each other.
+
+And so, we have the natural generalization of streams (and the machine
+we will be spending the most time looking at): Auto.
+
+\section{Auto}\label{auto}
+
+Let's upgrade our streams, and introduce a way to affect how they
+progress. Let's call it an Auto.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{newtype} \DataTypeTok{Auto} \NormalTok{a b }\FunctionTok{=} \DataTypeTok{ACons} \NormalTok{\{}\OtherTok{ runAuto ::} \NormalTok{a }\OtherTok{->} \NormalTok{(b, }\DataTypeTok{Auto} \NormalTok{a b) \}}
+\end{Highlighting}
+\end{Shaded}
+
+Now, instead of an \texttt{SCons} containing just a tuple (a
+head-tails), an \texttt{ACons} contains a \emph{function} that
+\emph{produces} your head-tails tuple. Before, all of our
+\texttt{runStreams} produced the same tuple no matter what. Now, our
+\texttt{runAuto} can produce a different tuple based on an outside
+input.
+
+This is cool!
+
+Let's look at the type signature of Auto before we go too much further.
+
+In \texttt{Auto\ a\ b}, \texttt{b} is the type of your ``head'' and the
+type of the items in your ``tail''. It's the type of your ``stream''.
+
+\texttt{a} is the type of the ``influencing input''.
+
+So now, we basically have a \texttt{Stream\ b}, except at every
+``step'', we can ``influence'' the Stream with something of type
+\texttt{a}.
+
+\subsection{A Trivial Auto}\label{a-trivial-auto}
+
+Let's look at a direct ``port'' of our \texttt{myStream}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{myStreamAuto ::} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Int}
+\NormalTok{myStreamAuto }\FunctionTok{=} \NormalTok{streamAutoFrom }\DecValTok{1}
+  \KeywordTok{where}
+\OtherTok{    streamAutoFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Int}
+    \NormalTok{streamAutoFrom n }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}_ }\OtherTok{->} \NormalTok{( n, streamAutoFrom (n}\FunctionTok{+}\DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+This is kind of a dumb example, but \texttt{myStreamAuto} is just the
+exact same as \texttt{myStream}. It's an Auto, but it \emph{ignores its
+influencing input}.
+
+Let's try it out.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \FunctionTok{:}\NormalTok{t runAuto}
+\OtherTok{runAuto ::} \DataTypeTok{Auto} \NormalTok{a b }\OtherTok{->} \NormalTok{a }\OtherTok{->} \NormalTok{(b, }\DataTypeTok{Auto} \NormalTok{a b)}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(x, xs) }\FunctionTok{=} \NormalTok{runAuto myStreamAuto undefined}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{x}
+\DecValTok{1}
+\NormalTok{λ}\FunctionTok{:} \FunctionTok{:}\NormalTok{t xs}
+\OtherTok{xs ::} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Int}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(y, ys) }\FunctionTok{=} \NormalTok{runAuto xs undefined}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{y}
+\DecValTok{2}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(z, zs) }\FunctionTok{=} \NormalTok{runAuto ys undefined}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{z}
+\DecValTok{3}
+\end{Highlighting}
+\end{Shaded}
+
+Remember that we are really doing
+\texttt{(runAuto\ myStreamAuto)\ undefined}, but because of how Haskell
+associates function calls, the parentheses are unnecessary. And hey, it
+kind of looks like \texttt{runAuto} is a two-parameter function with an
+Auto as the first parameter and the ``influence''/``input'' as its
+second. Which, due to the magic of currying-by-default, it really is!
+
+\subsection{A Non-trivial Auto}\label{a-non-trivial-auto}
+
+Okay, that was fun I guess. But now let's take a first look at an auto
+which ``can'' be influenced.
+
+Let's have a \emph{resettable counter}. Kind of like
+\texttt{myStreamAuto}, but at every step, you can choose to ``reset''
+the count back to zero.
+
+Actually, let's just jump to something even bigger. At every step, we
+can choose to ``set'' the counter to whatever int we like.
+
+We can do this by having the influence/input be a \texttt{Maybe\ Int}.
+If we want the counter to progress normally, we pass in a
+\texttt{Nothing}. If we want the counter to reset to a number \texttt{n}
+of our choosing, we pass in a \texttt{Just\ n}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{settableAuto ::} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Int}
+\NormalTok{settableAuto }\FunctionTok{=} \NormalTok{settableCounterFrom }\DecValTok{1}
+  \KeywordTok{where}
+\OtherTok{    settableCounterFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Int}
+    \NormalTok{settableCounterFrom n }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}reset }\OtherTok{->}
+      \KeywordTok{let} \NormalTok{c }\FunctionTok{=} \NormalTok{fromMaybe n reset}
+      \KeywordTok{in}  \NormalTok{( c, settableCounterFrom (c }\FunctionTok{+} \DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+Remember that
+\texttt{fromMaybe\ ::\ a\ -\textgreater{}\ Maybe\ a\ -\textgreater{}\ a}
+takes a ``default'' value, a Maybe value, and then returns the value
+inside the Maybe if it's a \texttt{Just}, or the default value if it's a
+\texttt{Nothing}.
+
+So basically, when you \texttt{runAuto} with the Auto, if you give it a
+\texttt{Nothing}, it'll give you
+\texttt{(\ n,\ settableCounterFrom\ (n+1)\ )}. If you give it
+\texttt{Just\ m}, it'll give you
+\texttt{(\ m,\ settableCounterFrom\ (m+1)\ )}.
+
+Cool, let's try it out.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(x, xs) }\FunctionTok{=} \NormalTok{runAuto settableAuto }\DataTypeTok{Nothing}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{x}
+\DecValTok{1}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(y, ys) }\FunctionTok{=} \NormalTok{runAuto xs }\DataTypeTok{Nothing}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{y}
+\DecValTok{2}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(z, zs) }\FunctionTok{=} \NormalTok{runAuto ys (}\DataTypeTok{Just} \DecValTok{10}\NormalTok{)}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{z}
+\DecValTok{10}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(j, js) }\FunctionTok{=} \NormalTok{runAuto zs }\DataTypeTok{Nothing}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{j}
+\DecValTok{11}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(k, ks) }\FunctionTok{=} \NormalTok{runAuto js }\DataTypeTok{Nothing}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{k}
+\DecValTok{12}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(l, ls) }\FunctionTok{=} \NormalTok{runAuto ks (}\DataTypeTok{Just} \NormalTok{(}\FunctionTok{-}\DecValTok{1}\NormalTok{))}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{l}
+\FunctionTok{-}\DecValTok{1}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(m, ms) }\FunctionTok{=} \NormalTok{runAuto ls }\DataTypeTok{Nothing}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{m}
+\DecValTok{0}
+\end{Highlighting}
+\end{Shaded}
+
+And there ya go.
+
+\subsubsection{Automatic traversals for our
+Autos}\label{automatic-traversals-for-our-autos}
+
+Again, the manual pattern matching is a little tedious so let's write us
+a function to automate ``progressing'' down an Auto.
+
+Like our \texttt{testStream}, \texttt{testAuto} takes an Auto. But
+because every ``step'' needs an input, \texttt{testAuto\ auto} takes a
+\emph{list} that specifies the input for every step. \texttt{testAuto}
+returns the resulting collection of results, and also the modified Auto.
+\texttt{testAuto\_} throws away the new Auto and just gives us the
+collection.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{testAuto ::} \DataTypeTok{Auto} \NormalTok{a b }\OtherTok{->} \NormalTok{[a] }\OtherTok{->} \NormalTok{([b], }\DataTypeTok{Auto} \NormalTok{a b)}
+\NormalTok{testAuto auto []      }\FunctionTok{=} \NormalTok{([]  , auto )}
+\NormalTok{testAuto auto (x}\FunctionTok{:}\NormalTok{xs)  }\FunctionTok{=} \NormalTok{(y}\FunctionTok{:}\NormalTok{ys, final)}
+  \KeywordTok{where}
+    \NormalTok{(y,  next ) }\FunctionTok{=} \NormalTok{runAuto  auto x}
+    \NormalTok{(ys, final) }\FunctionTok{=} \NormalTok{testAuto next xs}
+
+\OtherTok{testAuto_ ::} \DataTypeTok{Auto} \NormalTok{a b }\OtherTok{->} \NormalTok{[a] }\OtherTok{->} \NormalTok{[b]}
+\NormalTok{testAuto_ }\FunctionTok{=} \NormalTok{(fst }\FunctionTok{.}\NormalTok{) }\FunctionTok{.} \NormalTok{testAuto}
+\end{Highlighting}
+\end{Shaded}
+
+Trying it out on \texttt{settableAuto}:
+
+\begin{verbatim}
+λ: testAuto settableAuto [ Nothing, Nothing, Just 10
+                         , Nothing, Nothing, Just (-1)
+                         , Nothing ]
+[1,2,10,11,12,-1,0]
+\end{verbatim}
+
+\subsection{A Shift}\label{a-shift}
+
+Let's shift our thinking a bit. Instead of seeing Autos as ``streams you
+can influence'', we can think about them as ``functions with state''.
+That is, they are functions that carry self-contained encapsulated state
+\emph{inside} themselves. They are still \emph{functions} of some kind
+--- you put in an ``input'' of type \texttt{a} and get in an ``output''
+(the head) of type \texttt{b}. However, every ``time'' you do this, you
+get a different output depending on what you have already passed in and
+what the internal state is. As we will see, this internal state is
+completely opaque to the world. The world only has access to the
+``output'', the result.
+
+(Remember that, because we're in a functional language, nothing is
+technically actually really ``mutable''. When we say that we have a
+stateful function, we really mean that every time we ``call'' the
+function, we get back an ``updated'' function with the new state that
+behaves differently when ``called'').
+
+To put it in terms of \texttt{settableAuto}:
+
+\begin{itemize}
+\tightlist
+\item
+  The ``input'' of \texttt{settableAuto} is our \texttt{Maybe\ Int} by
+  which we specify to reset or allow to increment by one as normal.
+\item
+  The ``output'' of \texttt{settableAuto} is the ``head'' of the
+  \texttt{ACons} that is returned --- the \texttt{x}, \texttt{y}, etc.
+  It's the \texttt{Int}, the counter.
+\item
+  The ``state'' of \texttt{settableAuto} is, in essense, the \texttt{n}
+  of \texttt{settableCounterFrom\ n}. It's the internal value by which
+  the behavior is determined. The behavior of \texttt{runAuto} depends
+  on the \texttt{n} --- it either yields \texttt{n} itself and
+  increments \texttt{n}, or ignores it.
+\end{itemize}
+
+\subsubsection{The opaque state}\label{the-opaque-state}
+
+It's a little tricky because the ``output'' and the ``state'' in our
+example function seem to be exactly the same (just like for
+\texttt{myStream}), but let's whip up a quick example where it's a
+little more obvious that the state and the output are different things,
+and that the state is completely opaque and encapsulated.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{isEvenAuto ::} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Bool}
+\NormalTok{isEvenAuto }\FunctionTok{=} \NormalTok{isEvenAuto }\DecValTok{1}
+  \KeywordTok{where}
+\OtherTok{    isEvenAutoFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Bool}
+    \NormalTok{isEvenAutoFrom n }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}reset }\OtherTok{->}
+      \KeywordTok{let} \NormalTok{c }\FunctionTok{=} \NormalTok{fromMaybe n reset}
+      \KeywordTok{in}  \NormalTok{( even c, isEvenAutoFrom (c }\FunctionTok{+} \DecValTok{1}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+So \texttt{isEvenAuto} is the same as \texttt{settableCounterFrom},
+except instead of ``yielding''/``outputting'' \texttt{n}, it outputs
+\texttt{even\ n} --- \texttt{True} if \texttt{n} is even and
+\texttt{False} if \texttt{n} is odd.
+
+Here is a demonstration of its behavior ---
+
+\begin{verbatim}
+λ: testAuto isEvenAuto  [ Nothing, Nothing, Just 10
+                        , Nothing, Nothing, Just (-1)
+                        , Nothing ]
+[False,True,True,False,True]
+\end{verbatim}
+
+Note that there is in general really no way to ever access the
+\texttt{n} internally. It is completely sealed off from the world,
+except by explicit design. Here, we choose to only ``offer'' a way to
+``set'' it using our input.
+
+Now it the three distinct concepts --- the input, output, and state ---
+should be clear.
+
+\begin{itemize}
+\tightlist
+\item
+  The ``input'' again is a \texttt{Maybe\ Int} where we can choose to
+  reset the march of the state.
+\item
+  The ``output'' here is now a \texttt{Bool} that says whether or not
+  the internal state is even.
+\item
+  The ``state'' here is still that \texttt{n} (an \texttt{Int}), and was
+  the same as in the last example. But here it is more clear that the
+  state is inaccessible in general. We can only modify it in ways that
+  the Auto \emph{itself} allows our ``input'' (in this case, a setter)
+  to modify it. And we certainly can't arbitrarily ``read'' it.
+\end{itemize}
+
+\subsection{Autos are nice!}\label{autos-are-nice}
+
+It should be clear now that Autos are a more or less straightforward
+extension of Streams.
+
+In fact, you might see that every \texttt{Stream\ b} is equivalent to
+\texttt{Auto\ ()\ b}, where the input is always unit.
+
+Autos correspond loosely to the mathematical
+\href{http://en.wikipedia.org/wiki/Mealy_machine}{Mealy machine}, but
+again with technically potentially infinitely many possible states,
+input, and output values.
+
+Now, we have a way to model behaviors that can somehow interact with the
+outside world.
+
+\subsubsection{More on state}\label{more-on-state}
+
+Another short diversion with concerning state! As we have seen, Auto's
+carry all of the hidden-internal-state features of Streams. The type of
+an Auto (\texttt{Auto\ a\ b}) reveals the type of the ``input'' and the
+``ouput''\ldots{}but it never reveals nor fixes the type of the
+``state''. The type of the state is not only unknown, by possibly
+dynamically changing over the course of the Auto's progression.
+
+What Auto offers over Stream is then a way for the outside world to
+access and modify the state \emph{if the Auto wants it to}. Now, we can
+design Autos that, like we have seen with \texttt{settableAuto}, we can
+offer limited ways to allow the world to modify the state on our own
+terms.
+
+\subsection{The Accumulator}\label{the-accumulator}
+
+Let's try our hand at another Auto, but instead of looking at things as
+an influencable and eternally marching stream, we're going to try to
+look at things as a function with state that affects its output.
+
+How about an Auto that ``accumulates'' and ``sums up'' all of its
+incoming inputs, starting at 0? More correctly, an Auto that, given any
+int, ``returns'' the sum of that int with all of the previous ints it
+has received in its lifetime.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{summer ::} \DataTypeTok{Auto} \DataTypeTok{Int} \DataTypeTok{Int}
+\NormalTok{summer }\FunctionTok{=} \NormalTok{sumFrom }\DecValTok{0}
+  \KeywordTok{where}
+\OtherTok{    sumFrom ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Auto} \DataTypeTok{Int} \DataTypeTok{Int}
+    \NormalTok{sumFrom n }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}input }\OtherTok{->}
+      \KeywordTok{let} \NormalTok{s }\FunctionTok{=} \NormalTok{n }\FunctionTok{+} \NormalTok{input}
+      \KeywordTok{in}  \NormalTok{( s , sumFrom s )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(out1, auto1) }\FunctionTok{=} \NormalTok{runAuto summer }\DecValTok{10}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{out1}
+\DecValTok{10}
+\NormalTok{λ}\FunctionTok{:} \KeywordTok{let} \NormalTok{(out2, auto2) }\FunctionTok{=} \NormalTok{runAuto auto1 }\DecValTok{3}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{out1}
+\DecValTok{13}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{testAuto_ auto2 [}\DecValTok{15}\NormalTok{,}\FunctionTok{-}\DecValTok{17}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{0}\NormalTok{,}\FunctionTok{-}\DecValTok{1}\NormalTok{]}
+\NormalTok{[}\DecValTok{28}\NormalTok{,}\DecValTok{11}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{17}\NormalTok{,}\DecValTok{16}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  The ``input'' is our incoming \texttt{Int} --- 10, 3, 15, -17, etc.
+\item
+  The ``output'' is the accumulated sum/integral -- 10, 13, 28, 11, etc.
+\item
+  The ``state'' in this case is the accumulator, which in this case
+  stays in sync with the output. But remember that this is not the case
+  in general.
+\end{itemize}
+
+Just for kicks, let's generalize this and make an Auto version of
+\texttt{foldl}: give us an operator and an initial value, and we'll
+``fold up'' all of our inputs.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{autoFold ::} \NormalTok{forall a b}\FunctionTok{.} \NormalTok{(b }\OtherTok{->} \NormalTok{a }\OtherTok{->} \NormalTok{b) }\OtherTok{->} \NormalTok{b }\OtherTok{->} \DataTypeTok{Auto} \NormalTok{a b}
+\NormalTok{autoFold op init }\FunctionTok{=} \NormalTok{foldFrom init}
+  \KeywordTok{where}
+\OtherTok{    foldFrom ::} \NormalTok{b }\OtherTok{->} \DataTypeTok{Auto} \NormalTok{a b}
+    \NormalTok{foldFrom x }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}input }\OtherTok{->}
+      \KeywordTok{let} \NormalTok{y }\FunctionTok{=} \NormalTok{x }\OtherTok{`op`} \NormalTok{input}
+      \KeywordTok{in}  \NormalTok{( y, foldFrom y )}
+\end{Highlighting}
+\end{Shaded}
+
+(the \texttt{forall} is used with the
+\href{http://www.haskell.org/haskellwiki/Scoped_type_variables}{Scoped
+Type Variables} extension to let us say that the \texttt{b} we mention
+in the type of \texttt{foldFrom} is the same as the \texttt{b} in the
+type of \texttt{autoFold}. If we leave off the type signature of
+\texttt{foldFrom}, this is not necessary)
+
+Note that \texttt{summer} then is just \texttt{autoFold\ (+)\ 0}.
+
+You can probably imagine lots of different folds you can turn into
+\texttt{autoFold}s\ldots{}and indeed a lot of practical Autos are just
+\texttt{autoFold}s. Here are some cute ones:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{accumulateIntoList ::} \DataTypeTok{Auto} \NormalTok{a [a]}
+\NormalTok{accumulateIntoList }\FunctionTok{=} \NormalTok{autoFold (flip (}\FunctionTok{:}\NormalTok{)) []}
+
+\OtherTok{productor ::} \DataTypeTok{Num} \NormalTok{a }\OtherTok{=>} \DataTypeTok{Auto} \NormalTok{a a}
+\NormalTok{productor }\FunctionTok{=} \NormalTok{autoFold (}\FunctionTok{*}\NormalTok{) }\DecValTok{1}
+
+\OtherTok{accumulateStrings ::} \DataTypeTok{Auto} \DataTypeTok{String} \DataTypeTok{String}
+\NormalTok{accumulateStrings }\FunctionTok{=} \NormalTok{autoFold (}\FunctionTok{++}\NormalTok{) }\StringTok{""}
+
+\OtherTok{monoidAccum ::} \DataTypeTok{Monoid} \NormalTok{a }\OtherTok{=>} \DataTypeTok{Auto} \NormalTok{a a}
+\NormalTok{monoidAccum }\FunctionTok{=} \NormalTok{autoFold mappend mempty}
+\end{Highlighting}
+\end{Shaded}
+
+Cool, huh?
+
+\subsubsection{Parallels with list
+folds}\label{parallels-with-list-folds}
+
+Let's look very carefully at a comparison between the type signature of
+Prelude's \texttt{foldl} and the type signature of \texttt{autoFold}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{foldl}\OtherTok{      ::} \NormalTok{(b }\OtherTok{->} \NormalTok{a }\OtherTok{->} \NormalTok{b) }\OtherTok{->} \NormalTok{b }\OtherTok{->} \NormalTok{([a] }\OtherTok{->} \NormalTok{b)}
+\OtherTok{autoFold   ::} \NormalTok{(b }\OtherTok{->} \NormalTok{a }\OtherTok{->} \NormalTok{b) }\OtherTok{->} \NormalTok{b }\OtherTok{->}  \DataTypeTok{Auto} \NormalTok{a b}
+\end{Highlighting}
+\end{Shaded}
+
+Hm. Let's do some rearranging. Remember that in Haskell,
+\texttt{(-\textgreater{})} is just an infix type operator. So we can
+always rewrite \texttt{a\ -\textgreater{}\ b} as
+\texttt{(-\textgreater{})\ a\ b}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{foldl}\OtherTok{      ::} \NormalTok{(b }\OtherTok{->} \NormalTok{a }\OtherTok{->} \NormalTok{b) }\OtherTok{->} \NormalTok{b }\OtherTok{->} \NormalTok{( (}\OtherTok{->}\NormalTok{) [a] b )}
+\OtherTok{autoFold   ::} \NormalTok{(b }\OtherTok{->} \NormalTok{a }\OtherTok{->} \NormalTok{b) }\OtherTok{->} \NormalTok{b }\OtherTok{->} \NormalTok{( }\DataTypeTok{Auto}  \NormalTok{a  b )}
+\end{Highlighting}
+\end{Shaded}
+
+Let's get rid of some of the points, too:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{foldl    op}\OtherTok{ init  ::} \NormalTok{(}\OtherTok{->}\NormalTok{) [a] b}
+\NormalTok{autoFold op}\OtherTok{ init  ::} \DataTypeTok{Auto}  \NormalTok{a  b}
+\end{Highlighting}
+\end{Shaded}
+
+So both \texttt{foldl} and \texttt{autoFold} have very similar
+behaviors:
+
+Give \texttt{foldl} or \texttt{autoFold} an \emph{accumulating function}
+and an \emph{initial value}, and they return \emph{a new ``function
+thing''}.
+
+For \texttt{foldl\ op\ initial}, this ``function thing'' takes a
+\emph{list} of \texttt{a} values and condenses them into a \texttt{b}
+value.
+
+For \texttt{autoFold\ op\ initial}, the ``function thing'' takes
+\emph{one} \texttt{a} value and returns a \texttt{b} value based on the
+previous \texttt{a}'s it has seen.
+
+The main point here is that \texttt{autoFold} is a sort of ``function''
+in a way\ldots{}just like the others before it. It's
+a\ldots{}.``function-like thing''.
+
+\subparagraph{Aside}\label{aside}
+
+Here is a quick diversion, if you're up for it. This doesn't really have
+too much to do with the rest of the post, but it'll help you test your
+intuition a bit with Autos.
+
+As an exercise, compare (and contrast) these three functions of
+identical type signatures:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{map}\OtherTok{       f       ::} \NormalTok{[a] }\OtherTok{->} \NormalTok{[b]}
+\NormalTok{scanl     op}\OtherTok{ init ::} \NormalTok{[a] }\OtherTok{->} \NormalTok{[b]}
+\NormalTok{testAuto_}\OtherTok{ auto    ::} \NormalTok{[a] }\OtherTok{->} \NormalTok{[b]}
+\end{Highlighting}
+\end{Shaded}
+
+(Assume that \texttt{scanl} does not include the initial
+accumulator\ldots{}that is, we are really talking about
+\texttt{drop\ 1\ .\ scanl\ op\ init})
+
+Compare what they do conceptually. Then, for fun, try implementing some
+of them in terms of the other. Which re-implementations are possible?
+Which ones arent?
+
+\subsection{More Auto examples}\label{more-auto-examples}
+
+Here is an Auto that outputs a rolling average of the values it
+accumulates, with a given window size.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{rollingAverage ::} \NormalTok{forall a}\FunctionTok{.} \DataTypeTok{Fractional} \NormalTok{a}
+    \OtherTok{=>} \DataTypeTok{Int}          \CommentTok{-- length of the window}
+    \OtherTok{->} \DataTypeTok{Auto} \NormalTok{a a     }\CommentTok{-- an Auto taking an `a` and returning an average `a`}
+\NormalTok{rollingAverage window }\FunctionTok{=} \NormalTok{roll []}
+  \KeywordTok{where}
+\OtherTok{    roll ::} \NormalTok{[a] }\OtherTok{->} \DataTypeTok{Auto} \NormalTok{a a}
+    \NormalTok{roll xs }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}val }\OtherTok{->}
+      \KeywordTok{let} \NormalTok{xs' }\FunctionTok{=} \NormalTok{take window }\FunctionTok{$} \NormalTok{val}\FunctionTok{:}\NormalTok{xs  }\CommentTok{-- pop on the new value, drop all}
+                                      \CommentTok{--   values past the window}
+          \NormalTok{ave }\FunctionTok{=} \NormalTok{sum xs' }\FunctionTok{/} \NormalTok{genericLength xs'  }\CommentTok{-- the average}
+      \KeywordTok{in}  \NormalTok{( ave, roll xs' )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \NormalTok{testAuto_ (rollingAverage }\DecValTok{4}\NormalTok{) [}\DecValTok{2}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{9}\NormalTok{,}\DecValTok{2}\NormalTok{]}
+\NormalTok{[}\FloatTok{2.0} \NormalTok{,}\FloatTok{5.0} \NormalTok{,}\FloatTok{4.67}\NormalTok{,}\FloatTok{4.75}\NormalTok{,}\FloatTok{4.5}
+\NormalTok{,}\FloatTok{4.5} \NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{2.5}
+\NormalTok{,}\FloatTok{3.75}\NormalTok{,}\FloatTok{3.25}\NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{6.25}\NormalTok{,}\FloatTok{4.75}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Here is an Auto that is always \texttt{False}\ldots{}except whenever it
+receives a signal matching a given predicate (if it is ``triggered''),
+it remains \texttt{True} for a specified amount of time.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{onFor ::} \NormalTok{forall a}\FunctionTok{.}
+     \NormalTok{(a }\OtherTok{->} \DataTypeTok{Bool}\NormalTok{)  }\CommentTok{-- test to see if an input 'triggers'}
+  \OtherTok{->} \DataTypeTok{Int}          \CommentTok{-- amount of time to stay True for}
+  \OtherTok{->} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Bool}  \CommentTok{-- An Auto that takes an `a` and returns a `Bool`}
+\NormalTok{onFor p hold }\FunctionTok{=} \NormalTok{wait}
+  \KeywordTok{where}
+\OtherTok{    wait ::} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Bool}                 \CommentTok{-- the "waiting" state}
+    \NormalTok{wait }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}input }\OtherTok{->}
+      \KeywordTok{if} \NormalTok{p input                        }\CommentTok{-- if triggered,}
+        \KeywordTok{then} \NormalTok{(}\DataTypeTok{True}\NormalTok{, countdown (hold}\FunctionTok{-}\DecValTok{1}\NormalTok{)) }\CommentTok{-- jump to "countdown" state}
+        \KeywordTok{else} \NormalTok{(}\DataTypeTok{False}\NormalTok{, wait)              }\CommentTok{-- otherwise, stay waiting}
+
+\OtherTok{    countdown ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Bool}     \CommentTok{-- the "countdown" state}
+    \NormalTok{countdown n }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}input }\OtherTok{->}
+      \KeywordTok{if} \NormalTok{p input                        }\CommentTok{-- if re-triggered}
+        \KeywordTok{then} \NormalTok{(}\DataTypeTok{True}\NormalTok{, countdown (hold}\FunctionTok{-}\DecValTok{1}\NormalTok{)) }\CommentTok{-- countdown all over again}
+        \KeywordTok{else}
+          \KeywordTok{if} \NormalTok{n }\FunctionTok{==} \DecValTok{1}
+            \KeywordTok{then} \NormalTok{(}\DataTypeTok{False}\NormalTok{, wait)          }\CommentTok{-- If counted down, go wait again}
+            \KeywordTok{else} \NormalTok{(}\DataTypeTok{True}\NormalTok{, countdown (n}\FunctionTok{-}\DecValTok{1}\NormalTok{))  }\CommentTok{-- otherwise, count down.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \FunctionTok{:}\NormalTok{t onFor even }\DecValTok{3}
+\NormalTok{onFor even }\DecValTok{3}\OtherTok{ ::} \DataTypeTok{Auto} \DataTypeTok{Int} \DataTypeTok{Bool}
+\NormalTok{λ}\FunctionTok{:} \NormalTok{testAuto_ (onFor even }\DecValTok{3}\NormalTok{) [}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{[ }\DataTypeTok{False}\NormalTok{, }\DataTypeTok{False}\NormalTok{, }\DataTypeTok{True} \NormalTok{, }\DataTypeTok{True}\NormalTok{,}\DataTypeTok{True}
+\NormalTok{, }\DataTypeTok{False}\NormalTok{, }\DataTypeTok{True} \NormalTok{, }\DataTypeTok{True} \NormalTok{, }\DataTypeTok{True}\NormalTok{,}\DataTypeTok{True}
+\NormalTok{, }\DataTypeTok{True} \NormalTok{, }\DataTypeTok{False}\NormalTok{, }\DataTypeTok{False} \NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Here is an auto that keeps a Map as its state, and takes as input a data
+type
+\texttt{data\ Command\ k\ v\ =\ Insert\ k\ v\ \textbar{}\ Lookup\ k\ \textbar{}\ Delete\ k}
+allows you to either insert, lookup, or delete an item. However, the map
+has a ``maximum size''. If you insert past the maximum size, the insert
+will fail and you'll receive a \texttt{Nothing}. Otherwise, you'll
+receive a \texttt{Just\ val} with the value you just inserted.
+Successful lookups will return \texttt{Just\ val}, or \texttt{Nothing}
+on a failure. Same for deletions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{import qualified} \DataTypeTok{Data.Map.Strict} \KeywordTok{as} \DataTypeTok{Map}
+
+\KeywordTok{data} \DataTypeTok{Command} \NormalTok{k v }\FunctionTok{=} \DataTypeTok{Insert} \NormalTok{k v }\FunctionTok{|} \DataTypeTok{Lookup} \NormalTok{k }\FunctionTok{|} \DataTypeTok{Delete} \NormalTok{k}
+
+\OtherTok{autoMap ::} \NormalTok{forall k v}\FunctionTok{.} \DataTypeTok{Ord} \NormalTok{k}
+    \OtherTok{=>} \DataTypeTok{Int}              \CommentTok{-- the maximum capacity of the map}
+    \OtherTok{->} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Command} \NormalTok{k v) (}\DataTypeTok{Maybe} \NormalTok{v)}
+\NormalTok{autoMap cap }\FunctionTok{=} \NormalTok{go Map.empty}
+  \KeywordTok{where}
+\OtherTok{    go ::} \DataTypeTok{Map.Map} \NormalTok{k v }\OtherTok{->} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Command} \NormalTok{k v) (}\DataTypeTok{Maybe} \NormalTok{v)}
+    \NormalTok{go m }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}command }\OtherTok{->}
+      \KeywordTok{case} \NormalTok{command }\KeywordTok{of}
+        \DataTypeTok{Insert} \NormalTok{key val }\OtherTok{->}
+          \KeywordTok{if} \NormalTok{Map.size m }\FunctionTok{>=} \NormalTok{cap }\FunctionTok{&&} \NormalTok{key }\OtherTok{`Map.notMember`} \NormalTok{m}
+            \KeywordTok{then}
+              \NormalTok{( }\DataTypeTok{Nothing}\NormalTok{, go m )                 }\CommentTok{-- Map is full, no go!}
+            \KeywordTok{else}
+              \KeywordTok{let} \NormalTok{m' }\FunctionTok{=} \NormalTok{Map.insert key val m     }\CommentTok{-- go for it!}
+              \KeywordTok{in}  \NormalTok{( }\DataTypeTok{Just} \NormalTok{val, go m' )}
+        \DataTypeTok{Lookup} \NormalTok{key }\OtherTok{->}
+          \NormalTok{( key }\OtherTok{`Map.lookup`} \NormalTok{m, go m )}
+        \DataTypeTok{Delete} \NormalTok{key }\OtherTok{->}
+          \KeywordTok{let} \NormalTok{result  }\FunctionTok{=} \NormalTok{key }\OtherTok{`Map.lookup`} \NormalTok{m}
+              \NormalTok{m'      }\FunctionTok{=} \NormalTok{key }\OtherTok{`Map.delete`} \NormalTok{m}
+          \KeywordTok{in}  \NormalTok{( result, go m' )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{λ}\FunctionTok{:} \NormalTok{testAuto_ (autoMap }\DecValTok{3}\NormalTok{)}
+  \FunctionTok{|}  \NormalTok{[ }\DataTypeTok{Insert} \StringTok{"hello"} \DecValTok{7}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Insert} \StringTok{"world"} \DecValTok{10}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Insert} \StringTok{"foo"} \DecValTok{12}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Insert} \StringTok{"bar"} \DecValTok{15}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Delete} \StringTok{"baz"}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Delete} \StringTok{"world"}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Insert} \StringTok{"haskell"} \DecValTok{19}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Lookup} \StringTok{"world"}
+  \FunctionTok{|}  \NormalTok{, }\DataTypeTok{Lookup} \StringTok{"hello"}
+  \FunctionTok{|}  \NormalTok{]}
+\NormalTok{[ }\DataTypeTok{Just} \DecValTok{7} \NormalTok{, }\DataTypeTok{Just} \DecValTok{10}\NormalTok{, }\DataTypeTok{Just} \DecValTok{12}
+\NormalTok{, }\DataTypeTok{Nothing}\NormalTok{, }\DataTypeTok{Nothing}\NormalTok{, }\DataTypeTok{Just} \DecValTok{10}
+\NormalTok{, }\DataTypeTok{Just} \DecValTok{19}\NormalTok{, }\DataTypeTok{Nothing}\NormalTok{, }\DataTypeTok{Just} \DecValTok{7}  \NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+The main thing to note here is that you get to completely encapsulate
+your ``state'', and allow it only to be ``modified'' or ``viewed'' under
+your own terms. In OOP terms, it is like exposing only a few public
+methods to modify your private state with discrimination. If you were
+passed an \texttt{autoMap} with items already inside, you would have no
+way to have full ``access'' to the map --- you would never be able to
+perform general operations (such as getting a list of all of the keys).
+
+\section{\texorpdfstring{``Function
+Things''}{Function Things}}\label{function-things}
+
+Anyways, back to our main point of emphasis:
+
+\emph{Autos are function-like things}.
+
+They are functions\ldots{}with state.
+
+Let's do an analysis for \texttt{isEvenAuto} like the one we did with
+\texttt{foldAuto}. Our ``input'' was a \texttt{Maybe\ Int} and our
+``output'' was a \texttt{Bool}.
+
+You can think of \texttt{isEvenAuto} as a ``function thing'' from
+\texttt{Maybe\ Int} to \texttt{Bool}.
+
+Here's another function from \texttt{Maybe\ Int} to \texttt{Bool}: (I'm
+going to be using the prefix form of \texttt{(-\textgreater{})} a lot
+now for the ``final'' return functions)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{maybeIsEven ::} \NormalTok{(}\OtherTok{->}\NormalTok{) (}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Bool}
+\NormalTok{maybeIsEven }\FunctionTok{=} \NormalTok{even }\FunctionTok{.} \NormalTok{fromMaybe }\DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{maybeIsEven} returns \texttt{True} when value inside the
+\texttt{Just} is even, or \texttt{False} if the value is odd or it's a
+\texttt{Nothing}.
+
+Compare that type signature to that of our \texttt{isEvenAuto}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{maybeIsEven ::} \NormalTok{(}\OtherTok{->}\NormalTok{) (}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Bool}
+\OtherTok{isEvenAuto  ::} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{) }\DataTypeTok{Bool}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{maybeIsEven} and \texttt{isEvenAuto} are \emph{both}
+``function-like things''. But whereas \texttt{maybeIsEven} is
+``memoryless'' (it's the same every time you call it),
+\texttt{isEvenAuto} \emph{has memory} --- it returns a different Boolean
+based on its history.
+
+Contrast this with a Stream, which as we have seen is just an
+\texttt{Auto\ ()\ b}. Streams are then ``function like things'' analgous
+to some \texttt{(-\textgreater{})\ ()\ b}, or
+\texttt{()\ -\textgreater{}\ b}. We can call functions like
+\texttt{()\ -\textgreater{}\ b} ``constants'', or ``producers''. They
+are the same every time you call them. Streams, however, ``return'' a
+potentially different \texttt{b} value every time they are ``called''.
+So, just like an Auto is a ``function'' that has memory, a Stream is
+like a \emph{constant} that has memory. A stateful generator. A
+``constant'' that returns something different every time you ask for it.
+
+You should be able to guess that, after vaguely using the phrase
+``function things'' several times\ldots{}I'm going to surprise you all
+with the revelation that these ``function things'' have a name! And
+maybe even\ldots{}a typeclass?
+
+\section{Onward}\label{onward}
+
+So far we haven't really made too convincing of an argument for the
+advantages of using machines (like Auto and the related Wire). Yeah,
+they provide encapsulation and a changing state\ldots{}but these things
+come for free in most good Object-Oriented Programming languages. So
+what gives?
+
+As it turns out, as we suggested before, Autos are much more
+``composable'' than the objects of OOP. That is because, at their heart,
+they are just functions. And what do functions do best? They compose!
+Complex object built seamlessly from simpler ones.
+
+Now, I haven't really been able to back this up so far. But in the next
+post, as we explore more the function-like nature of these things, we
+will be able to witness the full power of machine composition. And we'll
+even be able to re-implement \emph{many} of the complex machines of this
+post with compositions of smaller, simpler Autos.
+
+\end{document}

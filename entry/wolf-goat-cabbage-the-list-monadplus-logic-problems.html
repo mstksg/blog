@@ -1,0 +1,400 @@
+<!DOCTYPE HTML>
+<html><head><title>Wolf, Goat, Cabbage: The List MonadPlus &amp; Logic Problems · in Code</title><meta name="description" content="Weblog of Justin Le, covering his various adventures in programming and explorations in the vast worlds of computation physics, and knowledge."><meta http-equiv="Content-Type" content="text/html;charset=utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta property="og:site_name" content="in Code"><meta property="og:description" content="Today we’re going to learn to solve the classic and ageless logic problems without any data structures besides List’s monadic properties as a MonadPlus! We are going to be solving this old-as-time logic puzzle, which Wikipedia claims dates back to the 9th century:"><meta property="og:type" content="article"><meta property="og:title" content="Wolf, Goat, Cabbage: The List MonadPlus &amp; Logic Problems"><meta property="og:image" content="http://home.jle0.com:4111/img/site_logo.jpg"><meta property="og:locale" content="en_US"><meta property="og:url" content="http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.html"><meta name="twitter:card" content="summary"><meta name="twitter:creator:id" content="mstk"><link rel="author" href="https://plus.google.com/107705320197444500140"><link rel="alternate" type="application/rss+xml" title="in Code (RSS Feed)" href="http://feeds.feedburner.com/justinleblogdevelopment"><link rel="canonical" href="http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.html"><link href="http://home.jle0.com:4111/favicon.ico" rel="shortcut icon"><link href="http://home.jle0.com:4111/css/toast.css" rel="stylesheet" type="text/css"><link href="http://home.jle0.com:4111/css/font.css" rel="stylesheet" type="text/css"><link href="http://home.jle0.com:4111/css/main.css" rel="stylesheet" type="text/css"><link href="http://home.jle0.com:4111/css/page/entry.css" rel="stylesheet" type="text/css"><link href="http://home.jle0.com:4111/css/pygments.css" rel="stylesheet" type="text/css"><script type="text/javascript">var page_data = {};
+var disqus_shortname='justinleblogdevelopment';
+</script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-443711-7', 'jle0.com');
+ga('send', 'pageview');
+</script><script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-520df7c304b817b9"></script><script type="text/javascript" src="http://home.jle0.com:4111/js/common.js"></script><script type="text/javascript" src="http://home.jle0.com:4111/js/page/entry_toc.js"></script><script type="text/javascript" src="http://home.jle0.com:4111/js/disqus_count.js"></script><script type="text/javascript" src="http://home.jle0.com:4111/js/social.js"></script><script type="text/javascript" src="http://home.jle0.com:4111/js/jquery/jquery.toc.js"></script><script type="text/javascript" src="http://home.jle0.com:4111/purescript/entry.js"></script></head><body><div id="fb-root"><script>(function(d, s, id) {
+ var js, fjs = d.getElementsByTagName(s)[0];
+ if (d.getElementById(id)) return;
+ js = d.createElement(s); js.id = id;
+ js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=645245675494525";
+ fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script></div><div id="header-container"><div id="navbar-container" class="tile"><nav id="navbar-content"><div class="nav-info"><h1 class="site-title"><a href="http://home.jle0.com:4111/" class="nav-title">in Code</a></h1><span class="nav-author">Justin Le</span></div><ul class="nav-links"><li><a href="http://home.jle0.com:4111/">home</a></li><li><a href="http://home.jle0.com:4111/entries.html">archives</a></li><div class="clear"></div></ul></nav></div><div id="header-content"></div></div><div id="body-container" class="container"><div id="main-container" class="grid"><div class="entry-section unit span-grid" role="main"><article class="tile article"><header><h1 id="title">Wolf, Goat, Cabbage: The List MonadPlus &amp; Logic Problems</h1><p class="entry-info">by <a class="author" href="http://home.jle0.com:4111/">Justin Le</a><span class="info-separator"> &diams; </span><time datetime="2013-12-26T11:43:50Z" pubdate="" class="pubdate">Thursday December 26, 2013</time></p><p><span class="source-info"><a class="source-link" href="https://github.com/mstksg/blog/tree/develop/copy/entries/monad-plus-3.md">Source</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.md">Markdown</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.tex">LaTeX</a><span class="info-separator"> &diams; </span></span>Posted in <a href="http://home.jle0.com:4111/entries/category/@haskell.html" class="tag-a-category" title="Functional, pure, non-strict, statically and strongly typed, natively
+compiled…really just the king of great languages.">Haskell</a>, <a href="http://home.jle0.com:4111/entries/category/@ramblings.html" class="tag-a-category" title="My slight ramblings on subjects of interest (to me and hopefully to you
+too!). Lots of surveys and introducts to new subjects.">Ramblings</a><span class="info-separator"> &diams; </span><a class="comment-link" href="#disqus_thread">Comments</a></p></header><hr><aside class="contents-container"><h5 id="contents-header">Contents</h5><div id="toc"></div></aside><div class="main-content copy-content"><p>Today we’re going to learn to solve the classic and ageless logic problems without any data structures besides List’s monadic properties as a MonadPlus!</p>
+<p>We are going to be solving this old-as-time logic puzzle, which <a href="http://en.wikipedia.org/wiki/Fox,_goose_and_bag_of_beans_puzzle">Wikipedia</a> claims dates back to the 9th century:</p>
+<blockquote>
+<p>A farmer has a wolf, a goat, and a cabbage that he wishes to transport across a river. Unfortunately, his boat can carry only one thing at a time with him. He can’t leave the wolf alone with the goat, or the wolf will eat the goat. He can’t leave the goat alone with the cabbage, or the goat will eat the cabbage. How can he properly transport his belongings to the other side one at a time, without any disasters?</p>
+</blockquote>
+<p>We’re going to assume a somewhat basic familiarity with functional programming concepts and a basic understanding of monads (if you don’t know that much, check out <a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html">adit’s</a> great concice guide). If you aren’t familiar with MonadPlus/Alternative (and how they work as monads) check out <a href="http://blog.jle.im/entry/practical-fun-with-monads-introducing-monadplus">Part 1</a> and <a href="http://blog.jle.im/entry/the-list-monadplus-practical-fun-with-monads-part">Part 2</a>, which should provide all the background and most of the syntax. Most Haskell syntax is either be explained here as we get to it or in the previous parts. Still, if you have any questions, feel free to leave a comment, give <a href="http://learnyouahaskell.com">Learn You A Haskell</a> a quick read, or stop by freenode’s friendly #haskell!</p>
+<h3 id="a-monadplus-review">A MonadPlus Review</h3>
+<p>The usefulness of a monad depends on how you define the characteristic “bind” or “chaining” behavior. For this article, MonadPlus refers to the design pattern (and Haskell typeclass) where you model this “chaining” as a “success/fail” process<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+<p>There is a common language with to talk about this process: <code>mzero</code> means “fail here” and <code>return x</code> means “succeed with a result of the value <code>x</code> here”. So chaining is implemented such that chaining anything to a failure will propagate that failure forward. That is, <code>mzero &gt;&gt; return x</code> = <code>mzero</code>.</p>
+<h2 id="our-approach">Our Approach</h2>
+<p>So, armed with what we learned in <a href="http://blog.jle.im/entry/the-list-monadplus-practical-fun-with-monads-part">Part 2</a>, let’s formulate a general plan for finding all solutions in <code>n</code> moves.</p>
+<p>Now, in the List monad, we can think of things as “journeys” or stories: subject your value to a long and arduous journey, specifying at every step of the way what choices it has to continue. Then specify where journeys fail and end. At the end of it all, the result is a list of the finishing values of all trails that have completed the journey.</p>
+<p>With the List monad, we say “Here is the description of <em>a</em> (single) journey. What journeys following this description succeed?”</p>
+<p>So what could this journey be for us? Well, we think of a journey in this situation as the accumulation of moves to a plan. We start out with a blank plan (“Do nothing”). The next step, we add one move to our plan (“Just move the fox”, for example). Then the next step, we add another move (“First move the fox, then move the farmer”).</p>
+<ol type="1">
+<li>Start with a blank plan; a tabula rasa.</li>
+<li>Add a legal and safe move to it.</li>
+<li>Repeat Step 2 <code>n</code> times</li>
+<li>Fail if you aren’t a solution; succeed if you are.</li>
+</ol>
+<p>Simple, right? We just laid out <em>the path of a single plan</em>, from its birth to its eventual death or ascension.</p>
+<p>This is the most significant thing about this approach: it allows you to describe <strong>one journey</strong>, in general terms, and List will “automatically” find out all successful journeys that fit your mold. You don’t ever have to worry about the ensemble or manually deal with explicit branching or filtering. Cognitively, all you have to do is <em>write <strong>one</strong> story</em>. Just <em>one</em>. That is the power of the List Monad abstraction.</p>
+<h2 id="our-types">Our Types</h2>
+<p>The first thing we do when writing any Haskell program: define our types!</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Character</span> <span class="fu">=</span> <span class="dt">Farmer</span> <span class="fu">|</span> <span class="dt">Wolf</span> <span class="fu">|</span> <span class="dt">Goat</span> <span class="fu">|</span> <span class="dt">Cabbage</span> <span class="co">-- 1</span>
+        <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>, <span class="dt">Enum</span>)
+
+<span class="kw">newtype</span> <span class="dt">Move</span> <span class="fu">=</span> <span class="dt">MoveThe</span> <span class="dt">Character</span>                <span class="co">-- 2</span>
+        <span class="kw">deriving</span> (<span class="dt">Eq</span>)
+
+<span class="kw">instance</span> <span class="dt">Show</span> <span class="dt">Move</span> <span class="kw">where</span>                        <span class="co">-- 3</span>
+    show (<span class="dt">MoveThe</span> <span class="dt">Farmer</span>)  <span class="fu">=</span> <span class="st">&quot;F&quot;</span>
+    show (<span class="dt">MoveThe</span> <span class="dt">Wolf</span>)    <span class="fu">=</span> <span class="st">&quot;W&quot;</span>
+    show (<span class="dt">MoveThe</span> <span class="dt">Goat</span>)    <span class="fu">=</span> <span class="st">&quot;G&quot;</span>
+    show (<span class="dt">MoveThe</span> <span class="dt">Cabbage</span>) <span class="fu">=</span> <span class="st">&quot;C&quot;</span>
+
+<span class="kw">type</span> <span class="dt">Plan</span> <span class="fu">=</span> [<span class="dt">Move</span>]                              <span class="co">-- 4</span>
+
+<span class="kw">data</span> <span class="dt">Position</span> <span class="fu">=</span> <span class="dt">West</span> <span class="fu">|</span> <span class="dt">East</span>                     <span class="co">-- 5</span>
+    <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>)</code></pre></div>
+<ol type="1">
+<li>First, we define the enumerated type <code>Character</code> all the characters we will be working with: the farmer, the wolf, the goat, and the cabbage.</li>
+<li>Next, we define a simple <code>Move</code> container, which just contains a character. A <code>MoveThe Farmer</code> will represent a movement of only the farmer, a <code>MoveThe Wolf</code> will represent the movement of both the farmer and the wolf, etc.</li>
+<li>For the purposes of easy debugging, we’re going to define our own instance of <code>Show</code> for moves so that we can use <code>print</code> on them.</li>
+<li>A simple type synonym; a <code>Plan</code> is just a list of <code>Move</code>s. Note that we are not using this list as a MonadPlus — it’s just a plain dumb list of moves in our plan.</li>
+<li>A <code>Position</code> type: either on the west bank or on the east bank of the river. Everyone starts out on the west bank, and we want them all to end up on the east bank.</li>
+</ol>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p>Hi! These “Welcome to Haskell” asides are for people unfamiliar with Haskell, mostly for Haskell syntax stuff. If you already feel comfortable, feel free to skip them.</p>
+<p>There’s a lot of Haskell syntax and concepts here; mostly, all we are doing is declaring new types.</p>
+<ol type="1">
+<li><p>We declare that <code>Character</code> is “either” a <code>Farmer</code>, <code>Wolf</code>, <code>Goat</code>, or <code>Cabbage</code>. This is like saying that a <code>Bool</code> is either a <code>False</code> or a <code>True</code>: in fact, you could define your own <code>Bool</code> with something like this: (or even your own <code>Int</code>)</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Bool</span> <span class="fu">=</span> <span class="dt">False</span> <span class="fu">|</span> <span class="dt">True</span>
+<span class="kw">data</span> <span class="dt">Int</span> <span class="fu">=</span> <span class="fu">-</span><span class="dv">536870912</span> <span class="fu">...</span> <span class="fu">|</span> <span class="fu">-</span><span class="dv">1</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">|</span> <span class="dv">1</span> <span class="fu">|</span> <span class="dv">2</span> <span class="fu">|</span> <span class="fu">...</span> <span class="dv">536870911</span></code></pre></div>
+<p>The <code>deriving</code> syntax tells the compiler to automatically derive functions for printing the type (Show), testing for equality (Eq), and enumerating through them (Enum)</p></li>
+<li><p>We declare a new type <code>Move</code> which is just a wrapper around a <code>Character</code>. We can create a new <code>Move</code> by using <code>MoveThe</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> <span class="fu">:</span>t <span class="dt">MoveThe</span>
+<span class="dt">MoveThe</span><span class="ot"> ::</span> <span class="dt">Character</span> <span class="ot">-&gt;</span> <span class="dt">Move</span>
+λ<span class="fu">:</span> <span class="fu">:</span>t <span class="dt">MoveThe</span> <span class="dt">Wolf</span>
+<span class="dt">MoveThe</span> <span class="dt">Wolf</span><span class="ot"> ::</span> <span class="dt">Move</span></code></pre></div>
+<p>(<code>λ:</code> represents a command at the interactive prompt ghci, and <code>:t</code> asks for the type of whatever comes after it)</p></li>
+<li><p>Here we define custom functions for printing out a <code>Move</code></p></li>
+<li><p>Here is a type synonym <code>Plan</code>. Every time we use <code>Plan</code> as a type, we really mean <code>[Move]</code>, and the compiler treats the two things as the same.</p></li>
+<li><p><code>Position</code>: same deal as <code>Character</code>.</p></li>
+</ol>
+</aside>
+<h2 id="implementation">Implementation</h2>
+<h3 id="the-final-step">The Final Step</h3>
+<p>We’re going to skip to the end and write our final step and what it is supposed to be, and then fill in the functions that are necessary to make it happen.</p>
+<p>The last stage of our journey is after we have made all <code>n</code> moves, we end the journey if it is not a solution.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">makeNMoves ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]         <span class="co">-- 1</span>
+<span class="ot">isSolution ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+
+<span class="ot">findSolutions ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]      <span class="co">-- 2</span>
+findSolutions n <span class="fu">=</span> <span class="kw">do</span>
+    p <span class="ot">&lt;-</span> makeNMoves n               <span class="co">-- 3</span>
+    guard <span class="fu">$</span> isSolution p            <span class="co">-- 4</span>
+    return p                        <span class="co">-- 5</span></code></pre></div>
+<ol type="1">
+<li>The type signatures of the helper functions we will be using.</li>
+<li><code>findSolutions n</code> is going to be the all successful plans after <code>n</code> moves.</li>
+<li>Let <code>p</code> be a plan after <code>n</code> moves have been added to it. Note that <code>makeNMoves</code> is itself a journey — a sub-journey. So <code>p</code> is a single plan that has <em>already gone through</em> the <code>makeNMoves</code> journey. We are continuing that journey.</li>
+<li>End the journey unless <code>p</code> is a solution (all characters are on the east side)</li>
+<li>Succeed with <code>p</code> if the journey has not yet ended.</li>
+</ol>
+<p>Hm. Sounds good! We’re done!</p>
+<p>So now we only need to implement <code>makeNMoves</code> and <code>isSolution</code>!</p>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p>Haskell is a functional language…but that “do” block sure looks very imperative to me. What gives?</p>
+<p>As explained in <a href="http://blog.jle.im/entry/practical-fun-with-monads-introducing-monadplus">Part 1</a>, all do blocks are just syntactical sugar for repeated applications of <code>&gt;&gt;=</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">findSolutions ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
+findSolutions <span class="fu">=</span>
+    makeNMoves n <span class="fu">&gt;&gt;=</span> (\p <span class="ot">-&gt;</span> guard (isSolution p) <span class="fu">&gt;&gt;</span> return p)</code></pre></div>
+And <code>&gt;&gt;=</code> is just the (hopefully) familiar bind. Again, look at <a href="http://blog.jle.im/entry/practical-fun-with-monads-introducing-monadplus">Part 1</a> or <a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html">adit’s</a> tutorial for a fuller explanation.
+</aside>
+<h3 id="makenmoves">makeNMoves</h3>
+<p><code>makeNMoves</code> is going to be the main logic of our program. We want it to be a journey, itself — a journey of a single plan going through <code>n</code> additions of moves.</p>
+<p>That means we want something like:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">makeMove ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
+
+<span class="ot">startingPlan ::</span> <span class="dt">Plan</span>
+startingPlan <span class="fu">=</span> []
+
+<span class="ot">makeNMoves ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
+makeNMoves n <span class="fu">=</span> <span class="kw">do</span>
+    m1 <span class="ot">&lt;-</span> makeMove startingPlan
+    m2 <span class="ot">&lt;-</span> makeMove m1
+    m3 <span class="ot">&lt;-</span> makeMove m2
+    <span class="co">-- ... (n times)</span>
+    mn <span class="ot">&lt;-</span> makeMove mx
+    return mn</code></pre></div>
+<p>Which says “The journey of <code>makeNMoves</code> is repeatedly making a move <code>n</code> times.”</p>
+<p>Of course we have seen that particular type of <code>do</code> block before, it is simply:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">makeNMoves ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
+makeNMoves n <span class="fu">=</span>
+    makeMove startingPlan <span class="fu">&gt;&gt;=</span> makeMove
+        <span class="fu">&gt;&gt;=</span> makeMove <span class="fu">&gt;&gt;=</span> makeMove   <span class="co">-- ...</span>
+        <span class="fu">&gt;&gt;=</span> makeMove                <span class="co">-- (n times)</span></code></pre></div>
+<p>Luckily there is a function in the standard library that allows us to repeatedly apply a function <code>n</code> times: <code>iterate :: (a -&gt; a) -&gt; a -&gt; [a]</code>. <code>iterate f x</code> takes a function <code>f :: a -&gt; a</code> and repeatedly applies it to a starting value <code>x :: a</code> and yields the results as a list:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">iterate f x <span class="fu">=</span> [ x, f x, f (f x), f (f (f x)) <span class="fu">...</span> ]</code></pre></div>
+<p>And so to get the <code>n</code>th application, we use <code>iterate f x !! n</code> (<code>!!</code> being the indexing function, getting the <code>n</code>th element of the list)</p>
+<p>So now we can define <code>makeNMoves</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">makeNMoves ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
+makeNMoves n <span class="fu">=</span> iterate (<span class="fu">&gt;&gt;=</span> makeMove) (return startingPlan) <span class="fu">!!</span> n</code></pre></div>
+<p>We say “apply <code>(&gt;&gt;= makeMove)</code> <code>n</code> times, starting the single starting plan”.</p>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p>Remember that <code>return x &gt;&gt;= f</code> is the same as <code>f x</code>. You can see this here:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foo1 <span class="fu">=</span> <span class="kw">do</span>
+    y <span class="ot">&lt;-</span> return x
+    f y
+
+<span class="co">-- identical</span>
+foo2 <span class="fu">=</span> f x</code></pre></div>
+Where <code>return x</code> says “succeed with the value <code>x</code>”, and <code>y &lt;-</code> says “set <code>y</code> to the value of that success”. Of course, <code>y</code> is just going to be <code>x</code>, because we had just said “succeed with the value of <code>x</code>. That means that <code>f y</code> is the same as <code>f x</code>.
+</aside>
+<p>Even though the syntax is not the cleanest, it is important to remember here that what we are doing is simply defining the journey <code>makeNMoves</code> as the result of taking <code>n</code> <code>makeMove</code> journeys one after the other. The same as that first do block.</p>
+<h3 id="issolution">isSolution</h3>
+<p>Let’s define our helper function <code>isSolution :: Plan -&gt; Bool</code>. Basically, we want to check if the positions of all of the characters are <code>East</code>.</p>
+<p>First, we need a way to get the position of a farmer/animal after a given plan has been executed.</p>
+<h4 id="positionof">positionOf</h4>
+<p>Our function <code>positionOf :: Plan -&gt; Character -&gt; Position</code> is going to take a <code>Plan</code> and a <code>Character</code>, and report what side of the river the character is on.</p>
+<p>Because every single move swaps the position of the farmer, the final position of the farmer depends only on the even-/odd-ness of the number of total moves. If it is even, then the farmer is on the west bank still (consider 0 moves, two moves, etc.). If it is odd, then the farmer is on the east bank.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">positionOf ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Character</span> <span class="ot">-&gt;</span> <span class="dt">Position</span>
+positionOf p c <span class="fu">=</span> <span class="kw">case</span> c <span class="kw">of</span>
+    <span class="dt">Farmer</span>  <span class="ot">-&gt;</span> positionFromCount <span class="fu">$</span> length p
+    _       <span class="ot">-&gt;</span> undefined
+    <span class="kw">where</span>
+        positionFromCount n <span class="fu">|</span> even n      <span class="fu">=</span> <span class="dt">West</span>
+                            <span class="fu">|</span> othherwise  <span class="fu">=</span> <span class="dt">East</span></code></pre></div>
+<p>Now, what if we want to know about non-farmers?</p>
+<p>Instead of finding the total number of moves, we only need to find the number of moves involving that given animal.</p>
+<p>Let’s first filter the Plan <code>p</code> by moves involving the character <code>c</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">filter (<span class="fu">==</span> <span class="dt">MoveThe</span> c) p</code></pre></div>
+<p>This will return a new Plan, but with only the moves involving the character <code>c</code>. We can then use the length of <em>that</em>.</p>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p><code>filter :: (a -&gt; Bool) -&gt; [a] -&gt; [a]</code> is a common function that takes a predicate <code>a -&gt; Bool</code> and a list, and returns a new list with only the items for which the predicate returns true.</p>
+<code>(== MoveThe c)</code> is a function that returns true if the move is equal to <code>MoveThe c</code>.
+</aside>
+<p>Putting it all together:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">positionOf ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Character</span> <span class="ot">-&gt;</span> <span class="dt">Position</span>
+positionOf p c <span class="fu">=</span> <span class="kw">case</span> c <span class="kw">of</span>
+    <span class="dt">Farmer</span>  <span class="ot">-&gt;</span> positionFromCount <span class="fu">.</span> length <span class="fu">$</span> p
+    c       <span class="ot">-&gt;</span> positionFromCount <span class="fu">.</span> length <span class="fu">$</span> filter (<span class="fu">==</span> <span class="dt">MoveThe</span> c) p
+    <span class="kw">where</span>
+        positionFromCount n <span class="fu">|</span> even n      <span class="fu">=</span> <span class="dt">West</span>
+                            <span class="fu">|</span> othherwise  <span class="fu">=</span> <span class="dt">East</span></code></pre></div>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p>What is <code>positionFromCount . length $ p</code>?</p>
+<p>In Haskell, the <code>(.)</code> operator represents function composition. <code>(f . g) x</code> is equivalent to <code>f (g x)</code>. “Apply <code>g</code> first, then apply <code>f</code>”.</p>
+<p>Also recall that you can think of <code>$</code> as adding an implicit parentheses around both sides of it. You visualize it like the spine of a butterfly — the “wings” are wrapped parentheses around either side of it. In that sense, <code>f . g $ x</code> is the same as <code>(f . g) (x)</code> (A rather lopsided butterfly).</p>
+<p>So, altogether, <code>positionFromCount . length $ p</code> is the same as <code>(positionFromCount . length) p</code>, which says “first, find the length of <code>p</code>, then turn that length into a position.”</p>
+In the same way, <code>positionFromCount . length $ filter (== MoveThe c) p</code> is <code>(positionFromCount . length) (filter (== MoveThe c) p)</code> — find the length of the filtered list, then turn that length into a position. We use <code>$</code> mostly because we don’t like writing parentheses everywhere when we don’t have to.
+</aside>
+<p>Does this actually work? Let’s try out some examples.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> <span class="kw">let</span> p <span class="fu">=</span> [<span class="dt">MoveThe</span> <span class="dt">Goat</span>, <span class="dt">MoveThe</span> <span class="dt">Farmer</span>, <span class="dt">MoveThe</span> <span class="dt">Wolf</span>, <span class="dt">MoveThe</span> <span class="dt">Goat</span>]
+λ<span class="fu">:</span> positionOf p <span class="dt">Goat</span>
+<span class="dt">West</span>
+λ<span class="fu">:</span> positionOf p <span class="dt">Wolf</span>
+<span class="dt">East</span>
+λ<span class="fu">:</span> positionOf p <span class="dt">Farmer</span>
+<span class="dt">West</span></code></pre></div>
+<p>It works! By the way, as an unrelated note, isn’t it cool that our <code>Plan</code> literal reads a lot like English? MoveThe Goat, MoveThe Farmer, MoveThe Wolf…</p>
+<h4 id="checking-the-path">Checking the Path</h4>
+<p>Now we have to check that the plan is a solution.</p>
+<p>Simple — that means that all <code>Characters</code> are on the east side.</p>
+<p>We can check this manually:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">isSolution ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+isSolution p <span class="fu">=</span>
+    positionOf p <span class="dt">Farmer</span> <span class="fu">==</span> <span class="dt">East</span>
+    <span class="fu">&amp;&amp;</span> positionOf p <span class="dt">Wolf</span> <span class="fu">==</span> <span class="dt">East</span>
+    <span class="fu">&amp;&amp;</span> positionOf p <span class="dt">Goat</span> <span class="fu">==</span> <span class="dt">East</span>
+    <span class="fu">&amp;&amp;</span> positionOf p <span class="dt">Cabbage</span> <span class="fu">==</span> <span class="dt">East</span></code></pre></div>
+<p>Hm. Rather ugly.</p>
+<p>We see a common pattern that we need <code>positionOf p c</code> for all <code>c</code>s. That looks like a map!</p>
+<p>We also compare all of them to <code>East</code>. That sounds like a job for the prelude function <code>all :: (a -&gt; Bool) -&gt; [a] -&gt; Bool</code>, which takes a predicate and a list and returns true if all items in the list satisfy the predicate.</p>
+<p>Let’s piece it all together:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">isSolution p <span class="fu">=</span> all (<span class="fu">==</span> <span class="dt">East</span>) positions
+    <span class="kw">where</span>
+        positions <span class="fu">=</span> map (positionOf p) [<span class="dt">Farmer</span> <span class="fu">..</span>]</code></pre></div>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p><code>map</code> is probably the most ubiquitous concept in functional programming — it takes a function and a list and returns a new list with the function applied to every item.</p>
+<p>For example, <code>map f [x,y,z]</code> = <code>[f x, f y, f z]</code>. If we wanted to find the lengths of a list of strings, we’d do:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">map length [<span class="st">&quot;alice&quot;</span>,<span class="st">&quot;bob&quot;</span>]
+<span class="fu">=</span> [length <span class="st">&quot;alice&quot;</span>, length <span class="st">&quot;bob&quot;</span>]
+<span class="fu">=</span> [<span class="dv">5</span>,<span class="dv">3</span>]</code></pre></div>
+<p>So in our case:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">map (positionOf p) [<span class="dt">Farmer</span>, <span class="dt">Wolf</span>, <span class="dt">Goat</span>, <span class="dt">Cabbage</span>]
+<span class="fu">=</span> [ positionOf p <span class="dt">Farmer</span>         <span class="co">-- Position of the farmer</span>
+  , positionOf p <span class="dt">Wolf</span>           <span class="co">-- Position of the wolf</span>
+  , positionOf p <span class="dt">Goat</span>           <span class="co">-- Position of the goat</span>
+  , positionOf p <span class="dt">Cabbage</span>        <span class="co">-- Position of the cabbage</span>
+  ]</code></pre></div>
+</aside>
+<p>We use <code>[Farmer ..]</code> as shorthand for <code>[Farmer, Wolf, Goat, Cabbage]</code> — this is because <code>Character</code> is an Enum, so it can be enumerated using enumeration syntax. It basically means “<code>Farmer</code>, etc.”</p>
+<h3 id="makemove">makeMove</h3>
+<p>So let’s get down to the meat of our journey. How do we make a move?</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">makeMove ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]</code></pre></div>
+<p><code>makeMove</code> will be a function that takes a plan and returns all the successful ways you can add a move to that plan. It takes a plan and takes it through a journey of adding a move, and returns the results of all of the successful ways it can fulfill this journey. This is similar to our old <code>halveOrDouble :: Int -&gt; [Int]</code>, which takes an int and returns the successful paths our int could have taken (it could have been halved…or doubled).</p>
+<p>What does a plan have to “go through” in its journey in adding a move?</p>
+<ol type="1">
+<li>First, we get the move we want to add. We could pick a <code>MoveThe Farmer</code>, a <code>MoveThe Goat</code>, or anything!</li>
+<li>Then, we fail/end the journey if we pick a move that isn’t legal. For example, we can’t move the goat if the farmer is not on the same side of the river that the goat is on.</li>
+<li>Now, we add that move that we got to the plan.</li>
+<li>Then, we fail/end the journey if that new plan is “unsafe” — if it leaves either the Wolf and Goat alone on a riverbank or the Goat and Cabbage.</li>
+<li>At the end of it all, we succeed with the new plan.</li>
+</ol>
+<p>Let’s try this out:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">moveLegal ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>           <span class="co">-- 1</span>
+<span class="ot">safePlan ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+
+<span class="ot">makeMove ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
+makeMove p <span class="fu">=</span> <span class="kw">do</span>
+    next <span class="ot">&lt;-</span> <span class="dt">MoveThe</span> <span class="fu">&lt;$&gt;</span> [<span class="dt">Farmer</span> <span class="fu">..</span> <span class="dt">Cabbage</span>] <span class="co">-- 2</span>
+    guard <span class="fu">$</span> moveLegal p next                <span class="co">-- 3</span>
+    <span class="kw">let</span>
+        p&#39; <span class="fu">=</span> p <span class="fu">++</span> [next]                    <span class="co">-- 4</span>
+    guard <span class="fu">$</span> safePlan p&#39;                     <span class="co">-- 5</span>
+    return p&#39;                               <span class="co">-- 6</span></code></pre></div>
+<ol type="1">
+<li>Here are the types of the helper functions we will be using.</li>
+<li>In this context, <code>MoveThe &lt;$&gt;</code> means to apply <code>MoveThe</code> to whatever we choose out of <code>[Farmer .. Cabbage]</code>. Kind of an “intercept it on the way out, and turn it into a Move”. So <code>next</code> is <code>MoveThe Farmer</code> or <code>MoveThe Wolf</code>, etc.; <code>next</code> is <em>one</em> of those. For every journey, we pick <em>one</em> of the possible moves.</li>
+<li>We insta-fail if the move is not legal with the given plan. By this, we mean that we can’t possibly move an animal unless the farmer is on the same side as the animal.</li>
+<li>Let’s let <code>p'</code> be <code>next</code> appended to the original plan <code>p</code>.</li>
+<li>We insta-fail unless the new plan is safe.</li>
+<li>If we haven’t failed yet, then we succeed with the new plan as the result.</li>
+</ol>
+<aside>
+<pre><code>###### Welcome to Haskell!</code></pre>
+<p>Okay, so I was slightly hand-wavey with <code>&lt;$&gt;</code>. But it is true that something like:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">x <span class="ot">&lt;-</span> (<span class="fu">*</span><span class="dv">2</span>) <span class="fu">&lt;$&gt;</span> <span class="dt">Just</span> <span class="dv">3</span></code></pre></div>
+<p>will put 6 (<code>3 * 2</code>) into <code>x</code> — it’ll take out the 3 and then apply <code>(*2)</code> to it before storing it in <code>x</code>.</p>
+<p>What’s going on under the hood is actually less magical. <code>&lt;$&gt;</code> basically says “apply inside”. It is like <code>$</code>, but “inside”. Remember how we can do:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> (<span class="fu">*</span><span class="dv">2</span>) <span class="fu">$</span> <span class="dv">3</span>
+<span class="dv">6</span></code></pre></div>
+<p>to apply <code>(*2)</code> to 3? We can then also do:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> (<span class="fu">*</span><span class="dv">2</span>) <span class="fu">$</span> <span class="dv">3</span>
+<span class="dv">6</span>
+λ<span class="fu">:</span> (<span class="fu">*</span><span class="dv">2</span>) <span class="fu">&lt;$&gt;</span> <span class="dt">Just</span> <span class="dv">3</span>
+<span class="dt">Just</span> <span class="dv">6</span>
+λ<span class="fu">:</span> (<span class="fu">*</span><span class="dv">2</span>) <span class="fu">&lt;$&gt;</span> [<span class="dv">3</span>]
+[<span class="dv">6</span>]</code></pre></div>
+<p>Now, if we think of a List like a list of possible successes, then applying a function “inside” means applying the function to all of the possible successes:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> (<span class="fu">*</span><span class="dv">2</span>) <span class="fu">&lt;$&gt;</span> [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]
+[<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">10</span>]
+
+λ<span class="fu">:</span> <span class="dt">MoveThe</span> <span class="fu">$</span> <span class="dt">Farmer</span>
+<span class="dt">MoveThe</span> <span class="dt">Farmer</span>
+λ<span class="fu">:</span> <span class="dt">MoveThe</span> <span class="fu">&lt;$&gt;</span> [<span class="dt">Farmer</span>, <span class="dt">Wolf</span>, <span class="dt">Goat</span>, <span class="dt">Cabbage</span>]
+[<span class="dt">MoveThe</span> <span class="dt">Farmer</span>, <span class="dt">MoveThe</span> <span class="dt">Wolf</span>, <span class="dt">MoveThe</span> <span class="dt">Goat</span>, <span class="dt">MoveThe</span> <span class="dt">Cabbage</span>]</code></pre></div>
+<p>So when I say</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">next <span class="ot">&lt;-</span> <span class="dt">MoveThe</span> <span class="fu">&lt;$&gt;</span> [<span class="dt">Farmer</span>, <span class="dt">Wolf</span>, <span class="dt">Goat</span>, <span class="dt">Cabbage</span>]</code></pre></div>
+<p>I really mean</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">next <span class="ot">&lt;-</span> [<span class="dt">MoveThe</span> <span class="dt">Farmer</span>, <span class="dt">MoveThe</span> <span class="dt">Wolf</span>, <span class="dt">MoveThe</span> <span class="dt">Goat</span>, <span class="dt">MoveThe</span> <span class="dt">Cabbage</span>]</code></pre></div>
+But still, it sometimes is cool to think of it as “Get the item inside, and then apply this function to it before you bind it to your variable”, if only for funsies.
+</aside>
+<h4 id="thought-experiment">Thought experiment</h4>
+<p>So let’s say our plan is, currently, <code>[MoveThe Goat, MoveThe Farmer, MoveThe Wolf]</code>. At the end of it all, our goat, wolf, and farmer are on the east bank, and the cabbage is on the west bank.</p>
+<p>What happens on a typical journey of <code>makeMove</code>?</p>
+<ol type="1">
+<li>First, we pick something to move. Let’s say <code>next</code> is <code>MoveThe Farmer</code>.</li>
+<li>This move is legal (moving the farmer is always legal).</li>
+<li>Our new plan is <code>[MoveThe Goat, MoveThe Farmer, MoveThe Wolf, MoveThe Farmer]</code></li>
+<li>This plan is not safe. If we move the farmer, the goat and the wolf will be alone, and that is bad news for the goat. We fail at the second guard.</li>
+<li>We don’t return anything, because this journey is a total and utter failure.</li>
+</ol>
+<p>Huh. How unfortunate. Let’s try again with another pick for <code>next</code>:</p>
+<ol type="1">
+<li>Let’s pick <code>MoveThe Cabbage</code> this time for <code>next</code>.</li>
+<li>This move isn’t even legal! The cabbage is on the west bank but the farmer is on the east. Failure!</li>
+</ol>
+<p>Well, that’s kind of depressing. Let’s try another:</p>
+<ol type="1">
+<li>We pick <code>MoveThe Goat</code> for <code>next</code>.</li>
+<li>This move is legal; both the goat and the farmer are on the east bank.</li>
+<li>Our new plan is <code>[MoveThe Goat, MoveThe Farmer, MoveThe Wolf, MoveThe Goat]</code>.</li>
+<li>This plan is indeed safe. The goat and the cabbage are now on the west bank, but so is the farmer.</li>
+<li>Because all is well, we return our new plan!</li>
+</ol>
+<p>Hooray!</p>
+<p>As an exercise, see how the journey fares if we had picked <code>MoveThe Wolf</code> for <code>next</code>.</p>
+<p>Anyways, at the end of it all, <code>makeMove</code> will return all new plans from the successful journeys. So it won’t be returning the plans with <code>MoveThe Farmer</code> and <code>MoveThe Cabbage</code> added to it, but will likely be retuning the plans with <code>MoveThe Goat</code> and <code>MoveThe Wolf</code> added to it. And it’ll return those two together in a List structure.</p>
+<p>We’re almost there! Now to just define our helper predicates <code>moveLegal</code> and <code>safePlan</code>.</p>
+<h4 id="movelegal">moveLegal</h4>
+<p>What makes a move legal? Well, the farmer has to be on the same side as whatever is being moved.</p>
+<p>We can re-use our <code>positionOf :: Plan -&gt; Character -&gt; Position</code> function here.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">moveLegal ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+moveLegal p (<span class="dt">MoveThe</span> <span class="dt">Farmer</span>)  <span class="fu">=</span> <span class="dt">True</span>
+moveLegal p (<span class="dt">MoveThe</span> c)       <span class="fu">=</span> positionOf p c <span class="fu">==</span> positionOf p <span class="dt">Farmer</span></code></pre></div>
+<h4 id="safeplan">safePlan</h4>
+<p>One last piece. How can we tell if a plan is safe or not?</p>
+<p>The plan is safe if nothing can eat anything else. That means if the wolf and goat or goat and cabbage sit on the same bank, so too must the farmer. Some boolean arithmetic will show that this is the same as if either the farmer is on the same side as the goat or the goat and cabbage are both “safe” (not on the side of their predators).</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">safePlan ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+safePlan p <span class="fu">=</span> goatPos <span class="fu">==</span> farmerPos <span class="fu">||</span> safeGoat <span class="fu">&amp;&amp;</span> safeCabbage
+    <span class="kw">where</span>
+        goatPos     <span class="fu">=</span> positionOf p <span class="dt">Goat</span>
+        farmerPos   <span class="fu">=</span> positionOf p <span class="dt">Farmer</span>
+        safeGoat    <span class="fu">=</span> goatPos <span class="fu">/=</span> positionOf p <span class="dt">Wolf</span>
+        safeCabbage <span class="fu">=</span> positionOf p <span class="dt">Cabbage</span> <span class="fu">/=</span> goatPos</code></pre></div>
+<p>And…that’s it! We finished!</p>
+<h4 id="exercise">Exercise</h4>
+<p>Notice that sometimes we are going to make “redundant moves”. For example, we could move the farmer or goat twice in a row. How can we add another guard to check if the move isn’t redundant? That is, that the move we are adding isn’t identical to the last move of the plan?</p>
+<p>The implementation is in the final solution later on, but think about how you would do it and compare the final solution to yours!</p>
+<h2 id="wrapping-up">Wrapping Up</h2>
+<p>The final code for this project is available <a href="https://github.com/mstksg/inCode/blob/master/code-samples/monad-plus/WolfGoatCabbage.hs">on Github</a> so you can follow along yourself. You can also <a href="https://www.fpcomplete.com/user/jle/wolf-goat-cabbage">load it interactively online</a> on FPComplete, a great online Haskell IDE where you can test your code right there in the browser.</p>
+<p>So…let’s test it!</p>
+<h3 id="tests">Tests</h3>
+<p>First, let’s load it up on ghci:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> <span class="fu">:</span>l WolfGoatCabbage.hs
+<span class="dt">Ok</span>, modules loaded<span class="fu">:</span> <span class="dt">Main</span><span class="fu">.</span></code></pre></div>
+<p>Let’s try a few plan lengths and see when we get one that has a valid solution:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> findSolutions <span class="dv">5</span>
+[]
+λ<span class="fu">:</span> findSolutions <span class="dv">6</span>
+[]
+λ<span class="fu">:</span> findSolutions <span class="dv">7</span>
+[[<span class="dt">G</span>,<span class="dt">F</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">F</span>,<span class="dt">G</span>],[<span class="dt">G</span>,<span class="dt">F</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">F</span>,<span class="dt">G</span>]]</code></pre></div>
+<p>Great, we have two solutions of length 7. If we try them out, it seems like they both work! Notice that, interestingly enough, the two solutions are their own reverses. This makes sense, because any solution of getting from the west bank to the east bank must also be, backwards, a valid solution of getting from the east bank to the west bank.</p>
+<p>It turns out that the solutions of length 9 and 11 are both identical to the solutions for length 7, just with some redundant moves thrown in (moving the farmer twice in a row, moving the goat twice in a row, etc.). Also, note that all possible solutions are of odd lengths, because for even lengths, the farmer ends up on the west bank.</p>
+<p>If we add the filter on redundant moves mentioned earlier, the next valid solutions with no direct redundancies come at length 13, and then at 19:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">:</span> findSolutions <span class="dv">13</span>
+[[<span class="dt">G</span>,<span class="dt">F</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">F</span>,<span class="dt">G</span>]
+,[<span class="dt">G</span>,<span class="dt">F</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">F</span>,<span class="dt">G</span>]]
+λ<span class="fu">:</span> findSolutions <span class="dv">19</span>
+[[<span class="dt">G</span>,<span class="dt">F</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">W</span>,<span class="dt">G</span>,<span class="dt">C</span>,<span class="dt">F</span>,<span class="dt">G</span>]
+,[<span class="dt">G</span>,<span class="dt">F</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">C</span>,<span class="dt">G</span>,<span class="dt">W</span>,<span class="dt">F</span>,<span class="dt">G</span>]]</code></pre></div>
+<p>Again note that both of these solutions come in pairs, with one being the reverse of the other. Also curious is the fact that they are actually identical to the length 7 solutions, just with cycles of <code>W,G,C</code> (or <code>C,G,W</code>) over and over again in the middle.</p>
+<h3 id="reflections">Reflections</h3>
+<p>We have solved the classic logic puzzle without using any control flow other than the List’s MonadPlus instance. The solution isn’t necessarily optimal, but it is interesting that we can model something like this simply as saying: “Here is the description of a journey. What journeys following this description succeed?”</p>
+<p>With the List MonadPlus, you can solve any problem that can be described as the result of a nondeterministic journey with choices and pitfalls along the way.</p>
+<p>In this particular puzzle, you could have done something similar from the start using only maps and filters. However, sometimes it is more useful or more insightful to, instead of using maps and filters, use abstractions that help you frame the problem in a more meaningful way.</p>
+<p>Hopefully as a result of this three part series and through playing around with the source code, you can appreciate the wonders of Succeed/Fail and MonadPlus!</p>
+<h3 id="the-future">The future</h3>
+<p>Where to go from here? You might want to take a look at the <a href="http://hackage.haskell.org/package/base/docs/Control-Applicative.html">Alternative</a> typeclass/design pattern, which also deals with the concept of success/failure — just not with their consecutive chaining, like MonadPlus. It deals with their parallel choices, actually, as the name implies. This functionality is redundantly implemented in MonadPlus in Haskell today (2013), and the parallel-choice operator <code>&lt;|&gt;</code> for Alternative is <code>mplus</code> for MonadPlus. I might write something on the matter some day. Anyways, learning about Alternative will help you see more about the usefulness of the success/fail design pattern, and it might help you gain the perspective which much of the early Haskell implementors apparently lacked: not everything is a monad!</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>You might be aware that in the current Haskell standard library organization, the implementation of MonadPlus also provides separate functionality — the “Plus”. We won’t be focusing on this part, because it is commonly regarded that it is more of a characteristic of the <em>Alternative</em> typeclass/design pattern. For the purposes of this article, MonadPlus is essentially “MonadZero”, as it should have been.<a href="#fnref1">↩</a></p></li>
+</ol>
+</section></div><footer><ul class="entry-series"><li><div>This entry is a part of a series called <b>&quot;MonadPlus: Success/Failure Monads&quot;</b>.  Find the rest of the entries in this series at its <a href="http://home.jle0.com:4111/entries/series/+monadplus-success-failure-monads.html" class="tag-a-series" title="Short series on the abstractions and uses of the MonadPlus typeclass —
+objects whose monad instance represent success/failure."> series history</a>.</div></li><li><div>This entry is a part of a series called <b>&quot;Practical Monads&quot;</b>.  Find the rest of the entries in this series at its <a href="http://home.jle0.com:4111/entries/series/+practical-monads.html" class="tag-a-series" title="Ongoing series exploring interesting objects and their curious monad
+instances."> series history</a>.</div></li></ul><ul class="tag-list"><li><a href="http://home.jle0.com:4111/entries/tagged/functional-programming.html" class="tag-a-tag">#functional programming</a></li><li><a href="http://home.jle0.com:4111/entries/tagged/haskell.html" class="tag-a-tag">#haskell</a></li><li><a href="http://home.jle0.com:4111/entries/category/@haskell.html" class="tag-a-category">@HASKELL</a></li><li><a href="http://home.jle0.com:4111/entries/category/@ramblings.html" class="tag-a-category">@RAMBLINGS</a></li><li><a href="http://home.jle0.com:4111/entries/series/+monadplus-success-failure-monads.html" class="tag-a-series">+MonadPlus: Success/Failure Monads</a></li><li><a href="http://home.jle0.com:4111/entries/series/+practical-monads.html" class="tag-a-series">+Practical Monads</a></li></ul><aside class="social-buttons"><div class="addthis_toolbox addthis_default_style addthis-buttons"><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_button_google_plusone" g:plusone:size="medium"></a><a class="addthis_counter addthis_pill_style"></a></div><div class="custom-social-buttons"><div class="custom-social-button"><a href="https://www.reddit.com/submit" onclick="window.location = &#39;https://www.reddit.com/submit?url=&#39;+ encodeURIComponent(window.location); return false"><img src="https://www.reddit.com/static/spreddit7.gif" alt="submit to reddit"></a></div></div></aside><nav class="next-prev-links"><ul><li class="prev-entry-link">&larr; <a href="http://home.jle0.com:4111/entry/the-list-monadplus-practical-fun-with-monads-part.html">The List MonadPlus — Practical Fun with Monads (Part 2 of 3)</a> (Previous)</li><li class="next-entry-link">(Next) <a href="http://home.jle0.com:4111/entry/code-2013.html">Code 2013</a> &rarr;</li></ul></nav></footer></article><div class="post-entry"><div class="tile"><div id="disqus_thread"></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.html';
+    this.page.identifier = 'monad-plus-3';
+};
+(function() {
+    var d = document, s = d.createElement('script');
+    s.src = '//justinleblogdevelopment.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+})();
+</script><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a><br></noscript><a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a></div></div></div></div></div><div id="footer-container"><div id="footer-content"><div class="tile"><div class="footer-copyright">&copy; 2016 Justin Le</div><div class="footer-follow social-follows"><ul class="social-follows-list"><li><ul class="social-follows-list-social"><li><a class="social-follow-facebook" title="Friend me on Facebook!" href="https://facebook.com/mstksg">Facebook</a></li><li><a class="social-follow-twitter" title="Follow me on Twitter!" href="https://twitter.com/intent/user?user_id=mstk" onclick="window.open(
+  &#39;http://twitter.com/intent/user?user_id=907281&#39;,
+  &#39;facebook-share-dialog&#39;,
+  &#39;width=550,height=520&#39;);
+return false;
+">Twitter</a></li><li><a class="social-follow-gplus" title="Add me on Google+!" href="https://plus.google.com/+JustinLe">Google+</a></li><li><a class="social-follow-linkedin" title="Connect with me on LinkedIn!" href="https://linkedin.com/in/lejustin">LinkedIn</a></li><li><a class="social-follow-github" title="Fork me on Github!" href="https://github.com/mstksg">Github</a></li><li><a class="social-follow-keybase" title="Track me on Keybase!" href="https://keybase.io/mstksg">Keybase</a></li><li><a class="social-follow-bitcoin" title="Donate via bitcoin!" href="https://coinbase.com/mstksg">Bitcoin</a></li></ul></li><li><ul class="social-follows-list-site"><li><a class="social-follow-rss" title="Subscribe to my RSS Feed!" href="http://feeds.feedburner.com/justinleblogdevelopment">RSS</a></li><li><a class="social-follow-email" title="Subscribe to the mailing list!" href="https://feedburner.google.com/fb/a/mailverify?loc=en_US&amp;uri=justinleblogdevelopment">Mailing list</a></li></ul></li></ul></div></div></div></div></body></html>
