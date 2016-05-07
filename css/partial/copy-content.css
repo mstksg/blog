@@ -10,6 +10,8 @@
     @media print {
       .copy-content p, .copy-content ul, .copy-content ol, .copy-content dl, .copy-content pre, .copy-content blockquote, .copy-content figure {
         margin-bottom: 0.3rem; } }
+    .copy-content p > br:first-child, .copy-content p > br:last-child, .copy-content ul > br:first-child, .copy-content ul > br:last-child, .copy-content ol > br:first-child, .copy-content ol > br:last-child, .copy-content dl > br:first-child, .copy-content dl > br:last-child, .copy-content pre > br:first-child, .copy-content pre > br:last-child, .copy-content blockquote > br:first-child, .copy-content blockquote > br:last-child, .copy-content figure > br:first-child, .copy-content figure > br:last-child {
+      display: none; }
   .copy-content hr {
     margin: 1.5em 0 3em; }
   .copy-content ul, .copy-content ol, .copy-content dl {
