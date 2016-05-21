@@ -93,63 +93,52 @@
 \textbf{\href{http://home.jle0.com:4111/entry/intro-to-machines-arrows-part-1-stream-and.html}{in
 Code}}.}
 
-So I'm going to be running a series soon on computation and (physical)
-simulations using AFRP (Arrowized Functional Reactive Programming)
-principles.
+So I'm going to be running a series soon on computation and (physical) simulations using AFRP
+(Arrowized Functional Reactive Programming) principles.
 
-I consider (A)FRP to actually be a pretty game changing paradigm. It
-provides us with semantics by which to compose and build time-varying,
-reactive behaviors and completely changes the way we approach any sort
-of simulation/state-like project.
+I consider (A)FRP to actually be a pretty game changing paradigm. It provides us with semantics by
+which to compose and build time-varying, reactive behaviors and completely changes the way we
+approach any sort of simulation/state-like project.
 
-However, it's fairly difficult to approach the subject (and not dumb
-things down to the point of magic) without a solid foundation on the
-basic building blocks of AFRP: \textbf{machines}. And so before I get
-started on my simulations in FRP series, here is hopefully a practical
-foundation on the practical usage and construction of the machine design
-pattern that we can build on to get started on our Physics simulation!
+However, it's fairly difficult to approach the subject (and not dumb things down to the point of
+magic) without a solid foundation on the basic building blocks of AFRP: \textbf{machines}. And so
+before I get started on my simulations in FRP series, here is hopefully a practical foundation on
+the practical usage and construction of the machine design pattern that we can build on to get
+started on our Physics simulation!
 
-This post will assume a somewhat basic knowledge of Haskell. I'll try
-explaining concepts here and there if I feel that they might not be very
-commonly known. But if you have any questions, feel free to leave a
-comment or stop by freenode's \#haskell on irc!
+This post will assume a somewhat basic knowledge of Haskell. I'll try explaining concepts here and
+there if I feel that they might not be very commonly known. But if you have any questions, feel free
+to leave a comment or stop by freenode's \#haskell on irc!
 
-In this post we are going to introduce Streams and (more importantly)
-Autos. In the next, we will be looking at Autos as a member of the
-powerful Category and Arrow typeclasses. Finally, we will bring in the
-final machine, the Wire, to transition into the popular AFRP library
+In this post we are going to introduce Streams and (more importantly) Autos. In the next, we will be
+looking at Autos as a member of the powerful Category and Arrow typeclasses. Finally, we will bring
+in the final machine, the Wire, to transition into the popular AFRP library
 \href{http://hackage.haskell.org/package/netwire}{netwire}.
 
 \section{Why FRP?}\label{why-frp}
 
-So why do we even bother with FRP? Why not just wrap everything in a
-giant global state monad and program imperatively?
+So why do we even bother with FRP? Why not just wrap everything in a giant global state monad and
+program imperatively?
 
-To get to the bottom of this, we must remember why we even bother with
-functional programming in the first place. Think very hard about this
-question, because without a real answer, all of this will be a waste. Is
-it just because it's cool?
+To get to the bottom of this, we must remember why we even bother with functional programming in the
+first place. Think very hard about this question, because without a real answer, all of this will be
+a waste. Is it just because it's cool?
 
-The (a?) reason why (pure) functional programming is powerful is because
-is a subset of what can be called
+The (a?) reason why (pure) functional programming is powerful is because is a subset of what can be
+called
 \textbf{\href{http://www.haskellforall.com/2012/08/the-category-design-pattern.html}{compositional
-programming}}. Almost all of the benefits of functional programming can
-be drawn from its unmatched power of composability. Think of the power
-of unix pipes. We can build programs by the free composition of smaller,
-simpler self-contained programs and concepts that don't have to be aware
-of any other part. Recognizing this completely changes the way we
-approach problems.
+programming}}. Almost all of the benefits of functional programming can be drawn from its unmatched
+power of composability. Think of the power of unix pipes. We can build programs by the free
+composition of smaller, simpler self-contained programs and concepts that don't have to be aware of
+any other part. Recognizing this completely changes the way we approach problems.
 
-So why FRP? FRP provides for us meaningful semantics by which to
-\emph{compose} time-varying and reactive behaviors, and create complex
-ones from smaller ones. You reason about a self-contained behavior
-``wire''\ldots{}and then use tools to build complex behaviors from
-simple ones. You don't specify what happens when, you specify how things
-\emph{should behave}, from a top-down level. And then compose those
-behaviors.
+So why FRP? FRP provides for us meaningful semantics by which to \emph{compose} time-varying and
+reactive behaviors, and create complex ones from smaller ones. You reason about a self-contained
+behavior ``wire''\ldots{}and then use tools to build complex behaviors from simple ones. You don't
+specify what happens when, you specify how things \emph{should behave}, from a top-down level. And
+then compose those behaviors.
 
-Yadda yadda. I am probably boring you at this point, let's just get
-started and jump into machines!
+Yadda yadda. I am probably boring you at this point, let's just get started and jump into machines!
 
 \section{Streams}\label{streams}
 
@@ -165,8 +154,7 @@ Streams are basically infinitely long linked lists.
 
 (\texttt{SCons} for ``Stream cons'')
 
-Compare that with the linked list data type, which is a Stream with an
-Ending (\texttt{Nil}):
+Compare that with the linked list data type, which is a Stream with an Ending (\texttt{Nil}):
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -221,15 +209,15 @@ Let's see if \texttt{myList} does what we want: (a list from 1 to 3):
 \end{Highlighting}
 \end{Shaded}
 
-Yes! Perfect. We can ``traverse'' down our linked list by repeatedly
-pattern matching out the ``head'' (the \texttt{x}, the first part of the
-tuple) and the ``tail'' (the \texttt{xs}, the second part of the tuple).
+Yes! Perfect. We can ``traverse'' down our linked list by repeatedly pattern matching out the
+``head'' (the \texttt{x}, the first part of the tuple) and the ``tail'' (the \texttt{xs}, the second
+part of the tuple).
 
-But how are we going to build a stream\ldots{}? We don't have access to
-\texttt{Nil}, so do we have to manually type out an infinite stream?
+But how are we going to build a stream\ldots{}? We don't have access to \texttt{Nil}, so do we have
+to manually type out an infinite stream?
 
-Let's try defining the stream \texttt{{[}1..{]}} --- a stream that
-contains every natural number starting from 1.
+Let's try defining the stream \texttt{{[}1..{]}} --- a stream that contains every natural number
+starting from 1.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -240,9 +228,8 @@ contains every natural number starting from 1.
 
 Hm. This is going to take a while. I wonder if there's an easier way.
 
-We can take advantage of Haskell's ``lazy-by-default''-ness and leave
-the ``rest'' of the stream as an unevaluated function call. And then we
-can recurse!
+We can take advantage of Haskell's ``lazy-by-default''-ness and leave the ``rest'' of the stream as
+an unevaluated function call. And then we can recurse!
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -254,8 +241,8 @@ can recurse!
 \end{Highlighting}
 \end{Shaded}
 
-Cool! Let's see if this \texttt{myStream} really does what we want, the
-same way we tested \texttt{myList}:
+Cool! Let's see if this \texttt{myStream} really does what we want, the same way we tested
+\texttt{myList}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -279,13 +266,12 @@ same way we tested \texttt{myList}:
 \end{Highlighting}
 \end{Shaded}
 
-Yes, it works perfectly! Just like in the case of List, we can
-``traverse'' down the stream by pattern matching out the ``head'' of the
-stream (the first part of the tuple) and the ``tail'' of the stream (the
-second part of the tuple).
+Yes, it works perfectly! Just like in the case of List, we can ``traverse'' down the stream by
+pattern matching out the ``head'' of the stream (the first part of the tuple) and the ``tail'' of
+the stream (the second part of the tuple).
 
-Note that we can use some syntax trickery with our data definition of
-\texttt{Stream} by adding a label to the first (and only) field:
+Note that we can use some syntax trickery with our data definition of \texttt{Stream} by adding a
+label to the first (and only) field:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -305,13 +291,12 @@ and we can do fancy things like:
 \end{Highlighting}
 \end{Shaded}
 
-Basically, we get for free the function \texttt{runStream}, a function
-that yanks the tuple out of the stream.
+Basically, we get for free the function \texttt{runStream}, a function that yanks the tuple out of
+the stream.
 
-One minor final touch --- because \texttt{Stream} has only one
-constructor and one field, we can make it a \texttt{newtype}, which has
-similar usage patterns/syntax as a \texttt{data}, but which the compiler
-can more easily optimize:
+One minor final touch --- because \texttt{Stream} has only one constructor and one field, we can
+make it a \texttt{newtype}, which has similar usage patterns/syntax as a \texttt{data}, but which
+the compiler can more easily optimize:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -321,13 +306,12 @@ can more easily optimize:
 
 \subsubsection{Automating Traversal}\label{automating-traversal}
 
-The repeated pattern matching is actually kind of tedious, and it'll
-only get more annoying over time, so let's make a function that can
-automate the pattern matching for us really quickly so that we can test
-it more easily.
+The repeated pattern matching is actually kind of tedious, and it'll only get more annoying over
+time, so let's make a function that can automate the pattern matching for us really quickly so that
+we can test it more easily.
 
-\texttt{streamToList} will take a Stream and perform the very
-straightforward conversion into an infinite list.
+\texttt{streamToList} will take a Stream and perform the very straightforward conversion into an
+infinite list.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -345,10 +329,9 @@ So now we can do:
 \end{Highlighting}
 \end{Shaded}
 
-Alternatively (and for reasons which will later become clear), we can
-also define \texttt{testStream}, which takes a specified amount of
-elements and returns also the ``resulting'' stream after all of those
-steps, and \texttt{testStream\_}, which is the same thing except that we
+Alternatively (and for reasons which will later become clear), we can also define
+\texttt{testStream}, which takes a specified amount of elements and returns also the ``resulting''
+stream after all of those steps, and \texttt{testStream\_}, which is the same thing except that we
 throw away the modified stream.
 
 \begin{Shaded}
@@ -374,18 +357,14 @@ throw away the modified stream.
 
 \subsection{Streams are nice}\label{streams-are-nice}
 
-Streams are nice! If you've been using Haskell for any stretch of time,
-you'll know that we use infinite lists all the time and to great
-usefulness for the ends of expressiveness and abstraction.
+Streams are nice! If you've been using Haskell for any stretch of time, you'll know that we use
+infinite lists all the time and to great usefulness for the ends of expressiveness and abstraction.
 
-In math, streams are known as a form of
-\href{http://en.wikipedia.org/wiki/Moore_machine}{Moore machines}
-(albeit with potentially infinite sets of state and output values). They
-are machines that basically progress from state to state to state to
-state. They just keep on marching on\ldots{}like a machine. In
-\texttt{myStream}, the initial state is 1. The next state is 2; the next
-is 3, etc. What is important is that the next state \emph{is a function
-of the current state}.
+In math, streams are known as a form of \href{http://en.wikipedia.org/wiki/Moore_machine}{Moore
+machines} (albeit with potentially infinite sets of state and output values). They are machines that
+basically progress from state to state to state to state. They just keep on marching on\ldots{}like
+a machine. In \texttt{myStream}, the initial state is 1. The next state is 2; the next is 3, etc.
+What is important is that the next state \emph{is a function of the current state}.
 
 This is made very apparent in our definition of \texttt{streamFrom}:
 
@@ -396,35 +375,32 @@ This is made very apparent in our definition of \texttt{streamFrom}:
 \end{Highlighting}
 \end{Shaded}
 
-The ``current state'' whenever we call \texttt{streamFrom\ n} is
-\texttt{n}\ldots{}the ``next state'' (the ``initial state'' of the
-``tail'') is \texttt{n+1}. We could have provided any function
-\texttt{::\ Int\ -\textgreater{}\ Int} there (say, \texttt{n+2}), that
-would be for us our ``next state'' function.
+The ``current state'' whenever we call \texttt{streamFrom\ n} is \texttt{n}\ldots{}the ``next
+state'' (the ``initial state'' of the ``tail'') is \texttt{n+1}. We could have provided any function
+\texttt{::\ Int\ -\textgreater{}\ Int} there (say, \texttt{n+2}), that would be for us our ``next
+state'' function.
 
-So \texttt{myStream} is a Moore-like machine whose ``next state''
-function is ``the current state plus one''.
+So \texttt{myStream} is a Moore-like machine whose ``next state'' function is ``the current state
+plus one''.
 
 \subsubsection{on State}\label{on-state}
 
-Before we move on, let's take a slight diversion --- you can skip this
-whole section if you wish, to get onto the main point.
+Before we move on, let's take a slight diversion --- you can skip this whole section if you wish, to
+get onto the main point.
 
-Notice that in our last example, our ``state'' \texttt{n} was the same
-type as our ``output'' \texttt{n+1}. Is this in general the case?
+Notice that in our last example, our ``state'' \texttt{n} was the same type as our ``output''
+\texttt{n+1}. Is this in general the case?
 
-The type of our stream is \texttt{Stream\ Int}\ldots{}does \texttt{Int}
-refer to the state or the output?
+The type of our stream is \texttt{Stream\ Int}\ldots{}does \texttt{Int} refer to the state or the
+output?
 
-As it turns out, this \texttt{Int} refers to the output --- it is the
-type of the ``head'' of the stream, and all values we will eventually
-grab from it.
+As it turns out, this \texttt{Int} refers to the output --- it is the type of the ``head'' of the
+stream, and all values we will eventually grab from it.
 
-Note however that the type of the state is not actually included in the
-type signature, so it can be whatever you want! As a trivial example,
-let's say that \texttt{streamFrom} actually takes a
-\texttt{x\ ::\ Double} instead of an \texttt{n\ ::\ Int}, and rounds it
-before it pops it out as the ``head'':
+Note however that the type of the state is not actually included in the type signature, so it can be
+whatever you want! As a trivial example, let's say that \texttt{streamFrom} actually takes a
+\texttt{x\ ::\ Double} instead of an \texttt{n\ ::\ Int}, and rounds it before it pops it out as the
+``head'':
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -436,16 +412,14 @@ before it pops it out as the ``head'':
 \end{Highlighting}
 \end{Shaded}
 
-This function now sorta behaves similarly to our original
-\texttt{streamFrom}\ldots{} \texttt{myStream\textquotesingle{}} would
-still be \texttt{Stream\ Int} and output ints, and we might not ever be
-able to tell that the internal state of
-\texttt{myStream\textquotesingle{}} was ``actually'' a double!
+This function now sorta behaves similarly to our original \texttt{streamFrom}\ldots{}
+\texttt{myStream\textquotesingle{}} would still be \texttt{Stream\ Int} and output ints, and we
+might not ever be able to tell that the internal state of \texttt{myStream\textquotesingle{}} was
+``actually'' a double!
 
-Now also observe that the internal state is actually in general
-\emph{inaccessible} and \emph{opaque} to the outside world. What if we
-had \texttt{streamFrom} simply return whether or not \texttt{n} was
-even?
+Now also observe that the internal state is actually in general \emph{inaccessible} and
+\emph{opaque} to the outside world. What if we had \texttt{streamFrom} simply return whether or not
+\texttt{n} was even?
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -464,26 +438,21 @@ even?
 \end{Highlighting}
 \end{Shaded}
 
-\texttt{myBoolStream} simply cycles between \texttt{False} and
-\texttt{True}. Yet, it has an internal state that is completely closed
-off to us that is an \texttt{Int} counting from \texttt{1} to infinity.
-We might not have ever even known.
+\texttt{myBoolStream} simply cycles between \texttt{False} and \texttt{True}. Yet, it has an
+internal state that is completely closed off to us that is an \texttt{Int} counting from \texttt{1}
+to infinity. We might not have ever even known.
 
-This property --- that the states of these types of machines are hidden
-from the world --- is actually going to be very useful. Like I said
-before, every machine can really be considered self-contained. This is
-unlike using a State monad-based loop, where all internal state is more
-or less freely viewable manipulatable by anyone. Here, every machine is
-truly its own little world.
+This property --- that the states of these types of machines are hidden from the world --- is
+actually going to be very useful. Like I said before, every machine can really be considered
+self-contained. This is unlike using a State monad-based loop, where all internal state is more or
+less freely viewable manipulatable by anyone. Here, every machine is truly its own little world.
 
-In fact, because the type of the state is unknown and
-unpredictable\ldots{}even if we could ``force'' the state out of a
-stream somehow, we wouldn't even be able to work with it in a type safe
-way. The type is truly dynamic and the type of the nth state of a stream
-is unknowable at compile time.
+In fact, because the type of the state is unknown and unpredictable\ldots{}even if we could
+``force'' the state out of a stream somehow, we wouldn't even be able to work with it in a type safe
+way. The type is truly dynamic and the type of the nth state of a stream is unknowable at compile
+time.
 
-Here is a stream whose state switches from an \texttt{Int} to a
-\texttt{Bool} dynamically.
+Here is a stream whose state switches from an \texttt{Int} to a \texttt{Bool} dynamically.
 
 \begin{verbatim}
 wackyStateStream :: Stream (Maybe Int)
@@ -504,21 +473,19 @@ wackyStateStream = wackyStateBool True
 
 \subsection{Continuing on}\label{continuing-on}
 
-The problem with streams, as you might have guessed, is that you can't
-really affect their progress once they start. Once you start
-\texttt{myStream}, it'll keep on marching on, and on, and on\ldots{}you
-have no way to ``influence'' its progression \emph{during} its march.
-The \emph{behavior} of our stream \emph{can't be influenced} by the
-outside world in any way, once it has started. This is a bit limiting,
-because we want behaviors that we can have interact with each other.
+The problem with streams, as you might have guessed, is that you can't really affect their progress
+once they start. Once you start \texttt{myStream}, it'll keep on marching on, and on, and
+on\ldots{}you have no way to ``influence'' its progression \emph{during} its march. The
+\emph{behavior} of our stream \emph{can't be influenced} by the outside world in any way, once it
+has started. This is a bit limiting, because we want behaviors that we can have interact with each
+other.
 
-And so, we have the natural generalization of streams (and the machine
-we will be spending the most time looking at): Auto.
+And so, we have the natural generalization of streams (and the machine we will be spending the most
+time looking at): Auto.
 
 \section{Auto}\label{auto}
 
-Let's upgrade our streams, and introduce a way to affect how they
-progress. Let's call it an Auto.
+Let's upgrade our streams, and introduce a way to affect how they progress. Let's call it an Auto.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -526,25 +493,22 @@ progress. Let's call it an Auto.
 \end{Highlighting}
 \end{Shaded}
 
-Now, instead of an \texttt{SCons} containing just a tuple (a
-head-tails), an \texttt{ACons} contains a \emph{function} that
-\emph{produces} your head-tails tuple. Before, all of our
-\texttt{runStreams} produced the same tuple no matter what. Now, our
-\texttt{runAuto} can produce a different tuple based on an outside
-input.
+Now, instead of an \texttt{SCons} containing just a tuple (a head-tails), an \texttt{ACons} contains
+a \emph{function} that \emph{produces} your head-tails tuple. Before, all of our \texttt{runStreams}
+produced the same tuple no matter what. Now, our \texttt{runAuto} can produce a different tuple
+based on an outside input.
 
 This is cool!
 
 Let's look at the type signature of Auto before we go too much further.
 
-In \texttt{Auto\ a\ b}, \texttt{b} is the type of your ``head'' and the
-type of the items in your ``tail''. It's the type of your ``stream''.
+In \texttt{Auto\ a\ b}, \texttt{b} is the type of your ``head'' and the type of the items in your
+``tail''. It's the type of your ``stream''.
 
 \texttt{a} is the type of the ``influencing input''.
 
-So now, we basically have a \texttt{Stream\ b}, except at every
-``step'', we can ``influence'' the Stream with something of type
-\texttt{a}.
+So now, we basically have a \texttt{Stream\ b}, except at every ``step'', we can ``influence'' the
+Stream with something of type \texttt{a}.
 
 \subsection{A Trivial Auto}\label{a-trivial-auto}
 
@@ -560,9 +524,8 @@ Let's look at a direct ``port'' of our \texttt{myStream}:
 \end{Highlighting}
 \end{Shaded}
 
-This is kind of a dumb example, but \texttt{myStreamAuto} is just the
-exact same as \texttt{myStream}. It's an Auto, but it \emph{ignores its
-influencing input}.
+This is kind of a dumb example, but \texttt{myStreamAuto} is just the exact same as
+\texttt{myStream}. It's an Auto, but it \emph{ignores its influencing input}.
 
 Let's try it out.
 
@@ -584,29 +547,24 @@ Let's try it out.
 \end{Highlighting}
 \end{Shaded}
 
-Remember that we are really doing
-\texttt{(runAuto\ myStreamAuto)\ undefined}, but because of how Haskell
-associates function calls, the parentheses are unnecessary. And hey, it
-kind of looks like \texttt{runAuto} is a two-parameter function with an
-Auto as the first parameter and the ``influence''/``input'' as its
-second. Which, due to the magic of currying-by-default, it really is!
+Remember that we are really doing \texttt{(runAuto\ myStreamAuto)\ undefined}, but because of how
+Haskell associates function calls, the parentheses are unnecessary. And hey, it kind of looks like
+\texttt{runAuto} is a two-parameter function with an Auto as the first parameter and the
+``influence''/``input'' as its second. Which, due to the magic of currying-by-default, it really is!
 
 \subsection{A Non-trivial Auto}\label{a-non-trivial-auto}
 
-Okay, that was fun I guess. But now let's take a first look at an auto
-which ``can'' be influenced.
+Okay, that was fun I guess. But now let's take a first look at an auto which ``can'' be influenced.
 
-Let's have a \emph{resettable counter}. Kind of like
-\texttt{myStreamAuto}, but at every step, you can choose to ``reset''
-the count back to zero.
+Let's have a \emph{resettable counter}. Kind of like \texttt{myStreamAuto}, but at every step, you
+can choose to ``reset'' the count back to zero.
 
-Actually, let's just jump to something even bigger. At every step, we
-can choose to ``set'' the counter to whatever int we like.
+Actually, let's just jump to something even bigger. At every step, we can choose to ``set'' the
+counter to whatever int we like.
 
-We can do this by having the influence/input be a \texttt{Maybe\ Int}.
-If we want the counter to progress normally, we pass in a
-\texttt{Nothing}. If we want the counter to reset to a number \texttt{n}
-of our choosing, we pass in a \texttt{Just\ n}
+We can do this by having the influence/input be a \texttt{Maybe\ Int}. If we want the counter to
+progress normally, we pass in a \texttt{Nothing}. If we want the counter to reset to a number
+\texttt{n} of our choosing, we pass in a \texttt{Just\ n}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -620,16 +578,12 @@ of our choosing, we pass in a \texttt{Just\ n}
 \end{Highlighting}
 \end{Shaded}
 
-Remember that
-\texttt{fromMaybe\ ::\ a\ -\textgreater{}\ Maybe\ a\ -\textgreater{}\ a}
-takes a ``default'' value, a Maybe value, and then returns the value
-inside the Maybe if it's a \texttt{Just}, or the default value if it's a
-\texttt{Nothing}.
+Remember that \texttt{fromMaybe\ ::\ a\ -\textgreater{}\ Maybe\ a\ -\textgreater{}\ a} takes a
+``default'' value, a Maybe value, and then returns the value inside the Maybe if it's a
+\texttt{Just}, or the default value if it's a \texttt{Nothing}.
 
-So basically, when you \texttt{runAuto} with the Auto, if you give it a
-\texttt{Nothing}, it'll give you
-\texttt{(\ n,\ settableCounterFrom\ (n+1)\ )}. If you give it
-\texttt{Just\ m}, it'll give you
+So basically, when you \texttt{runAuto} with the Auto, if you give it a \texttt{Nothing}, it'll give
+you \texttt{(\ n,\ settableCounterFrom\ (n+1)\ )}. If you give it \texttt{Just\ m}, it'll give you
 \texttt{(\ m,\ settableCounterFrom\ (m+1)\ )}.
 
 Cool, let's try it out.
@@ -662,18 +616,15 @@ Cool, let's try it out.
 
 And there ya go.
 
-\subsubsection{Automatic traversals for our
-Autos}\label{automatic-traversals-for-our-autos}
+\subsubsection{Automatic traversals for our Autos}\label{automatic-traversals-for-our-autos}
 
-Again, the manual pattern matching is a little tedious so let's write us
-a function to automate ``progressing'' down an Auto.
+Again, the manual pattern matching is a little tedious so let's write us a function to automate
+``progressing'' down an Auto.
 
-Like our \texttt{testStream}, \texttt{testAuto} takes an Auto. But
-because every ``step'' needs an input, \texttt{testAuto\ auto} takes a
-\emph{list} that specifies the input for every step. \texttt{testAuto}
-returns the resulting collection of results, and also the modified Auto.
-\texttt{testAuto\_} throws away the new Auto and just gives us the
-collection.
+Like our \texttt{testStream}, \texttt{testAuto} takes an Auto. But because every ``step'' needs an
+input, \texttt{testAuto\ auto} takes a \emph{list} that specifies the input for every step.
+\texttt{testAuto} returns the resulting collection of results, and also the modified Auto.
+\texttt{testAuto\_} throws away the new Auto and just gives us the collection.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -700,49 +651,42 @@ Trying it out on \texttt{settableAuto}:
 
 \subsection{A Shift}\label{a-shift}
 
-Let's shift our thinking a bit. Instead of seeing Autos as ``streams you
-can influence'', we can think about them as ``functions with state''.
-That is, they are functions that carry self-contained encapsulated state
-\emph{inside} themselves. They are still \emph{functions} of some kind
---- you put in an ``input'' of type \texttt{a} and get in an ``output''
-(the head) of type \texttt{b}. However, every ``time'' you do this, you
-get a different output depending on what you have already passed in and
-what the internal state is. As we will see, this internal state is
-completely opaque to the world. The world only has access to the
-``output'', the result.
+Let's shift our thinking a bit. Instead of seeing Autos as ``streams you can influence'', we can
+think about them as ``functions with state''. That is, they are functions that carry self-contained
+encapsulated state \emph{inside} themselves. They are still \emph{functions} of some kind --- you
+put in an ``input'' of type \texttt{a} and get in an ``output'' (the head) of type \texttt{b}.
+However, every ``time'' you do this, you get a different output depending on what you have already
+passed in and what the internal state is. As we will see, this internal state is completely opaque
+to the world. The world only has access to the ``output'', the result.
 
-(Remember that, because we're in a functional language, nothing is
-technically actually really ``mutable''. When we say that we have a
-stateful function, we really mean that every time we ``call'' the
-function, we get back an ``updated'' function with the new state that
-behaves differently when ``called'').
+(Remember that, because we're in a functional language, nothing is technically actually really
+``mutable''. When we say that we have a stateful function, we really mean that every time we
+``call'' the function, we get back an ``updated'' function with the new state that behaves
+differently when ``called'').
 
 To put it in terms of \texttt{settableAuto}:
 
 \begin{itemize}
 \tightlist
 \item
-  The ``input'' of \texttt{settableAuto} is our \texttt{Maybe\ Int} by
-  which we specify to reset or allow to increment by one as normal.
+  The ``input'' of \texttt{settableAuto} is our \texttt{Maybe\ Int} by which we specify to reset or
+  allow to increment by one as normal.
 \item
-  The ``output'' of \texttt{settableAuto} is the ``head'' of the
-  \texttt{ACons} that is returned --- the \texttt{x}, \texttt{y}, etc.
-  It's the \texttt{Int}, the counter.
+  The ``output'' of \texttt{settableAuto} is the ``head'' of the \texttt{ACons} that is returned ---
+  the \texttt{x}, \texttt{y}, etc. It's the \texttt{Int}, the counter.
 \item
-  The ``state'' of \texttt{settableAuto} is, in essense, the \texttt{n}
-  of \texttt{settableCounterFrom\ n}. It's the internal value by which
-  the behavior is determined. The behavior of \texttt{runAuto} depends
-  on the \texttt{n} --- it either yields \texttt{n} itself and
+  The ``state'' of \texttt{settableAuto} is, in essense, the \texttt{n} of
+  \texttt{settableCounterFrom\ n}. It's the internal value by which the behavior is determined. The
+  behavior of \texttt{runAuto} depends on the \texttt{n} --- it either yields \texttt{n} itself and
   increments \texttt{n}, or ignores it.
 \end{itemize}
 
 \subsubsection{The opaque state}\label{the-opaque-state}
 
-It's a little tricky because the ``output'' and the ``state'' in our
-example function seem to be exactly the same (just like for
-\texttt{myStream}), but let's whip up a quick example where it's a
-little more obvious that the state and the output are different things,
-and that the state is completely opaque and encapsulated.
+It's a little tricky because the ``output'' and the ``state'' in our example function seem to be
+exactly the same (just like for \texttt{myStream}), but let's whip up a quick example where it's a
+little more obvious that the state and the output are different things, and that the state is
+completely opaque and encapsulated.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -756,10 +700,9 @@ and that the state is completely opaque and encapsulated.
 \end{Highlighting}
 \end{Shaded}
 
-So \texttt{isEvenAuto} is the same as \texttt{settableCounterFrom},
-except instead of ``yielding''/``outputting'' \texttt{n}, it outputs
-\texttt{even\ n} --- \texttt{True} if \texttt{n} is even and
-\texttt{False} if \texttt{n} is odd.
+So \texttt{isEvenAuto} is the same as \texttt{settableCounterFrom}, except instead of
+``yielding''/``outputting'' \texttt{n}, it outputs \texttt{even\ n} --- \texttt{True} if \texttt{n}
+is even and \texttt{False} if \texttt{n} is odd.
 
 Here is a demonstration of its behavior ---
 
@@ -770,71 +713,60 @@ Here is a demonstration of its behavior ---
 [False,True,True,False,True]
 \end{verbatim}
 
-Note that there is in general really no way to ever access the
-\texttt{n} internally. It is completely sealed off from the world,
-except by explicit design. Here, we choose to only ``offer'' a way to
-``set'' it using our input.
+Note that there is in general really no way to ever access the \texttt{n} internally. It is
+completely sealed off from the world, except by explicit design. Here, we choose to only ``offer'' a
+way to ``set'' it using our input.
 
-Now it the three distinct concepts --- the input, output, and state ---
-should be clear.
+Now it the three distinct concepts --- the input, output, and state --- should be clear.
 
 \begin{itemize}
 \tightlist
 \item
-  The ``input'' again is a \texttt{Maybe\ Int} where we can choose to
-  reset the march of the state.
+  The ``input'' again is a \texttt{Maybe\ Int} where we can choose to reset the march of the state.
 \item
-  The ``output'' here is now a \texttt{Bool} that says whether or not
-  the internal state is even.
+  The ``output'' here is now a \texttt{Bool} that says whether or not the internal state is even.
 \item
-  The ``state'' here is still that \texttt{n} (an \texttt{Int}), and was
-  the same as in the last example. But here it is more clear that the
-  state is inaccessible in general. We can only modify it in ways that
-  the Auto \emph{itself} allows our ``input'' (in this case, a setter)
-  to modify it. And we certainly can't arbitrarily ``read'' it.
+  The ``state'' here is still that \texttt{n} (an \texttt{Int}), and was the same as in the last
+  example. But here it is more clear that the state is inaccessible in general. We can only modify
+  it in ways that the Auto \emph{itself} allows our ``input'' (in this case, a setter) to modify it.
+  And we certainly can't arbitrarily ``read'' it.
 \end{itemize}
 
 \subsection{Autos are nice!}\label{autos-are-nice}
 
-It should be clear now that Autos are a more or less straightforward
-extension of Streams.
+It should be clear now that Autos are a more or less straightforward extension of Streams.
 
-In fact, you might see that every \texttt{Stream\ b} is equivalent to
-\texttt{Auto\ ()\ b}, where the input is always unit.
+In fact, you might see that every \texttt{Stream\ b} is equivalent to \texttt{Auto\ ()\ b}, where
+the input is always unit.
 
-Autos correspond loosely to the mathematical
-\href{http://en.wikipedia.org/wiki/Mealy_machine}{Mealy machine}, but
-again with technically potentially infinitely many possible states,
-input, and output values.
+Autos correspond loosely to the mathematical \href{http://en.wikipedia.org/wiki/Mealy_machine}{Mealy
+machine}, but again with technically potentially infinitely many possible states, input, and output
+values.
 
-Now, we have a way to model behaviors that can somehow interact with the
-outside world.
+Now, we have a way to model behaviors that can somehow interact with the outside world.
 
 \subsubsection{More on state}\label{more-on-state}
 
-Another short diversion with concerning state! As we have seen, Auto's
-carry all of the hidden-internal-state features of Streams. The type of
-an Auto (\texttt{Auto\ a\ b}) reveals the type of the ``input'' and the
-``ouput''\ldots{}but it never reveals nor fixes the type of the
-``state''. The type of the state is not only unknown, by possibly
-dynamically changing over the course of the Auto's progression.
+Another short diversion with concerning state! As we have seen, Auto's carry all of the
+hidden-internal-state features of Streams. The type of an Auto (\texttt{Auto\ a\ b}) reveals the
+type of the ``input'' and the ``ouput''\ldots{}but it never reveals nor fixes the type of the
+``state''. The type of the state is not only unknown, by possibly dynamically changing over the
+course of the Auto's progression.
 
-What Auto offers over Stream is then a way for the outside world to
-access and modify the state \emph{if the Auto wants it to}. Now, we can
-design Autos that, like we have seen with \texttt{settableAuto}, we can
-offer limited ways to allow the world to modify the state on our own
+What Auto offers over Stream is then a way for the outside world to access and modify the state
+\emph{if the Auto wants it to}. Now, we can design Autos that, like we have seen with
+\texttt{settableAuto}, we can offer limited ways to allow the world to modify the state on our own
 terms.
 
 \subsection{The Accumulator}\label{the-accumulator}
 
-Let's try our hand at another Auto, but instead of looking at things as
-an influencable and eternally marching stream, we're going to try to
-look at things as a function with state that affects its output.
+Let's try our hand at another Auto, but instead of looking at things as an influencable and
+eternally marching stream, we're going to try to look at things as a function with state that
+affects its output.
 
-How about an Auto that ``accumulates'' and ``sums up'' all of its
-incoming inputs, starting at 0? More correctly, an Auto that, given any
-int, ``returns'' the sum of that int with all of the previous ints it
-has received in its lifetime.
+How about an Auto that ``accumulates'' and ``sums up'' all of its incoming inputs, starting at 0?
+More correctly, an Auto that, given any int, ``returns'' the sum of that int with all of the
+previous ints it has received in its lifetime.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -868,14 +800,12 @@ has received in its lifetime.
 \item
   The ``output'' is the accumulated sum/integral -- 10, 13, 28, 11, etc.
 \item
-  The ``state'' in this case is the accumulator, which in this case
-  stays in sync with the output. But remember that this is not the case
-  in general.
+  The ``state'' in this case is the accumulator, which in this case stays in sync with the output.
+  But remember that this is not the case in general.
 \end{itemize}
 
-Just for kicks, let's generalize this and make an Auto version of
-\texttt{foldl}: give us an operator and an initial value, and we'll
-``fold up'' all of our inputs.
+Just for kicks, let's generalize this and make an Auto version of \texttt{foldl}: give us an
+operator and an initial value, and we'll ``fold up'' all of our inputs.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -890,17 +820,15 @@ Just for kicks, let's generalize this and make an Auto version of
 \end{Shaded}
 
 (the \texttt{forall} is used with the
-\href{http://www.haskell.org/haskellwiki/Scoped_type_variables}{Scoped
-Type Variables} extension to let us say that the \texttt{b} we mention
-in the type of \texttt{foldFrom} is the same as the \texttt{b} in the
-type of \texttt{autoFold}. If we leave off the type signature of
+\href{http://www.haskell.org/haskellwiki/Scoped_type_variables}{Scoped Type Variables} extension to
+let us say that the \texttt{b} we mention in the type of \texttt{foldFrom} is the same as the
+\texttt{b} in the type of \texttt{autoFold}. If we leave off the type signature of
 \texttt{foldFrom}, this is not necessary)
 
 Note that \texttt{summer} then is just \texttt{autoFold\ (+)\ 0}.
 
-You can probably imagine lots of different folds you can turn into
-\texttt{autoFold}s\ldots{}and indeed a lot of practical Autos are just
-\texttt{autoFold}s. Here are some cute ones:
+You can probably imagine lots of different folds you can turn into \texttt{autoFold}s\ldots{}and
+indeed a lot of practical Autos are just \texttt{autoFold}s. Here are some cute ones:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -920,11 +848,10 @@ You can probably imagine lots of different folds you can turn into
 
 Cool, huh?
 
-\subsubsection{Parallels with list
-folds}\label{parallels-with-list-folds}
+\subsubsection{Parallels with list folds}\label{parallels-with-list-folds}
 
-Let's look very carefully at a comparison between the type signature of
-Prelude's \texttt{foldl} and the type signature of \texttt{autoFold}:
+Let's look very carefully at a comparison between the type signature of Prelude's \texttt{foldl} and
+the type signature of \texttt{autoFold}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -933,9 +860,8 @@ Prelude's \texttt{foldl} and the type signature of \texttt{autoFold}:
 \end{Highlighting}
 \end{Shaded}
 
-Hm. Let's do some rearranging. Remember that in Haskell,
-\texttt{(-\textgreater{})} is just an infix type operator. So we can
-always rewrite \texttt{a\ -\textgreater{}\ b} as
+Hm. Let's do some rearranging. Remember that in Haskell, \texttt{(-\textgreater{})} is just an infix
+type operator. So we can always rewrite \texttt{a\ -\textgreater{}\ b} as
 \texttt{(-\textgreater{})\ a\ b}
 
 \begin{Shaded}
@@ -954,33 +880,26 @@ Let's get rid of some of the points, too:
 \end{Highlighting}
 \end{Shaded}
 
-So both \texttt{foldl} and \texttt{autoFold} have very similar
-behaviors:
+So both \texttt{foldl} and \texttt{autoFold} have very similar behaviors:
 
-Give \texttt{foldl} or \texttt{autoFold} an \emph{accumulating function}
-and an \emph{initial value}, and they return \emph{a new ``function
-thing''}.
+Give \texttt{foldl} or \texttt{autoFold} an \emph{accumulating function} and an \emph{initial
+value}, and they return \emph{a new ``function thing''}.
 
-For \texttt{foldl\ op\ initial}, this ``function thing'' takes a
-\emph{list} of \texttt{a} values and condenses them into a \texttt{b}
-value.
+For \texttt{foldl\ op\ initial}, this ``function thing'' takes a \emph{list} of \texttt{a} values
+and condenses them into a \texttt{b} value.
 
-For \texttt{autoFold\ op\ initial}, the ``function thing'' takes
-\emph{one} \texttt{a} value and returns a \texttt{b} value based on the
-previous \texttt{a}'s it has seen.
+For \texttt{autoFold\ op\ initial}, the ``function thing'' takes \emph{one} \texttt{a} value and
+returns a \texttt{b} value based on the previous \texttt{a}'s it has seen.
 
-The main point here is that \texttt{autoFold} is a sort of ``function''
-in a way\ldots{}just like the others before it. It's
-a\ldots{}.``function-like thing''.
+The main point here is that \texttt{autoFold} is a sort of ``function'' in a way\ldots{}just like
+the others before it. It's a\ldots{}.``function-like thing''.
 
 \subparagraph{Aside}\label{aside}
 
-Here is a quick diversion, if you're up for it. This doesn't really have
-too much to do with the rest of the post, but it'll help you test your
-intuition a bit with Autos.
+Here is a quick diversion, if you're up for it. This doesn't really have too much to do with the
+rest of the post, but it'll help you test your intuition a bit with Autos.
 
-As an exercise, compare (and contrast) these three functions of
-identical type signatures:
+As an exercise, compare (and contrast) these three functions of identical type signatures:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -990,18 +909,16 @@ identical type signatures:
 \end{Highlighting}
 \end{Shaded}
 
-(Assume that \texttt{scanl} does not include the initial
-accumulator\ldots{}that is, we are really talking about
-\texttt{drop\ 1\ .\ scanl\ op\ init})
+(Assume that \texttt{scanl} does not include the initial accumulator\ldots{}that is, we are really
+talking about \texttt{drop\ 1\ .\ scanl\ op\ init})
 
-Compare what they do conceptually. Then, for fun, try implementing some
-of them in terms of the other. Which re-implementations are possible?
-Which ones arent?
+Compare what they do conceptually. Then, for fun, try implementing some of them in terms of the
+other. Which re-implementations are possible? Which ones arent?
 
 \subsection{More Auto examples}\label{more-auto-examples}
 
-Here is an Auto that outputs a rolling average of the values it
-accumulates, with a given window size.
+Here is an Auto that outputs a rolling average of the values it accumulates, with a given window
+size.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1028,9 +945,8 @@ accumulates, with a given window size.
 \end{Highlighting}
 \end{Shaded}
 
-Here is an Auto that is always \texttt{False}\ldots{}except whenever it
-receives a signal matching a given predicate (if it is ``triggered''),
-it remains \texttt{True} for a specified amount of time.
+Here is an Auto that is always \texttt{False}\ldots{}except whenever it receives a signal matching a
+given predicate (if it is ``triggered''), it remains \texttt{True} for a specified amount of time.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1068,15 +984,12 @@ it remains \texttt{True} for a specified amount of time.
 \end{Highlighting}
 \end{Shaded}
 
-Here is an auto that keeps a Map as its state, and takes as input a data
-type
-\texttt{data\ Command\ k\ v\ =\ Insert\ k\ v\ \textbar{}\ Lookup\ k\ \textbar{}\ Delete\ k}
-allows you to either insert, lookup, or delete an item. However, the map
-has a ``maximum size''. If you insert past the maximum size, the insert
-will fail and you'll receive a \texttt{Nothing}. Otherwise, you'll
-receive a \texttt{Just\ val} with the value you just inserted.
-Successful lookups will return \texttt{Just\ val}, or \texttt{Nothing}
-on a failure. Same for deletions.
+Here is an auto that keeps a Map as its state, and takes as input a data type
+\texttt{data\ Command\ k\ v\ =\ Insert\ k\ v\ \textbar{}\ Lookup\ k\ \textbar{}\ Delete\ k} allows
+you to either insert, lookup, or delete an item. However, the map has a ``maximum size''. If you
+insert past the maximum size, the insert will fail and you'll receive a \texttt{Nothing}. Otherwise,
+you'll receive a \texttt{Just\ val} with the value you just inserted. Successful lookups will return
+\texttt{Just\ val}, or \texttt{Nothing} on a failure. Same for deletions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1127,16 +1040,14 @@ on a failure. Same for deletions.
 \end{Highlighting}
 \end{Shaded}
 
-The main thing to note here is that you get to completely encapsulate
-your ``state'', and allow it only to be ``modified'' or ``viewed'' under
-your own terms. In OOP terms, it is like exposing only a few public
-methods to modify your private state with discrimination. If you were
-passed an \texttt{autoMap} with items already inside, you would have no
-way to have full ``access'' to the map --- you would never be able to
-perform general operations (such as getting a list of all of the keys).
+The main thing to note here is that you get to completely encapsulate your ``state'', and allow it
+only to be ``modified'' or ``viewed'' under your own terms. In OOP terms, it is like exposing only a
+few public methods to modify your private state with discrimination. If you were passed an
+\texttt{autoMap} with items already inside, you would have no way to have full ``access'' to the map
+--- you would never be able to perform general operations (such as getting a list of all of the
+keys).
 
-\section{\texorpdfstring{``Function
-Things''}{Function Things}}\label{function-things}
+\section{\texorpdfstring{``Function Things''}{Function Things}}\label{function-things}
 
 Anyways, back to our main point of emphasis:
 
@@ -1144,16 +1055,14 @@ Anyways, back to our main point of emphasis:
 
 They are functions\ldots{}with state.
 
-Let's do an analysis for \texttt{isEvenAuto} like the one we did with
-\texttt{foldAuto}. Our ``input'' was a \texttt{Maybe\ Int} and our
-``output'' was a \texttt{Bool}.
+Let's do an analysis for \texttt{isEvenAuto} like the one we did with \texttt{foldAuto}. Our
+``input'' was a \texttt{Maybe\ Int} and our ``output'' was a \texttt{Bool}.
 
-You can think of \texttt{isEvenAuto} as a ``function thing'' from
-\texttt{Maybe\ Int} to \texttt{Bool}.
+You can think of \texttt{isEvenAuto} as a ``function thing'' from \texttt{Maybe\ Int} to
+\texttt{Bool}.
 
-Here's another function from \texttt{Maybe\ Int} to \texttt{Bool}: (I'm
-going to be using the prefix form of \texttt{(-\textgreater{})} a lot
-now for the ``final'' return functions)
+Here's another function from \texttt{Maybe\ Int} to \texttt{Bool}: (I'm going to be using the prefix
+form of \texttt{(-\textgreater{})} a lot now for the ``final'' return functions)
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1162,9 +1071,8 @@ now for the ``final'' return functions)
 \end{Highlighting}
 \end{Shaded}
 
-\texttt{maybeIsEven} returns \texttt{True} when value inside the
-\texttt{Just} is even, or \texttt{False} if the value is odd or it's a
-\texttt{Nothing}.
+\texttt{maybeIsEven} returns \texttt{True} when value inside the \texttt{Just} is even, or
+\texttt{False} if the value is odd or it's a \texttt{Nothing}.
 
 Compare that type signature to that of our \texttt{isEvenAuto}
 
@@ -1175,45 +1083,35 @@ Compare that type signature to that of our \texttt{isEvenAuto}
 \end{Highlighting}
 \end{Shaded}
 
-\texttt{maybeIsEven} and \texttt{isEvenAuto} are \emph{both}
-``function-like things''. But whereas \texttt{maybeIsEven} is
-``memoryless'' (it's the same every time you call it),
-\texttt{isEvenAuto} \emph{has memory} --- it returns a different Boolean
-based on its history.
+\texttt{maybeIsEven} and \texttt{isEvenAuto} are \emph{both} ``function-like things''. But whereas
+\texttt{maybeIsEven} is ``memoryless'' (it's the same every time you call it), \texttt{isEvenAuto}
+\emph{has memory} --- it returns a different Boolean based on its history.
 
-Contrast this with a Stream, which as we have seen is just an
-\texttt{Auto\ ()\ b}. Streams are then ``function like things'' analgous
-to some \texttt{(-\textgreater{})\ ()\ b}, or
-\texttt{()\ -\textgreater{}\ b}. We can call functions like
-\texttt{()\ -\textgreater{}\ b} ``constants'', or ``producers''. They
-are the same every time you call them. Streams, however, ``return'' a
-potentially different \texttt{b} value every time they are ``called''.
-So, just like an Auto is a ``function'' that has memory, a Stream is
-like a \emph{constant} that has memory. A stateful generator. A
-``constant'' that returns something different every time you ask for it.
+Contrast this with a Stream, which as we have seen is just an \texttt{Auto\ ()\ b}. Streams are then
+``function like things'' analgous to some \texttt{(-\textgreater{})\ ()\ b}, or
+\texttt{()\ -\textgreater{}\ b}. We can call functions like \texttt{()\ -\textgreater{}\ b}
+``constants'', or ``producers''. They are the same every time you call them. Streams, however,
+``return'' a potentially different \texttt{b} value every time they are ``called''. So, just like an
+Auto is a ``function'' that has memory, a Stream is like a \emph{constant} that has memory. A
+stateful generator. A ``constant'' that returns something different every time you ask for it.
 
-You should be able to guess that, after vaguely using the phrase
-``function things'' several times\ldots{}I'm going to surprise you all
-with the revelation that these ``function things'' have a name! And
-maybe even\ldots{}a typeclass?
+You should be able to guess that, after vaguely using the phrase ``function things'' several
+times\ldots{}I'm going to surprise you all with the revelation that these ``function things'' have a
+name! And maybe even\ldots{}a typeclass?
 
 \section{Onward}\label{onward}
 
-So far we haven't really made too convincing of an argument for the
-advantages of using machines (like Auto and the related Wire). Yeah,
-they provide encapsulation and a changing state\ldots{}but these things
-come for free in most good Object-Oriented Programming languages. So
-what gives?
+So far we haven't really made too convincing of an argument for the advantages of using machines
+(like Auto and the related Wire). Yeah, they provide encapsulation and a changing state\ldots{}but
+these things come for free in most good Object-Oriented Programming languages. So what gives?
 
-As it turns out, as we suggested before, Autos are much more
-``composable'' than the objects of OOP. That is because, at their heart,
-they are just functions. And what do functions do best? They compose!
-Complex object built seamlessly from simpler ones.
+As it turns out, as we suggested before, Autos are much more ``composable'' than the objects of OOP.
+That is because, at their heart, they are just functions. And what do functions do best? They
+compose! Complex object built seamlessly from simpler ones.
 
-Now, I haven't really been able to back this up so far. But in the next
-post, as we explore more the function-like nature of these things, we
-will be able to witness the full power of machine composition. And we'll
-even be able to re-implement \emph{many} of the complex machines of this
-post with compositions of smaller, simpler Autos.
+Now, I haven't really been able to back this up so far. But in the next post, as we explore more the
+function-like nature of these things, we will be able to witness the full power of machine
+composition. And we'll even be able to re-implement \emph{many} of the complex machines of this post
+with compositions of smaller, simpler Autos.
 
 \end{document}
