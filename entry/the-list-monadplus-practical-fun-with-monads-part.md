@@ -1,8 +1,9 @@
 The List MonadPlus — Practical Fun with Monads (Part 2 of 3)
 ============================================================
 
-(Posted by Justin Le on December 18, 2013 <http://home.jle0.com:4111/entry/the-list-monadplus-practical-fun-with-monads-part.html> )
+(Posted by Justin Le on December 18, 2013)
 
+[Read online](http://home.jle0.com:4111/entry/the-list-monadplus-practical-fun-with-monads-part.html)
 Part two of an exploration of a very useful design pattern in Haskell
 known as MonadPlus, a part of an effort to make “practical” monads less
 of a mystery and fun to the good peoples of this earth.

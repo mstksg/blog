@@ -1,8 +1,9 @@
 The Hamster Hotel: An Introduction to Control Theory (Part 2)
 =============================================================
 
-(Posted by Justin Le on October 1, 2013 <http://home.jle0.com:4111/entry/the-hamster-hotel-an-introduction-to-control-theory-2.html> )
+(Posted by Justin Le on October 1, 2013)
 
+[Read online](http://home.jle0.com:4111/entry/the-hamster-hotel-an-introduction-to-control-theory-2.html)
 As we left it off in [part
 1](/entry/the-hamster-hotel-an-introduction-to-control-theory), our
 elevator is still in trouble. You have an elevator for your humble hotel

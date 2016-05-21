@@ -1,8 +1,9 @@
 Fun With MonadPlus: The Success/Failure Monads
 ==============================================
 
-(Posted by Justin Le <http://home.jle0.com:4111/entry/ident/list-monad.html> )
+(Posted by Justin Le)
 
+[Read online](http://home.jle0.com:4111/entry/ident/list-monad.html)
 Monads. Haskell’s famous for them, but they are one of the most
 ill-understood concepts to the public. They are mostly shrouded in
 mystery because of their association with how Haskell models I/O. This
