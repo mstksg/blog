@@ -14,13 +14,13 @@ ga('send', 'pageview');
  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=645245675494525";
  fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-</script></div><div id="header-container"><div id="navbar-container" class="tile"><nav id="navbar-content"><div class="nav-info"><h1 class="site-title"><a href="http://home.jle0.com:4111/" class="nav-title">in Code</a></h1><span class="nav-author">Justin Le</span></div><ul class="nav-links"><li><a href="http://home.jle0.com:4111/">home</a></li><li><a href="http://home.jle0.com:4111/entries.html">archives</a></li><div class="clear"></div></ul></nav></div><div id="header-content"></div></div><div id="body-container" class="container"><div id="main-container" class="grid"><div class="entry-section unit span-grid" role="main"><article class="tile article"><header><h1 id="title">Inside My World (Ode to Functor and Monad)</h1><p class="entry-info">by <a class="author" href="http://home.jle0.com:4111/">Justin Le</a><span class="info-separator"> &diams; </span><time datetime="2014-05-19T09:46:22Z" pubdate="" class="pubdate">Monday May 19, 2014</time></p><p><span class="source-info"><a class="source-link" href="https://github.com/mstksg/blog/tree/develop/copy/entries/inside.md">Source</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/inside-my-world-ode-to-functor-and-monad.md">Markdown</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/inside-my-world-ode-to-functor-and-monad.tex">LaTeX</a><span class="info-separator"> &diams; </span></span>Posted in <a href="http://home.jle0.com:4111/entries/category/@haskell.html" class="tag-a-category" title="Functional, pure, non-strict, statically and strongly typed, natively
+</script></div><div id="header-container"><div id="navbar-container" class="tile"><nav id="navbar-content"><div class="nav-info"><h1 class="site-title"><a href="http://home.jle0.com:4111/" class="nav-title">in Code</a></h1><span class="nav-author">Justin Le</span></div><ul class="nav-links"><li><a href="http://home.jle0.com:4111/">home</a></li><li><a href="http://home.jle0.com:4111/entries.html">archives</a></li><div class="clear"></div></ul></nav></div><div id="header-content"></div></div><div id="body-container" class="container"><div id="main-container" class="grid"><div class="entry-section unit span-grid" role="main"><article class="tile article"><header><h1 id="title">Inside My World (Ode to Functor and Monad)</h1><p class="entry-info">by <a class="author" href="http://home.jle0.com:4111/">Justin Le</a><span class="info-separator"> &diams; </span><time datetime="2014-05-19T09:46:22Z" pubdate="" class="pubdate">Monday May 19, 2014</time></p><p><span class="source-info"><a class="source-link" href="http://home.jle0.com:4111/entry/inside-my-world-ode-to-functor-and-monad.md">Markdown</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/inside-my-world-ode-to-functor-and-monad.tex">LaTeX</a><span class="info-separator"> &diams; </span></span>Posted in <a href="http://home.jle0.com:4111/entries/category/@haskell.html" class="tag-a-category" title="Functional, pure, non-strict, statically and strongly typed, natively
 compiled…really just the king of great languages.">Haskell</a>, <a href="http://home.jle0.com:4111/entries/category/@ramblings.html" class="tag-a-category" title="My slight ramblings on subjects of interest (to me and hopefully to you
 too!). Lots of surveys and introducts to new subjects.">Ramblings</a><span class="info-separator"> &diams; </span><a class="comment-link" href="#disqus_thread">Comments</a></p></header><hr><aside class="contents-container"><h5 id="contents-header">Contents</h5><div id="toc"></div></aside><div class="main-content copy-content"><p>I like Haskell because it lets me live inside my world.</p>
 <p>There are a lot of special worlds out there! And Haskell lets me stay in those worlds, and use all of the tools I normally have when I’m not there. I get to transform normal tools into tools that work in my world.</p>
 <p>(This post is meant to be approachable by people unfamiliar with Haskell! That being said, if there is a concept you don’t understand, feel free to leave a comment, <a href="https://twitter.com/mstk">tweet</a> me, stop by on irc at freenode’s #haskell, or give <a href="http://learnyouahaskell.com/">Learn You a Haskell</a> a quick read!)</p>
 <h2 id="stuck-in-maybe">Stuck in Maybe</h2>
-<p>(Feel free to play along with the code in this section by <a href="https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs">loading it into ghci</a>, the Haskell interpreter!)</p>
+<p>(Feel free to play along with the code in this section by <a href="/not-found">loading it into ghci</a>, the Haskell interpreter!)</p>
 <p>In Haskell, we have a type called <code>Maybe a</code>:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a</code></pre></div>
 <p>This says that <code>Maybe a</code> is like an Enumerable type of sorts; The <code>|</code> reads like “<em>or</em>”.</p>
@@ -29,8 +29,7 @@ too!). Lots of surveys and introducts to new subjects.">Ramblings</a><span class
 <p>to define a <code>Bool</code> data type. If I have something of type <code>Bool</code>, it can be (literally) <code>False</code> or <code>True</code>. If I have something of type <code>Maybe a</code>, it can be <code>Nothing</code> (nothing is there, it’s empty) or <code>Just x</code> (it contains a value <code>x</code>).</p>
 <p>If you are used to an OOP language with templates or generics, this is similar to saying <code>Maybe&lt;a&gt;</code> – <code>Maybe&lt;a&gt;</code> is a parameterized type over some <code>a</code>.</p>
 <p>This type is useful for functions that might fail:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L23-41</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="co">-- divideMaybe: Takes two integers and returns -- possibly -- their integer</span>
 <span class="co">--      quotient. It succeeds if the denominator is not zero, and fails if</span>
 <span class="co">--      it is.</span>
@@ -67,8 +66,7 @@ foo x <span class="fu">=</span> <span class="fu">...</span></code></pre></div>
 <h3 id="the-problem">The Problem</h3>
 <p>Okay, well, I have a <code>Maybe Int</code>. Which is nice and all…but…I want to do normal inty-things with it.</p>
 <p>That is…I have all these functions that work only on <code>Int</code>!</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L43-50</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">addThree ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 addThree <span class="fu">=</span> (<span class="fu">+</span> <span class="dv">3</span>)
 
@@ -91,8 +89,7 @@ showInt <span class="fu">=</span> show</code></pre></div>
 </div>
 <p>In most other languages, to get around this, you would “exit” your uncertain world. That is, you would turn your uncertain 5 into either a certain 5 or an error. Or you would turn your uncertain 5 into either a certain 5 or some “default” value.</p>
 <p>That is, you would use functions like these to exit your world:<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L76-82</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">certaintify ::</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> a
 certaintify (<span class="dt">Just</span> x) <span class="fu">=</span> x
 certaintify <span class="dt">Nothing</span>  <span class="fu">=</span> error <span class="st">&quot;Nothing was there, you fool!&quot;</span>
@@ -122,8 +119,7 @@ ghci<span class="fu">&gt;</span> square (certaintifyWithDefault <span class="dv"
 <p>If you look at this carefully, we want some sort of “function transformer”. Give our transformer an <code>a -&gt; b</code>, it’ll output a new function <code>Maybe a -&gt; Maybe b</code>. The new function takes an <code>a</code> that may or may not be there, and outputs a <code>b</code> that may or not be there.</p>
 <p>We want a function of type <code>(a -&gt; b) -&gt; (Maybe a -&gt; Maybe b)</code></p>
 <p>Let’s make one! It’ll apply the function to the value inside a <code>Just</code>, and leave a <code>Nothing</code> alone.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L84-88</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">inMaybe ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (<span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b)
 inMaybe f <span class="fu">=</span> liftedF
   <span class="kw">where</span>
@@ -142,8 +138,7 @@ ghci<span class="fu">&gt;</span> (inMaybe showInt) <span class="dt">Nothing</spa
 ghci<span class="fu">&gt;</span> (inMaybe showInt) (<span class="dt">Just</span> <span class="dv">8</span>)
 <span class="dt">Just</span> <span class="st">&quot;8&quot;</span></code></pre></div>
 <p>Wow! We can now use normal functions and still stay inside my uncertain world. We could even write our <code>ageFromId</code>:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L68-69</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">ageFromId ::</span> <span class="dt">ID</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Int</span>
 ageFromId i <span class="fu">=</span> (inMaybe age) (personFromId i)</code></pre></div>
 <p>Now we are no longer afraid of dealing with uncertainty. It’s a scary realm, but as long as we have <code>inMaybe</code>…all of our normal tools apply!</p>
@@ -220,8 +215,7 @@ fmap<span class="ot"> halveMaybe ::</span> <span class="dt">Maybe</span> <span c
 <p>If we want to apply <code>halveMaybe</code> to a number that isn’t there…well…it should also return a number that isn’t there. It should propagate the not-thereness.</p>
 <p>If we want to apply <code>halveMaybe</code> to a number that <em>is</em> there…well, just apply it to that number, and take that result! If the result is there, then you have a result there. If the result is not there, then you don’t.</p>
 <p>We have enough to write this out ourselves:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L90-94</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">liftInput ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b) <span class="ot">-&gt;</span> (<span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b)
 liftInput f <span class="fu">=</span> liftedF
   <span class="kw">where</span>
@@ -236,8 +230,7 @@ ghci<span class="fu">&gt;</span> <span class="kw">let</span> y <span class="fu">
 ghci<span class="fu">&gt;</span> (liftInput halveMaybe) y
 <span class="dt">Nothing</span></code></pre></div>
 <p>Neat! Now we don’t have to fear <code>a -&gt; Maybe b</code>’s…we can use them and <em>still stay in our world</em>, without leaving our world of uncertainty!</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L71-72</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">halfOfAge ::</span> <span class="dt">ID</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Int</span>
 halfOfAge i <span class="fu">=</span> (liftInput halveMaybe) (ageFromId i)</code></pre></div>
 <h3 id="monad">Monad</h3>
@@ -309,10 +302,9 @@ ghci<span class="fu">&gt;</span> <span class="dt">Just</span> <span class="dv">8
 </div>
 <p>Anyways, here is a whirlwind tour of different worlds, to help you realize how often you’ll actually want to live in these worlds in Haskell, and why having <code>fmap</code> and <code>(=&lt;&lt;)</code> are so useful!</p>
 <h3 id="the-world-of-future-values">The world of future values</h3>
-<p>(Play along with this section too by <a href="https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs">loading the source</a>!)</p>
+<p>(Play along with this section too by <a href="/not-found">loading the source</a>!)</p>
 <p>In Haskell, we have a <code>Reader r</code> world. You can think of <code>(Reader r) a</code> as a little machine that “waits” for something of type <code>r</code>, then <em>uses</em> it to (purely) make an <code>a</code>. The <code>a</code> doesn’t exist yet; it’s a future <code>a</code> that will exist as soon as you give it an <code>r</code>.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs#L17-27</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="co">-- futureLength: A future `Int` that will be the length of whatever the</span>
 <span class="co">--      list it is waiting for will be.</span>
 <span class="ot">futureLength ::</span> (<span class="dt">Reader</span> [a]) <span class="dt">Int</span>
@@ -344,8 +336,7 @@ ghci<span class="fu">&gt;</span> runReader futureOdd <span class="dv">5</span>
 <p>Let’s say I have a future <code>Int</code>. Say, <code>futureLength</code>, waiting on an <code>[a]</code>. And I have a function <code>(&lt; 5) :: Int -&gt; Bool</code>. Can I apply <code>(&lt; 5)</code> to my future <code>Int</code>, in order to get a future <code>Bool</code>?</p>
 <p>At first, no! This future <code>Int</code> is useless! I can’t even use it in <em>any</em> of my normal functions! Time to reach for the exit button?</p>
 <p>Oh — but, because <code>Reader [a]</code> is a Functor, I can use <code>fmap</code> to turn <code>(&lt; 5) :: Int -&gt; Bool</code> into <code>fmap (&lt; 5) :: (Reader [a]) Int -&gt; (Reader [a]) Bool</code>!</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs#L34-38</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">futureShorterThan ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Reader</span> [a]) <span class="dt">Bool</span>
 futureShorterThan n <span class="fu">=</span> fmap (<span class="fu">&lt;</span> n) futureLength
 
@@ -362,8 +353,7 @@ ghci<span class="fu">&gt;</span> runReader (futureShorterThan <span class="dv">3
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">futureShorterThan       ::</span> <span class="dt">Int</span>              <span class="ot">-&gt;</span> (<span class="dt">Reader</span> [a]) <span class="dt">Bool</span>
 (<span class="fu">=&lt;&lt;</span>)<span class="ot"> futureShorterThan ::</span> (<span class="dt">Reader</span> [a]) <span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Reader</span> [a]) <span class="dt">Bool</span></code></pre></div>
 <p>Hm. Let’s try this out on a future <code>Int</code> we have…we can use <code>futureHead :: (Reader [Int]) Int</code>.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs#L40-41</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">futureShorterThanHead ::</span> (<span class="dt">Reader</span> [<span class="dt">Int</span>]) <span class="dt">Bool</span>
 futureShorterThanHead <span class="fu">=</span> futureShorterThan <span class="fu">=&lt;&lt;</span> futureHead</code></pre></div>
 <p>So, we are applying <code>futureShorterThan</code> to the <code>Int</code> we got from <code>futureHead</code>. And so we get a future <code>Bool</code> that tells us if that future <code>Int</code> we got from the input list is shorter than the input list.</p>
@@ -377,7 +367,7 @@ ghci<span class="fu">&gt;</span> runReader futureShorterThanHead [<span class="d
 <p>But now, we <em>don’t have to be scared of future values</em>. We can work with them just as well as if they were normal values, and “leave” them as futures the entire time, without ever forcing them until when we really need to, and only force them <em>once</em>.</p>
 <p>Who said futures were complicated, anyway?</p>
 <h3 id="the-world-of-io">The world of “IO”</h3>
-<p>(The source code for this section is <a href="https://github.com/mstksg/blog/tree/develop/code-samples/inside/io.hs">also available online</a> for you to play with!)</p>
+<p>(The source code for this section is <a href="/not-found">also available online</a> for you to play with!)</p>
 <p>And now we go into the most infamous of Haskell worlds, <code>IO</code>.</p>
 <p><code>IO</code> is “kind of like” our <code>Reader r</code> world — an <code>IO Int</code> is an <code>Int</code> that <em>doesn’t yet exist</em>…but that will be computed by a CPU/computer <em>when a CPU executes it</em>.</p>
 <p>In this sense, an <code>IO Int</code> is kind of like a little packet of Assembly or C code — it contains instructions (assembly commands, machine language) for a computer to do this and that and eventually produce an <code>Int</code>. An <code>IO String</code> could, for example, be a little packet of C code that reads a file and outputs the contents of that file. The <code>String</code> doesn’t exist yet — but it will, once the computer executes those commands.</p>
@@ -392,8 +382,7 @@ fmap length<span class="ot"> getLine ::</span> <span class="dt">IO</span> <span 
 <p>Neat!</p>
 <p>We had a function that only worked on <code>String</code>, but we made it work the “future/promised” <code>String</code> of <code>IO String</code></p>
 <p>Let’s look at a function returning an IO action <code>wc</code>, which takes a filename and returns a program that, when executed, promises an <code>Int</code> — the number of lines in that file.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/io.hs#L19-19</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world</span>
 <span class="ot">wc ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Int</span></code></pre></div>
 <p>So <code>wc &quot;file.txt&quot;</code> would evaluate to a computation that, when executed by a computer, produces an <code>Int</code> (by loading the file from disk using system calls, reading it, and counting the lines).</p>
 <p><code>wc</code> is a function that takes a (non-future, normal) <code>String</code>.</p>

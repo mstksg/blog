@@ -14,14 +14,13 @@ ga('send', 'pageview');
  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=645245675494525";
  fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
-</script></div><div id="header-container"><div id="navbar-container" class="tile"><nav id="navbar-content"><div class="nav-info"><h1 class="site-title"><a href="http://home.jle0.com:4111/" class="nav-title">in Code</a></h1><span class="nav-author">Justin Le</span></div><ul class="nav-links"><li><a href="http://home.jle0.com:4111/">home</a></li><li><a href="http://home.jle0.com:4111/entries.html">archives</a></li><div class="clear"></div></ul></nav></div><div id="header-content"></div></div><div id="body-container" class="container"><div id="main-container" class="grid"><div class="entry-section unit span-grid" role="main"><article class="tile article"><header><h1 id="title">Blog engine updates: Markdown Preprocessor &amp; Fay Scripts</h1><p class="entry-info">by <a class="author" href="http://home.jle0.com:4111/">Justin Le</a><span class="info-separator"> &diams; </span><time datetime="2014-01-27T01:03:38Z" pubdate="" class="pubdate">Monday January 27, 2014</time></p><p><span class="source-info"><a class="source-link" href="https://github.com/mstksg/blog/tree/develop/copy/entries/blog-pp-fay.md">Source</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/blog-engine-updates-markdown-preprocessor-fay-scripts.md">Markdown</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/blog-engine-updates-markdown-preprocessor-fay-scripts.tex">LaTeX</a><span class="info-separator"> &diams; </span></span>Posted in <a href="http://home.jle0.com:4111/entries/category/@haskell.html" class="tag-a-category" title="Functional, pure, non-strict, statically and strongly typed, natively
+</script></div><div id="header-container"><div id="navbar-container" class="tile"><nav id="navbar-content"><div class="nav-info"><h1 class="site-title"><a href="http://home.jle0.com:4111/" class="nav-title">in Code</a></h1><span class="nav-author">Justin Le</span></div><ul class="nav-links"><li><a href="http://home.jle0.com:4111/">home</a></li><li><a href="http://home.jle0.com:4111/entries.html">archives</a></li><div class="clear"></div></ul></nav></div><div id="header-content"></div></div><div id="body-container" class="container"><div id="main-container" class="grid"><div class="entry-section unit span-grid" role="main"><article class="tile article"><header><h1 id="title">Blog engine updates: Markdown Preprocessor &amp; Fay Scripts</h1><p class="entry-info">by <a class="author" href="http://home.jle0.com:4111/">Justin Le</a><span class="info-separator"> &diams; </span><time datetime="2014-01-27T01:03:38Z" pubdate="" class="pubdate">Monday January 27, 2014</time></p><p><span class="source-info"><a class="source-link" href="http://home.jle0.com:4111/entry/blog-engine-updates-markdown-preprocessor-fay-scripts.md">Markdown</a><span class="info-separator"> &diams; </span><a class="source-link" href="http://home.jle0.com:4111/entry/blog-engine-updates-markdown-preprocessor-fay-scripts.tex">LaTeX</a><span class="info-separator"> &diams; </span></span>Posted in <a href="http://home.jle0.com:4111/entries/category/@haskell.html" class="tag-a-category" title="Functional, pure, non-strict, statically and strongly typed, natively
 compiled…really just the king of great languages.">Haskell</a>, <a href="http://home.jle0.com:4111/entries/category/@meta.html" class="tag-a-category" title="Posts about this blog or blogging in general. So meta.">Meta</a><span class="info-separator"> &diams; </span><a class="comment-link" href="#disqus_thread">Comments</a></p></header><hr><aside class="contents-container"><h5 id="contents-header">Contents</h5><div id="toc"></div></aside><div class="main-content copy-content"><p>I spent some time over the past week writing a preprocessor for the entry copy markdowns and getting Fay to deploy some simple scripts.</p>
 <p>The need for a preprocessor was sparked by a post I’m writing that sort of necessitated the features. I write <a href="https://github.com/mstksg/inCode/tree/master/copy/entries">all of my posts</a> in markdown, and it all integrated well with the preprocessor. In addition I needed some javascript scripting to make the preprocessor actions worthwhile, so I buckled down and wrestled with getting Fay to work in a production environment. So I guess this post is to show off some new features of the blog engine?</p>
 <p>Here it is in action:</p>
 <pre><code>&gt; !!!monad-plus/WolfGoatCabbage.hs &quot;makeMove ::&quot; &quot;moveLegal ::&quot; wolf-goat-cabbage</code></pre>
 <p>yields:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/monad-plus/WolfGoatCabbage.hs#L37-58</span>
-<span class="co">-- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage</span>
 <span class="ot">makeMove ::</span> <span class="dt">Plan</span> <span class="ot">-&gt;</span> [<span class="dt">Plan</span>]
 makeMove p <span class="fu">=</span> <span class="kw">do</span>
     next <span class="ot">&lt;-</span> <span class="dt">MoveThe</span> <span class="fu">&lt;$&gt;</span> [<span class="dt">Farmer</span> <span class="fu">..</span>]
@@ -45,8 +44,7 @@ moveLegal p (<span class="dt">MoveThe</span> c)       <span class="fu">=</span> 
 <p>Where “keyword” is the text in the line to match for, <code>n</code> is the number of lines after the keyword to display (if left off, it takes the next “block”, or the next continuous piece of code before a new non-indented line), and <code>live_link</code> is a link to the live/interactive version on FPComplete.</p>
 <h3 id="reflections">Reflections</h3>
 <p>So…writing the parser for the syntax specification was pretty easy due to parsec and parser combinators:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/EntryPP.hs#L32-127</span>
-<span class="kw">data</span> <span class="dt">SampleSpec</span> <span class="fu">=</span> <span class="dt">SampleSpec</span>  {<span class="ot"> sSpecFile       ::</span> FilePath
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">SampleSpec</span> <span class="fu">=</span> <span class="dt">SampleSpec</span>  {<span class="ot"> sSpecFile       ::</span> FilePath
                               , _<span class="ot">sSpecLive      ::</span> <span class="dt">Maybe</span> <span class="dt">String</span>
                               , _<span class="ot">sSpecKeywords  ::</span> [(<span class="dt">String</span>,<span class="dt">Maybe</span> <span class="dt">Int</span>)]
                               } <span class="kw">deriving</span> (<span class="dt">Show</span>)
@@ -79,8 +77,7 @@ sampleSpec <span class="fu">=</span> <span class="kw">do</span>
 <h3 id="reflections-1">Reflections</h3>
 <h4 id="fay-jquery">fay-jquery</h4>
 <p>Here is a characteristic example of fay code with fay-jquery (0.6.0.2):</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/entry.hs#L45-54</span>
-<span class="ot">appendTopLinks ::</span> <span class="dt">Fay</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">appendTopLinks ::</span> <span class="dt">Fay</span> ()
 appendTopLinks <span class="fu">=</span> <span class="kw">do</span>
   mainContent <span class="ot">&lt;-</span> select <span class="st">&quot;.main-content&quot;</span>
   headings <span class="ot">&lt;-</span> childrenMatching <span class="st">&quot;h2,h3,h4,h5&quot;</span> mainContent
@@ -105,8 +102,7 @@ container <span class="ot">`childrenMatching`</span> <span class="st">&quot;.con
   appendIt contained3</code></pre></div>
 <p>So I guess that’s okay.</p>
 <p>However, something I was less understanding of was the ordering for event binding, which needed the handlers <em>before</em> the object being binded.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/entry.hs#L112-119</span>
-<span class="ot">processCodeBlocks ::</span> <span class="dt">Fay</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">processCodeBlocks ::</span> <span class="dt">Fay</span> ()
 processCodeBlocks <span class="fu">=</span> <span class="kw">do</span>
   blocks <span class="ot">&lt;-</span> select <span class="st">&quot;.main-content pre.sourceCode&quot;</span>
   flip each blocks <span class="fu">$</span> \_ el <span class="ot">-&gt;</span> <span class="kw">do</span>
