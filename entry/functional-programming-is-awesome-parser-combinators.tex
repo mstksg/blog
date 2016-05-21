@@ -94,22 +94,25 @@
 \textbf{\href{http://home.jle0.com:4111/entry/functional-programming-is-awesome-parser-combinators.html}{in
 Code}}.}
 
-If you've spent your entire life programming imperatively, you could not even begin to imagine the
-vast worlds of thinking that are inaccessible because of restrictions in your thinking. Not
-``better'', or ``harder'' ways of thinking --- possibly just as easy, but\ldots{}different.
+If you've spent your entire life programming imperatively, you could not even
+begin to imagine the vast worlds of thinking that are inaccessible because of
+restrictions in your thinking. Not ``better'', or ``harder'' ways of thinking
+--- possibly just as easy, but\ldots{}different.
 
-Don't believe me? Here is an example of an amazingly awesome and amazing and incomprehensibly
-mind-opeining design pattern that shines in functional programming: applicative combinators. In
-specific, we are going to write a small parser library! Yay!
+Don't believe me? Here is an example of an amazingly awesome and amazing and
+incomprehensibly mind-opeining design pattern that shines in functional
+programming: applicative combinators. In specific, we are going to write a small
+parser library! Yay!
 
 Now, if you are a sane person, you should know that \emph{nobody} enjoys writing
-parsers\ldots{}imperatively. The whole deal is a mess; you have to keep track of multiple layers of
-state, work out back tracking and edge cases, and to top it off, parsers tend to be very
-uncomposable, and parsing two different things usually requires either source code surgery in the
-best case or a complete rewrite in the worst.
+parsers\ldots{}imperatively. The whole deal is a mess; you have to keep track of
+multiple layers of state, work out back tracking and edge cases, and to top it
+off, parsers tend to be very uncomposable, and parsing two different things
+usually requires either source code surgery in the best case or a complete
+rewrite in the worst.
 
-But what if I told you that combinator-based parsers are so easy to work with and composable and
-intuitive that they are\ldots{}well, fun? I'll tease you:
+But what if I told you that combinator-based parsers are so easy to work with
+and composable and intuitive that they are\ldots{}well, fun? I'll tease you:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -131,25 +134,28 @@ intuitive that they are\ldots{}well, fun? I'll tease you:
 \end{Highlighting}
 \end{Shaded}
 
-Let's take a look, shall we? We will first write our library, and then see how we build complex
-parsers out of smaller, simpler ones. And maybe learn a little bit of Haskell along the way --- in
-particular, the magic of Functors and Applicative Functors (and maybe some Monads if we're lucky).
+Let's take a look, shall we? We will first write our library, and then see how
+we build complex parsers out of smaller, simpler ones. And maybe learn a little
+bit of Haskell along the way --- in particular, the magic of Functors and
+Applicative Functors (and maybe some Monads if we're lucky).
 
 (Much of this post is taken from a University of Göteborg
-\href{http://www.cse.chalmers.se/edu/course/TDA452/FPLectures/Vid/}{lecture series} available
-online; it has been slightly rephrased to be more applicative-centric than monad-centric)
+\href{http://www.cse.chalmers.se/edu/course/TDA452/FPLectures/Vid/}{lecture
+series} available online; it has been slightly rephrased to be more
+applicative-centric than monad-centric)
 
 \section{Our Parser Type}\label{our-parser-type}
 
-So; our goal here is to write a library for parsing that is powerful to be completely general and
-adaptable for any purpose. And also be very intuitive to use. Easy, right? Let's start with the type
-of our Parser!
+So; our goal here is to write a library for parsing that is powerful to be
+completely general and adaptable for any purpose. And also be very intuitive to
+use. Easy, right? Let's start with the type of our Parser!
 
 \subsection{Our Parser type}\label{our-parser-type-1}
 
-So our Parser type is going to be an object of type \texttt{Parser\ a} that contains one thing: a
-parsing function. This parsing function will take in a string and return the parsed value of type
-\texttt{a}, together with the ``leftover'' string that is unparsed.
+So our Parser type is going to be an object of type \texttt{Parser\ a} that
+contains one thing: a parsing function. This parsing function will take in a
+string and return the parsed value of type \texttt{a}, together with the
+``leftover'' string that is unparsed.
 
 In Haskell, we represent this object as:
 
@@ -159,23 +165,25 @@ In Haskell, we represent this object as:
 \end{Highlighting}
 \end{Shaded}
 
-which reads ``The type \texttt{Parser\ a} is an object that you specify by saying `\texttt{P\ f}',
-where \texttt{f} is a function that takes in a string and returns an \texttt{a} with another string.
+which reads ``The type \texttt{Parser\ a} is an object that you specify by
+saying `\texttt{P\ f}', where \texttt{f} is a function that takes in a string
+and returns an \texttt{a} with another string.
 
 \begin{verbatim}
 ###### Aside
 \end{verbatim}
 
-Hi! These asides are for people unfamiliar with Haskell syntax. Feel free to skip them if you
-already are comfortable.
+Hi! These asides are for people unfamiliar with Haskell syntax. Feel free to
+skip them if you already are comfortable.
 
-If you've ever used an object-oriented language like Java or C++, \texttt{Parser\ a} is a template,
-or generic, and would be written in those languages as the class
-\texttt{Parser\textless{}a\textgreater{}}, with only one instance variable: a function taking a
-string and returning something of type \texttt{a} with a leftover string.
+If you've ever used an object-oriented language like Java or C++,
+\texttt{Parser\ a} is a template, or generic, and would be written in those
+languages as the class \texttt{Parser\textless{}a\textgreater{}}, with only one
+instance variable: a function taking a string and returning something of type
+\texttt{a} with a leftover string.
 
-And we write a function \texttt{parse} that will take any \texttt{Parser\ a} object and any string,
-and return the parsed string:
+And we write a function \texttt{parse} that will take any \texttt{Parser\ a}
+object and any string, and return the parsed string:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -193,17 +201,19 @@ A bunch of Haskell syntax features here!
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  This first line says ``the function \texttt{parse} is a function that takes a \texttt{Parser\ a}
-  and a \texttt{String} and return something of the value \texttt{(a,\ String)}''
+  This first line says ``the function \texttt{parse} is a function that takes a
+  \texttt{Parser\ a} and a \texttt{String} and return something of the value
+  \texttt{(a,\ String)}''
 \item
-  Now to define the function. It has two arguments; the first one is of the form \texttt{P\ f}, and
-  the second is just a string \texttt{str}. Remember, \texttt{P\ f} is how you specify a
-  \texttt{Parser\ a}; the \texttt{f} is the function inside the object. We then call \texttt{f} with
-  \texttt{str}, and that's what we want.
+  Now to define the function. It has two arguments; the first one is of the form
+  \texttt{P\ f}, and the second is just a string \texttt{str}. Remember,
+  \texttt{P\ f} is how you specify a \texttt{Parser\ a}; the \texttt{f} is the
+  function inside the object. We then call \texttt{f} with \texttt{str}, and
+  that's what we want.
 \end{enumerate}
 
-Let's say we had a parser \texttt{integerParser} pre-made, that parses a string into an integer.
-Here is how we would use it in the interactive
+Let's say we had a parser \texttt{integerParser} pre-made, that parses a string
+into an integer. Here is how we would use it in the interactive
 \href{http://en.wikipedia.org/wiki/Read-eval-print_loop}{repl} prompt:
 
 \begin{Shaded}
@@ -223,30 +233,34 @@ Here is how we would use it in the interactive
 ###### Aside
 \end{verbatim}
 
-In this article, code that begins with \texttt{λ:} means stuff entered at the interactive prompt,
-ghci. You enter an expression, and it is evaluated, its result printed.
+In this article, code that begins with \texttt{λ:} means stuff entered at the
+interactive prompt, ghci. You enter an expression, and it is evaluated, its
+result printed.
 
 \texttt{:type} is a ghci command that returns the type of the thing in question.
 
-Hm. There's a problem. Sometimes, the parse will fail. How can we indicate that a parse is failable?
+Hm. There's a problem. Sometimes, the parse will fail. How can we indicate that
+a parse is failable?
 
-In most languages, we might return a \texttt{nil} or \texttt{null} value. But this is not cool in
-Haskell because we like having type safety --- having things be \texttt{nil} or \texttt{null}
-willy-nilly means that your compiler can't help you, and you open up the door to runtime errors.
+In most languages, we might return a \texttt{nil} or \texttt{null} value. But
+this is not cool in Haskell because we like having type safety --- having things
+be \texttt{nil} or \texttt{null} willy-nilly means that your compiler can't help
+you, and you open up the door to runtime errors.
 
-In Haskell, we have an object of type \texttt{Maybe\ a}, which can either be \texttt{Just\ a} (the
-object contains a value \texttt{a}), or \texttt{Nothing} (the object contains nothing). Let's change
-our function so that it will return \texttt{Just\ a} if our parse succeeds and \texttt{Nothing} if
-it fails.
+In Haskell, we have an object of type \texttt{Maybe\ a}, which can either be
+\texttt{Just\ a} (the object contains a value \texttt{a}), or \texttt{Nothing}
+(the object contains nothing). Let's change our function so that it will return
+\texttt{Just\ a} if our parse succeeds and \texttt{Nothing} if it fails.
 
 \begin{verbatim}
 ###### Aside
 \end{verbatim}
 
-Again keeping with the analogies to Object-Oriented Programming, you can think of \texttt{Maybe\ a}
-as a superclass, \texttt{Maybe\textless{}a\textgreater{}}, with two subclasses: \texttt{Just\ a} and
-\texttt{Nothing}. \texttt{Just\ a} contains one instance variable of type \texttt{a}, and
-\texttt{Nothing} contains\ldots{}nothing.
+Again keeping with the analogies to Object-Oriented Programming, you can think
+of \texttt{Maybe\ a} as a superclass, \texttt{Maybe\textless{}a\textgreater{}},
+with two subclasses: \texttt{Just\ a} and \texttt{Nothing}. \texttt{Just\ a}
+contains one instance variable of type \texttt{a}, and \texttt{Nothing}
+contains\ldots{}nothing.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -273,8 +287,9 @@ Okay, cool. Let's get started.
 
 \subsection{Our base parsers}\label{our-base-parsers}
 
-So remember, the whole point is to be able to somehow build complex parsers out of very simple ones.
-So let's start with the simplest parsers of all: a parser that always fails.
+So remember, the whole point is to be able to somehow build complex parsers out
+of very simple ones. So let's start with the simplest parsers of all: a parser
+that always fails.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -302,14 +317,15 @@ So let's start with the simplest parsers of all: a parser that always fails.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Remember, we specify/construct parsers as \texttt{P\ f}, where \texttt{f} is the parsing function.
+  Remember, we specify/construct parsers as \texttt{P\ f}, where \texttt{f} is
+  the parsing function.
 \item
-  \texttt{\_} is a wildcard in Haskell; \texttt{returnNothing} is a function that takes
-  \emph{anything} and returns \texttt{Nothing}.
+  \texttt{\_} is a wildcard in Haskell; \texttt{returnNothing} is a function
+  that takes \emph{anything} and returns \texttt{Nothing}.
 \end{enumerate}
 
-Easy enough. How about some parsers that always succeeds with a pre-defined answer, and does not
-consume any of the string?
+Easy enough. How about some parsers that always succeeds with a pre-defined
+answer, and does not consume any of the string?
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -334,9 +350,10 @@ consume any of the string?
 \end{Highlighting}
 \end{Shaded}
 
-We have two parsers here, with two different parse functions. If you notice, they pretty much do the
-same thing, and have very similar structure. This is a key flag that we can probably abstract out
-some part of it. Let's write a new parse function that covers both of them:
+We have two parsers here, with two different parse functions. If you notice,
+they pretty much do the same thing, and have very similar structure. This is a
+key flag that we can probably abstract out some part of it. Let's write a new
+parse function that covers both of them:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -353,9 +370,10 @@ some part of it. Let's write a new parse function that covers both of them:
 \end{Highlighting}
 \end{Shaded}
 
-So \texttt{successful\ val} is a function that takes any value and gives us a \texttt{Parser\ a}
-with the function \texttt{returnVal} --- \texttt{returnVal\ str} yields a \texttt{Just} with the
-\texttt{val} we gave to \texttt{successful}, with the string untouched. Let's try it out.
+So \texttt{successful\ val} is a function that takes any value and gives us a
+\texttt{Parser\ a} with the function \texttt{returnVal} ---
+\texttt{returnVal\ str} yields a \texttt{Just} with the \texttt{val} we gave to
+\texttt{successful}, with the string untouched. Let's try it out.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -369,12 +387,14 @@ with the function \texttt{returnVal} --- \texttt{returnVal\ str} yields a \textt
 \end{Shaded}
 
 Note that the type of \texttt{succesful\ True} is exactly the same type as our
-\texttt{succesfulTrue} function. Which is what we would expect. Our \texttt{succesful\ val} function
-takes a value and returns a parser that parses anything into that given value. So if we pass in
-\texttt{True}, it will return a parser/function that parses anything into \texttt{True}.
+\texttt{succesfulTrue} function. Which is what we would expect. Our
+\texttt{succesful\ val} function takes a value and returns a parser that parses
+anything into that given value. So if we pass in \texttt{True}, it will return a
+parser/function that parses anything into \texttt{True}.
 
-Okay, so our two base parses are nice, but it doesn't sound like they are useful at all for any real
-parsing work. Let's write our first somewhat-useful-kinda-maybe parser: \texttt{anyChar}
+Okay, so our two base parses are nice, but it doesn't sound like they are useful
+at all for any real parsing work. Let's write our first
+somewhat-useful-kinda-maybe parser: \texttt{anyChar}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -394,9 +414,10 @@ parsing work. Let's write our first somewhat-useful-kinda-maybe parser: \texttt{
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  If you call \texttt{getFirst} on a non-empty list, it will set the \texttt{x} to the first element
-  and \texttt{xs} to the rest of the list. Kind of like in C, a string is just an alias for a list
-  of characters. So \texttt{getFirst\ "hello"} will return
+  If you call \texttt{getFirst} on a non-empty list, it will set the \texttt{x}
+  to the first element and \texttt{xs} to the rest of the list. Kind of like in
+  C, a string is just an alias for a list of characters. So
+  \texttt{getFirst\ "hello"} will return
   \texttt{Just\ (\textquotesingle{}h\textquotesingle{},\ "ello")}.
 \item
   If you call \texttt{getFirst} on an empty list, it fails.
@@ -415,13 +436,14 @@ Let's see it at work.
 \end{Highlighting}
 \end{Shaded}
 
-So \texttt{anyChar} parses a string into a\ldots{}character. That's\ldots{}kind of boring,
-admittedly. I'm sure you could have written something that parses a one-letter string into a
-character in any language without a problem\ldots{}one that would parse \texttt{"h"}, the string,
-into \texttt{\textquotesingle{}h\textquotesingle{}}, the character.
+So \texttt{anyChar} parses a string into a\ldots{}character. That's\ldots{}kind
+of boring, admittedly. I'm sure you could have written something that parses a
+one-letter string into a character in any language without a problem\ldots{}one
+that would parse \texttt{"h"}, the string, into
+\texttt{\textquotesingle{}h\textquotesingle{}}, the character.
 
-Hm. Let's try something else. Let's try a parser that always fails \emph{unless} the taken character
-satisfies a certain condition:
+Hm. Let's try something else. Let's try a parser that always fails \emph{unless}
+the taken character satisfies a certain condition:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -444,8 +466,8 @@ satisfies a certain condition:
 \end{Shaded}
 
 Remember that Haskell's built-in \texttt{Data.Char} module provides the function
-\texttt{isLower\ ::\ Char\ -\textgreater{}\ Bool}, which is true if the given character is a
-lowercase letter and false otherwise.
+\texttt{isLower\ ::\ Char\ -\textgreater{}\ Bool}, which is true if the given
+character is a lowercase letter and false otherwise.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -458,8 +480,8 @@ lowercase letter and false otherwise.
 \end{Highlighting}
 \end{Shaded}
 
-But wait! Like in the case for \texttt{succesful}, we notice a definite pattern\ldots{}and we can
-abstract this out.
+But wait! Like in the case for \texttt{succesful}, we notice a definite
+pattern\ldots{}and we can abstract this out.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -484,17 +506,20 @@ abstract this out.
 ###### Aside
 \end{verbatim}
 
-Similar in structure to \texttt{(*2)}, \texttt{(==\ \textquotesingle{}z\textquotesingle{})} is a
-function that returns true if the input is equal to \texttt{\textquotesingle{}z\textquotesingle{}}
-and false otherwise. That is,
-\texttt{(==\ \textquotesingle{}z\textquotesingle{})\ \textquotesingle{}a\textquotesingle{}} is
-false, while
-\texttt{(==\ \textquotesingle{}z\textquotesingle{})\ \textquotesingle{}z\textquotesingle{}} is true.
+Similar in structure to \texttt{(*2)},
+\texttt{(==\ \textquotesingle{}z\textquotesingle{})} is a function that returns
+true if the input is equal to \texttt{\textquotesingle{}z\textquotesingle{}} and
+false otherwise. That is,
+\texttt{(==\ \textquotesingle{}z\textquotesingle{})\ \textquotesingle{}a\textquotesingle{}}
+is false, while
+\texttt{(==\ \textquotesingle{}z\textquotesingle{})\ \textquotesingle{}z\textquotesingle{}}
+is true.
 
-Remember, just like in the case with \texttt{succesful}: \texttt{satisfies\ p} returns a
-\texttt{Parser\ Char} that fails unless the first character satisfies the given predicate
-\texttt{p}; \texttt{p} has to be a function from \texttt{Char} to \texttt{Bool} --- a predicate on
-\texttt{Char}s. So then \texttt{satisfies\ isLower} returns a new parser with the predicate
+Remember, just like in the case with \texttt{succesful}: \texttt{satisfies\ p}
+returns a \texttt{Parser\ Char} that fails unless the first character satisfies
+the given predicate \texttt{p}; \texttt{p} has to be a function from
+\texttt{Char} to \texttt{Bool} --- a predicate on \texttt{Char}s. So then
+\texttt{satisfies\ isLower} returns a new parser with the predicate
 \texttt{isLower} as the ``checker''.
 
 Let's try this out with some more built-in predicates from \texttt{Data.Char}:
@@ -528,9 +553,9 @@ In fact, some of these parsers are so useful, let's name some:
 \end{Highlighting}
 \end{Shaded}
 
-The last one is particularly neat --- it says ``accept only the given character'' ---
-\texttt{char\ \textquotesingle{}a\textquotesingle{}} generates a parser that succeeds only on the
-character \texttt{a}.
+The last one is particularly neat --- it says ``accept only the given
+character'' --- \texttt{char\ \textquotesingle{}a\textquotesingle{}} generates a
+parser that succeeds only on the character \texttt{a}.
 
 Note that we even can rewrite \texttt{anyChar} in terms of \texttt{satisfies}:
 
@@ -541,25 +566,27 @@ Note that we even can rewrite \texttt{anyChar} in terms of \texttt{satisfies}:
 \end{Highlighting}
 \end{Shaded}
 
-where \texttt{const\ True\ ::\ a\ -\textgreater{}\ Bool} is a function that ignores all its input
-and always returns true no matter what. \texttt{anyChar} is a parser that will take any character,
-no matter what.
+where \texttt{const\ True\ ::\ a\ -\textgreater{}\ Bool} is a function that
+ignores all its input and always returns true no matter what. \texttt{anyChar}
+is a parser that will take any character, no matter what.
 
 \subsection{Now we're cooking}\label{now-were-cooking}
 
-Okay, so we are making baby steps. Here are our ``base'' parsers. They can't really do much on their
-own; you can either always fail, always succeed, and parse any one-character string into a
-character. But the last one\ldots{}the ability to \emph{selectively} parse a string into a
-character\ldots{}that might be interesting. It's not totally obvious yet how we can make it useful,
-but\ldots{}I think we have enough base parsers to start building our \emph{combinators} ---
-functions that combine and modify parsers.
+Okay, so we are making baby steps. Here are our ``base'' parsers. They can't
+really do much on their own; you can either always fail, always succeed, and
+parse any one-character string into a character. But the last one\ldots{}the
+ability to \emph{selectively} parse a string into a character\ldots{}that might
+be interesting. It's not totally obvious yet how we can make it useful,
+but\ldots{}I think we have enough base parsers to start building our
+\emph{combinators} --- functions that combine and modify parsers.
 
 \section{Functors}\label{functors}
 
-You have probably worked with functors before in your programming life with or without knowing it.
-Functors represent objects or data structures that ``contain'' data that can be ``mapped over'' ---
-that is, functors are objects where you can apply functions to the values inside. The most famous
-functor in any language is the list, \texttt{{[}{]}}; another neat one is \texttt{Maybe}.
+You have probably worked with functors before in your programming life with or
+without knowing it. Functors represent objects or data structures that
+``contain'' data that can be ``mapped over'' --- that is, functors are objects
+where you can apply functions to the values inside. The most famous functor in
+any language is the list, \texttt{{[}{]}}; another neat one is \texttt{Maybe}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -574,12 +601,12 @@ functor in any language is the list, \texttt{{[}{]}}; another neat one is \textt
 ###### Aside
 \end{verbatim}
 
-First of all, to clarify, \texttt{(*2)} is a function that doubles whatever is passed to it ---
-\texttt{(*2)\ 3} is 6.
+First of all, to clarify, \texttt{(*2)} is a function that doubles whatever is
+passed to it --- \texttt{(*2)\ 3} is 6.
 
-Next, in haskell, we can use the \texttt{\textless{}\$\textgreater{}} operator to say ``apply
-this\ldots{}`inside' of the structure''. This is analogous to the more-often-used \texttt{\$}
-operator:
+Next, in haskell, we can use the \texttt{\textless{}\$\textgreater{}} operator
+to say ``apply this\ldots{}`inside' of the structure''. This is analogous to the
+more-often-used \texttt{\$} operator:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -601,8 +628,8 @@ Compare that to:
 \end{Highlighting}
 \end{Shaded}
 
-As you can see, \texttt{\textless{}\$\textgreater{}} is the ``container'' version of \texttt{\$}. It
-is like \texttt{\$}, but ``inside''.
+As you can see, \texttt{\textless{}\$\textgreater{}} is the ``container''
+version of \texttt{\$}. It is like \texttt{\$}, but ``inside''.
 
 For more information, refer to adit's
 \href{http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html}{amazing
@@ -610,13 +637,14 @@ article} on the topic.
 
 You can probably see where I'm going with this.
 
-\subsection{Turning our Parser into a Functor}\label{turning-our-parser-into-a-functor}
+\subsection{Turning our Parser into a
+Functor}\label{turning-our-parser-into-a-functor}
 
 \subsubsection{What does that even mean?}\label{what-does-that-even-mean}
 
-Hopefully you saw this coming. Functors seem to be very cool. But does it even make sense that our
-Parser object is a functor? The \texttt{Parser\ Int} object doesn't ``contain'' any
-\texttt{Int}s\ldots{}does it?
+Hopefully you saw this coming. Functors seem to be very cool. But does it even
+make sense that our Parser object is a functor? The \texttt{Parser\ Int} object
+doesn't ``contain'' any \texttt{Int}s\ldots{}does it?
 
 Well\ldots{}it kind of ``does''\ldots{}in two ways, sorta kinda maybe.
 
@@ -624,27 +652,32 @@ Well\ldots{}it kind of ``does''\ldots{}in two ways, sorta kinda maybe.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  You could say that a \texttt{Parser\ Int} ``contains'' the to-be-parsed integer.
+  You could say that a \texttt{Parser\ Int} ``contains'' the to-be-parsed
+  integer.
 \item
   You could say that a \texttt{Parser\ Int} ``contains'' the \textbf{idea} of an
   integer\ldots{}abstractly. Like, whoa, man.
 \end{enumerate}
 
-So\ldots{}does it make sense to apply a function ``inside'' a \texttt{Parser\ a}? The answer is yes!
+So\ldots{}does it make sense to apply a function ``inside'' a
+\texttt{Parser\ a}? The answer is yes!
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  If a \texttt{Parser\ Int} contains a to-be-parsed integer, then applying a function inside a
-  \texttt{Parser\ Int} would be like applying the function to the to-be-parsed integer!
+  If a \texttt{Parser\ Int} contains a to-be-parsed integer, then applying a
+  function inside a \texttt{Parser\ Int} would be like applying the function to
+  the to-be-parsed integer!
 \item
-  If a \texttt{Parser\ Int} contains the \emph{idea} of an integer, then applying a function inside
-  a \texttt{Parser\ Int} would be applying the function to the idea of the integer.
+  If a \texttt{Parser\ Int} contains the \emph{idea} of an integer, then
+  applying a function inside a \texttt{Parser\ Int} would be applying the
+  function to the idea of the integer.
 \end{enumerate}
 
-Huh. This is kinda cool, isn't it? So let's say that when we apply a function ``inside'' our
-Parser\ldots{}it means that we apply a function to the finished result of a succesful parse.
+Huh. This is kinda cool, isn't it? So let's say that when we apply a function
+``inside'' our Parser\ldots{}it means that we apply a function to the finished
+result of a succesful parse.
 
 Basically, we want something like this:
 
@@ -658,13 +691,14 @@ Basically, we want something like this:
 \end{Highlighting}
 \end{Shaded}
 
-Okay, cool. So instead of \texttt{succesful\ 3} always succeeding with a 3, it succeeds with
-\texttt{(*2)\ 3}, which is 6. Still kinda boring but w/e.
+Okay, cool. So instead of \texttt{succesful\ 3} always succeeding with a 3, it
+succeeds with \texttt{(*2)\ 3}, which is 6. Still kinda boring but w/e.
 
-Let's try something else\ldots{}we're going to take advantage of the \texttt{Data.Char} method
-\texttt{digitToInt\ ::\ Char\ -\textgreater{}\ Int}, which takes a \texttt{Char} and returns the
-digit that it represents (for example, \texttt{digitToInt\ \textquotesingle{}5\textquotesingle{}} is
-5, the integer):
+Let's try something else\ldots{}we're going to take advantage of the
+\texttt{Data.Char} method \texttt{digitToInt\ ::\ Char\ -\textgreater{}\ Int},
+which takes a \texttt{Char} and returns the digit that it represents (for
+example, \texttt{digitToInt\ \textquotesingle{}5\textquotesingle{}} is 5, the
+integer):
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -682,13 +716,13 @@ digit that it represents (for example, \texttt{digitToInt\ \textquotesingle{}5\t
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Remember, we defined the parser \texttt{digit} earlier, as a parser that only succeeds if the
-  first character is a digit.
+  Remember, we defined the parser \texttt{digit} earlier, as a parser that only
+  succeeds if the first character is a digit.
 \end{enumerate}
 
 Did you just see that? That sounds genuinely useful! If we manage to implement
-\texttt{\textless{}\$\textgreater{}} properly, we just have a way to selectively parse any digit
-character into a digit, and fail otherwise.
+\texttt{\textless{}\$\textgreater{}} properly, we just have a way to selectively
+parse any digit character into a digit, and fail otherwise.
 
 Let's try chaining \texttt{\textless{}\$\textgreater{}}'s:
 
@@ -712,39 +746,46 @@ What just happened here?
 \item
   \texttt{digit} is a parser that succeeds only on digit characters.
 \item
-  \texttt{digitToInt\ \textless{}\$\textgreater{}\ digit} is the result of applying
-  \texttt{digitToInt} on the value of a succesful parse. Basically,
-  \texttt{digitToInt\ \textless{}\$\textgreater{}\ digit} is a \emph{new parser} that succeeds on
-  digit characters, returning an integer.
+  \texttt{digitToInt\ \textless{}\$\textgreater{}\ digit} is the result of
+  applying \texttt{digitToInt} on the value of a succesful parse. Basically,
+  \texttt{digitToInt\ \textless{}\$\textgreater{}\ digit} is a \emph{new parser}
+  that succeeds on digit characters, returning an integer.
 \item
-  \texttt{(*2)\ \textless{}\$\textgreater{}\ (digitToInt\ \textless{}\$\textgreater{}\ digit)} is
-  the result of applying \texttt{(*2)} (the doubling function) to
-  \texttt{digitToInt\ \textless{}\$\textgreater{}\ digit}, the return-digit-as-int parser. The
-  \texttt{(*2)\ \textless{}\$\textgreater{}} doubles the result of the return-digit-as-int parser.
-  Essentially, the entire expression is a \emph{new parser} that succeeds on digit character,
-  returning the doubled integer as the parse result.
+  \texttt{(*2)\ \textless{}\$\textgreater{}\ (digitToInt\ \textless{}\$\textgreater{}\ digit)}
+  is the result of applying \texttt{(*2)} (the doubling function) to
+  \texttt{digitToInt\ \textless{}\$\textgreater{}\ digit}, the
+  return-digit-as-int parser. The \texttt{(*2)\ \textless{}\$\textgreater{}}
+  doubles the result of the return-digit-as-int parser. Essentially, the entire
+  expression is a \emph{new parser} that succeeds on digit character, returning
+  the doubled integer as the parse result.
 \end{enumerate}
 
-*Phew*. That was a conceptual doozy. But this seems like a good path. Do you see what we did? We
-turned old, boring parsers into new, interesting parsers by ``transforming'' them. This is the kind
-of thing we were looking for in the first place, right?
+*Phew*. That was a conceptual doozy. But this seems like a good path. Do you see
+what we did? We turned old, boring parsers into new, interesting parsers by
+``transforming'' them. This is the kind of thing we were looking for in the
+first place, right?
 
-\subsubsection{Implementing the Functor instance}\label{implementing-the-functor-instance}
+\subsubsection{Implementing the Functor
+instance}\label{implementing-the-functor-instance}
 
-That's all fine and dandy. Now we have to actually implement \texttt{\textless{}\$\textgreater{}}.
+That's all fine and dandy. Now we have to actually implement
+\texttt{\textless{}\$\textgreater{}}.
 
-Luckily in Haskell, there are mechanisms for uniting functor interfaces. That is, if you tell it
-that \texttt{Parser\ a} is a functor, then you open up all sorts of powerful functor tools that were
-written for things like lists and maybe's --- now we can use them all on \texttt{Parser\ a}, too.
+Luckily in Haskell, there are mechanisms for uniting functor interfaces. That
+is, if you tell it that \texttt{Parser\ a} is a functor, then you open up all
+sorts of powerful functor tools that were written for things like lists and
+maybe's --- now we can use them all on \texttt{Parser\ a}, too.
 
-To do this, we ``instance'' the Functor \emph{typeclass}. A typeclass in Haskell is like an
-interface in Object-Oriented Programming. Basically, we say ``\texttt{Parser\ a} is a
-functor\ldots{}treat it like one!'' But in order to make it a valid functor, we must tell it how to
-\texttt{fmap}. \texttt{fmap} is basically \texttt{\textless{}\$\textgreater{}} --- it takes a
-function, a functor object, and returns a new functor object with that function applied ``inside''.
-Once we define \texttt{fmap}, then we get \texttt{\textless{}\$\textgreater{}} for free. Or rather,
-Haskell knows that our parser is a functor, and knows how to use
-\texttt{\textless{}\$\textgreater{}} on functors.
+To do this, we ``instance'' the Functor \emph{typeclass}. A typeclass in Haskell
+is like an interface in Object-Oriented Programming. Basically, we say
+``\texttt{Parser\ a} is a functor\ldots{}treat it like one!'' But in order to
+make it a valid functor, we must tell it how to \texttt{fmap}. \texttt{fmap} is
+basically \texttt{\textless{}\$\textgreater{}} --- it takes a function, a
+functor object, and returns a new functor object with that function applied
+``inside''. Once we define \texttt{fmap}, then we get
+\texttt{\textless{}\$\textgreater{}} for free. Or rather, Haskell knows that our
+parser is a functor, and knows how to use \texttt{\textless{}\$\textgreater{}}
+on functors.
 
 Here's how we do it. Hold on tight!
 
@@ -773,38 +814,45 @@ Here's how we do it. Hold on tight!
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  This line is syntax for ``we are declaring that \texttt{Parser} is a functor!'', so that Haskell
-  can treat \texttt{Parser} like a functor (and have \texttt{\textless{}\$\textgreater{}} work).
+  This line is syntax for ``we are declaring that \texttt{Parser} is a
+  functor!'', so that Haskell can treat \texttt{Parser} like a functor (and have
+  \texttt{\textless{}\$\textgreater{}} work).
 \item
   In order to declare something as a functor, we must define the function
   \texttt{fmap\ ::\ (a\ -\textgreater{}\ b)\ -\textgreater{}\ Parser\ a\ -\textgreater{}\ Parser\ b},
-  which takes a function from \texttt{a} to \texttt{b}, a \texttt{Parser\ a}, and returns the
-  mapped-over parser/parser with the function applied ``inside''.
+  which takes a function from \texttt{a} to \texttt{b}, a \texttt{Parser\ a},
+  and returns the mapped-over parser/parser with the function applied
+  ``inside''.
 \item
   Grab the result of the parse with the unmapped parser, first.
 \item
-  Some more Haskell syntax. Basically, the result of \texttt{mapped\_parser\_function} is dependent
-  on what \texttt{unmapped\_result} is.
+  Some more Haskell syntax. Basically, the result of
+  \texttt{mapped\_parser\_function} is dependent on what
+  \texttt{unmapped\_result} is.
 \item
-  If \texttt{unmapped\_result} is a \texttt{Just}, then return the success, but apply \texttt{f} to
-  the result first.
+  If \texttt{unmapped\_result} is a \texttt{Just}, then return the success, but
+  apply \texttt{f} to the result first.
 \item
-  If \texttt{unmapped\_result} is \texttt{Nothing}\ldots{}well, you can't apply anything to the
-  result if the result is a failure (a \texttt{Nothing}). Pass on the failure.
+  If \texttt{unmapped\_result} is \texttt{Nothing}\ldots{}well, you can't apply
+  anything to the result if the result is a failure (a \texttt{Nothing}). Pass
+  on the failure.
 \end{enumerate}
 
-And now we can use our \texttt{Parser\ a} as a functor; all of our use cases above will now work.
+And now we can use our \texttt{Parser\ a} as a functor; all of our use cases
+above will now work.
 
 \subsection{Fun with functors}\label{fun-with-functors}
 
-Let's take a brief moment to see what kind of things we can do with only functors, and nothing else.
-It's probably not going to be too much more useful than what you can write imperatively, but it is
-interesting what you can do by only `modifying' simpler parsers\ldots{}which is what the whole point
-of combinators are.
+Let's take a brief moment to see what kind of things we can do with only
+functors, and nothing else. It's probably not going to be too much more useful
+than what you can write imperatively, but it is interesting what you can do by
+only `modifying' simpler parsers\ldots{}which is what the whole point of
+combinators are.
 
 With that in mind, let's try out some neat use cases.
 
-What if you want to parse a digit and look it up in a list of keywords, and return that keyword?
+What if you want to parse a digit and look it up in a list of keywords, and
+return that keyword?
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -826,9 +874,9 @@ What if you want to parse a digit and look it up in a list of keywords, and retu
 ###### Aside
 \end{verbatim}
 
-\texttt{(!!\ keywords)} is a function that looks up the given index in the given list. In our case,
-\texttt{(!!\ keywords)\ 2} would return what in other languages is \texttt{keywords{[}2{]}}, which
-is the string ``warning''.
+\texttt{(!!\ keywords)} is a function that looks up the given index in the given
+list. In our case, \texttt{(!!\ keywords)\ 2} would return what in other
+languages is \texttt{keywords{[}2{]}}, which is the string ``warning''.
 
 \begin{Shaded}
 \begin{Highlighting}[]

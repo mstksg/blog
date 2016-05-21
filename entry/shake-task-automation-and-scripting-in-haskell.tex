@@ -94,35 +94,38 @@
 \textbf{\href{http://home.jle0.com:4111/entry/shake-task-automation-and-scripting-in-haskell.html}{in
 Code}}.}
 
-As someone who comes from a background in ruby and \emph{rake}, I'm used to powerful task management
-systems with expressive dependency. \emph{Make} is a favorite tool of mine when I'm working on
-projects with people who don't use ruby, and when I'm working on ruby projects I never go far
-without starting a good Rakefile. The two tools provided a perfect DSL for setting up systems of
+As someone who comes from a background in ruby and \emph{rake}, I'm used to
+powerful task management systems with expressive dependency. \emph{Make} is a
+favorite tool of mine when I'm working on projects with people who don't use
+ruby, and when I'm working on ruby projects I never go far without starting a
+good Rakefile. The two tools provided a perfect DSL for setting up systems of
 tasks that had complicated file and task dependencies.
 
-As I was starting to learn Haskell and building larger-scale Haskell projects, I began to look for
-alternatives in Haskell. Was there a Haskell counterpart to Ruby's
-\href{http://rake.rubyforge.org/}{\emph{rake}}, Node's
-\href{https://github.com/mde/jake}{\emph{jake}}? (Not to mention the tools of slightly different
-philosophy \href{http://gruntjs.com/}{\emph{grunt}} and \href{http://ant.apache.org/}{\emph{ant}})
+As I was starting to learn Haskell and building larger-scale Haskell projects, I
+began to look for alternatives in Haskell. Was there a Haskell counterpart to
+Ruby's \href{http://rake.rubyforge.org/}{\emph{rake}}, Node's
+\href{https://github.com/mde/jake}{\emph{jake}}? (Not to mention the tools of
+slightly different philosophy \href{http://gruntjs.com/}{\emph{grunt}} and
+\href{http://ant.apache.org/}{\emph{ant}})
 
 It turns out that by far the most established answer is a library known as
-\href{http://hackage.haskell.org/package/shake}{\emph{Shake}} (maintained by the prolific Neil
-Mitchell of \href{http://haskell.org/hoogle}{\emph{hoogle}} fame and much more). So far it's served
-me pretty well. Its documentation is written from the perspective of chiefly using it as a build
-tool (more ``make'' than ``rake''), so if you're looking to use it as a task management system, you
-might have to do some digging. Hopefully this post can help you get started.
+\href{http://hackage.haskell.org/package/shake}{\emph{Shake}} (maintained by the
+prolific Neil Mitchell of \href{http://haskell.org/hoogle}{\emph{hoogle}} fame
+and much more). So far it's served me pretty well. Its documentation is written
+from the perspective of chiefly using it as a build tool (more ``make'' than
+``rake''), so if you're looking to use it as a task management system, you might
+have to do some digging. Hopefully this post can help you get started.
 
-I also go over the core concepts of a task management system, so I assume no knowledge of
-\emph{make}; this post therefore should also be a good introduction to starting with any sort of
-task management system.
+I also go over the core concepts of a task management system, so I assume no
+knowledge of \emph{make}; this post therefore should also be a good introduction
+to starting with any sort of task management system.
 
 \section{Our Sample Project}\label{our-sample-project}
 
-Our sample project is going to be a report build system that builds reports written in markdown with
-\href{http://johnmacfarlane.net/pandoc/}{pandoc} into html, pdf, and doc formats. This is honestly
-one of my most common use cases for \emph{make}, so porting it all to \emph{shake} will be something
-useful for me.
+Our sample project is going to be a report build system that builds reports
+written in markdown with \href{http://johnmacfarlane.net/pandoc/}{pandoc} into
+html, pdf, and doc formats. This is honestly one of my most common use cases for
+\emph{make}, so porting it all to \emph{shake} will be something useful for me.
 
 The final directory structure will look like this:
 
@@ -172,12 +175,13 @@ The final directory structure will look like this:
 \end{itemize}
 \end{quote}
 
-When we run \texttt{shake}, we want to build \texttt{report.doc} and \texttt{report.pdf} if
-\texttt{report.md} or any of the images have changed, and \texttt{report.html} if
-\texttt{report.md}, \texttt{report.css}, or any of the images have changed.
+When we run \texttt{shake}, we want to build \texttt{report.doc} and
+\texttt{report.pdf} if \texttt{report.md} or any of the images have changed, and
+\texttt{report.html} if \texttt{report.md}, \texttt{report.css}, or any of the
+images have changed.
 
-Furthermore, \texttt{img2.jpg} actually comes from online, and requires us to re-download it every
-time we compile to make sure it is up to date.
+Furthermore, \texttt{img2.jpg} actually comes from online, and requires us to
+re-download it every time we compile to make sure it is up to date.
 
 \section{Setup}\label{setup}
 
@@ -218,34 +222,37 @@ We set up our Shakefile with a simple scaffold:
 \end{Shaded}
 
 On my machine I've set this up to be generated by a
-\href{https://gist.github.com/mstksg/6588764}{bash script} called ``shakeup'', so I can start a
-project up on a Shakefile by simply typing \texttt{shakeup} at the project root.
+\href{https://gist.github.com/mstksg/6588764}{bash script} called ``shakeup'',
+so I can start a project up on a Shakefile by simply typing \texttt{shakeup} at
+the project root.
 
 Some notes:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Store shake's metadata files to the folder \texttt{.shake/}. This differs from the default
-  behavior, where all files would be saved to the root directory with \texttt{.shake} as a filename
-  prefix.
+  Store shake's metadata files to the folder \texttt{.shake/}. This differs from
+  the default behavior, where all files would be saved to the root directory
+  with \texttt{.shake} as a filename prefix.
 \item
-  I've aliased the operator \texttt{\textasciitilde{}\textgreater{}} for \texttt{phony} to allow for
-  a more expressive infix notation --- more on this later. I've submitted a patch to the project and
-  it should be included in the next cabal release.
+  I've aliased the operator \texttt{\textasciitilde{}\textgreater{}} for
+  \texttt{phony} to allow for a more expressive infix notation --- more on this
+  later. I've submitted a patch to the project and it should be included in the
+  next cabal release.
 
-  \textbf{Edit}: As of the 0.10.7 release of \emph{Shake}, this is no longer needed, as
-  \texttt{\textasciitilde{}\textgreater{}} is included in the library.
+  \textbf{Edit}: As of the 0.10.7 release of \emph{Shake}, this is no longer
+  needed, as \texttt{\textasciitilde{}\textgreater{}} is included in the
+  library.
 \end{enumerate}
 
 \section{What is a Rule?}\label{what-is-a-rule}
 
-If you haven't used \emph{make} before, it is important that you understand the key concepts before
-moving on.
+If you haven't used \emph{make} before, it is important that you understand the
+key concepts before moving on.
 
-A task management system/build system is a system that works to ensure that all files in the project
-are ``up to date''. In our case, our system will ensure that the files in the \texttt{out} directory
-are up to date.
+A task management system/build system is a system that works to ensure that all
+files in the project are ``up to date''. In our case, our system will ensure
+that the files in the \texttt{out} directory are up to date.
 
 In order to do this, files are given ``rules''. Rules specify:
 
@@ -254,28 +261,32 @@ In order to do this, files are given ``rules''. Rules specify:
 \item
   What other files/rules this file ``depends'' on
 \item
-  Instructions to execute to make this file up to date (or to create the file), if it is not already
-  up to date or created.
+  Instructions to execute to make this file up to date (or to create the file),
+  if it is not already up to date or created.
 \end{enumerate}
 
-A file or rule is out of date if any of its dependencies are out of date \textbf{or} if the file it
-indicates is either not created or has been updated since the last time the task management system
-has run. When this happens, the guilty dependencies are updated using their own rules. Afterwards,
-the file's own instructions are executed.
+A file or rule is out of date if any of its dependencies are out of date
+\textbf{or} if the file it indicates is either not created or has been updated
+since the last time the task management system has run. When this happens, the
+guilty dependencies are updated using their own rules. Afterwards, the file's
+own instructions are executed.
 
-If a file has no rule, ``out of date'' simply means that it has been updated or changed since the
-last time the task management system has run, or it does not exist. If it has, then all files or
-rules that depend on it are also out of date.
+If a file has no rule, ``out of date'' simply means that it has been updated or
+changed since the last time the task management system has run, or it does not
+exist. If it has, then all files or rules that depend on it are also out of
+date.
 
-A good task management system is smart enough to keep track of what is up to date and what isn't. If
-multiple rules all have one dependency, that dependency might be checked and updated every single
-time. For example, all of our builds in this sample project require \texttt{img2.jpg} to be
-downloaded afresh from online. A naive build system might re-download \texttt{img2.jpg} for every
+A good task management system is smart enough to keep track of what is up to
+date and what isn't. If multiple rules all have one dependency, that dependency
+might be checked and updated every single time. For example, all of our builds
+in this sample project require \texttt{img2.jpg} to be downloaded afresh from
+online. A naive build system might re-download \texttt{img2.jpg} for every
 single build, instead of once for all three.
 
 \section{File Rules}\label{file-rules}
 
-Let's set up \texttt{src/report.md} with a simple markdown document on our new project:
+Let's set up \texttt{src/report.md} with a simple markdown document on our new
+project:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -323,7 +334,8 @@ Our project tree should look like this at this point:
 \end{itemize}
 \end{quote}
 
-Let's set up our first rule -- rendering \texttt{out/report.doc} if \texttt{report.md} has changed.
+Let's set up our first rule -- rendering \texttt{out/report.doc} if
+\texttt{report.md} has changed.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -346,8 +358,9 @@ The operator \texttt{*\textgreater{}} attaches an
 \href{http://hackage.haskell.org/packages/archive/shake/0.10.6/doc/html/Development-Shake.html\#t:Action}{\texttt{Action}}
 (with a parameter) to a
 \href{http://hackage.haskell.org/packages/archive/shake/0.10.6/doc/html/Development-Shake.html\#t:FilePattern}{\texttt{FilePattern}}
-(a string) -- that is, when \emph{shake} decides that it needs that specified file on the left hand
-side to be up to date, it runs the action on the right hand side with that filename as a parameter.
+(a string) -- that is, when \emph{shake} decides that it needs that specified
+file on the left hand side to be up to date, it runs the action on the right
+hand side with that filename as a parameter.
 
 To be clear, the right hand side is of type:
 
@@ -357,13 +370,15 @@ To be clear, the right hand side is of type:
 \end{Highlighting}
 \end{Shaded}
 
-where the \texttt{FilePattern} is the filename of the file that is being ``needed''.
+where the \texttt{FilePattern} is the filename of the file that is being
+``needed''.
 
-The \texttt{need} function specifies all of the dependencies of that action. If \emph{shake} decides
-it needs \texttt{out/report.doc} to be up to date, \texttt{need} tells it that it first needs
-\texttt{src/report.md} and the images to be up to date -- or rather, that \texttt{out/report.doc} is
-only out of date if \texttt{src/report.md} or the images are out of date, or have changed since the
-last build.
+The \texttt{need} function specifies all of the dependencies of that action. If
+\emph{shake} decides it needs \texttt{out/report.doc} to be up to date,
+\texttt{need} tells it that it first needs \texttt{src/report.md} and the images
+to be up to date -- or rather, that \texttt{out/report.doc} is only out of date
+if \texttt{src/report.md} or the images are out of date, or have changed since
+the last build.
 
 With this in mind, let us write the rest of our file rules:
 
@@ -395,8 +410,8 @@ And that is it!
 
 \section{Running Shake}\label{running-shake}
 
-How do we tell \emph{shake} what file it is that we want to be up to date? We specify this by
-modifying the line \texttt{want\ {[}{]}}:
+How do we tell \emph{shake} what file it is that we want to be up to date? We
+specify this by modifying the line \texttt{want\ {[}{]}}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -404,8 +419,8 @@ modifying the line \texttt{want\ {[}{]}}:
 \end{Highlighting}
 \end{Shaded}
 
-That tells \emph{shake} that when we run \texttt{main} with no arguments, we want those three files
-to be checked to be up to date.
+That tells \emph{shake} that when we run \texttt{main} with no arguments, we
+want those three files to be checked to be up to date.
 
 Now, to wrap it all together, we run:
 
@@ -426,8 +441,8 @@ I run this enough times that I like to alias this:
 \end{Highlighting}
 \end{Shaded}
 
-Note that \texttt{want} specifies the \textbf{default} ``wants''. You can specify your own
-collection by passing a parameter:
+Note that \texttt{want} specifies the \textbf{default} ``wants''. You can
+specify your own collection by passing a parameter:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -437,13 +452,13 @@ collection by passing a parameter:
 
 \section{Wildcards}\label{wildcards}
 
-You may have noticed that even though we had multiple images in the \texttt{img} folder, we required
-them all explicitly. This could cause problems. What if in the future, our documents used more
-images?
+You may have noticed that even though we had multiple images in the \texttt{img}
+folder, we required them all explicitly. This could cause problems. What if in
+the future, our documents used more images?
 
-We can define wildcards using \emph{shake}'s \texttt{getDirectoryFiles}, which returns results of a
-wildcard search in an \texttt{Action} monad. \texttt{getDirectoryFiles} takes a directory base and a
-list of wildcards.
+We can define wildcards using \emph{shake}'s \texttt{getDirectoryFiles}, which
+returns results of a wildcard search in an \texttt{Action} monad.
+\texttt{getDirectoryFiles} takes a directory base and a list of wildcards.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -480,7 +495,8 @@ list of wildcards.
 \end{Highlighting}
 \end{Shaded}
 
-If you are comfortable with applicative style, you can make it all happen on one line:
+If you are comfortable with applicative style, you can make it all happen on one
+line:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -489,20 +505,23 @@ If you are comfortable with applicative style, you can make it all happen on one
 \end{Highlighting}
 \end{Shaded}
 
-(You'll need to import \texttt{\textless{}\$\textgreater{}} from \texttt{Control.Applicative}, and
-GHC will complain about the discarded value unless you use \texttt{void} or enable
-\texttt{-fno-warn-wrong-do-bind})
+(You'll need to import \texttt{\textless{}\$\textgreater{}} from
+\texttt{Control.Applicative}, and GHC will complain about the discarded value
+unless you use \texttt{void} or enable \texttt{-fno-warn-wrong-do-bind})
 
 \section{Phony Rules}\label{phony-rules}
 
-Now, you might sometimes want rules that are ``just tasks'' that don't relate to creating a specific
-file. That is, they still depend on other files or rules and are triggered to update when their
-dependencies are out of date, but they just aren't about building files.
+Now, you might sometimes want rules that are ``just tasks'' that don't relate to
+creating a specific file. That is, they still depend on other files or rules and
+are triggered to update when their dependencies are out of date, but they just
+aren't about building files.
 
-For example, what if you wanted a task \texttt{build-some}, which builds only \texttt{report.pdf}
-and \texttt{report.doc}, and outputs a proverb to the command line?
+For example, what if you wanted a task \texttt{build-some}, which builds only
+\texttt{report.pdf} and \texttt{report.doc}, and outputs a proverb to the
+command line?
 
-One thing you can do is to simply use a rule with a name that does not correspond to any file:
+One thing you can do is to simply use a rule with a name that does not
+correspond to any file:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -513,12 +532,13 @@ One thing you can do is to simply use a rule with a name that does not correspon
 \end{Highlighting}
 \end{Shaded}
 
-However, this is kind of an inelegant solution. There really actually is not a file
-\texttt{build-some}. Also, if someone ever decides to create a file called \texttt{build-some},
-you'll find that this rule never gets run.
+However, this is kind of an inelegant solution. There really actually is not a
+file \texttt{build-some}. Also, if someone ever decides to create a file called
+\texttt{build-some}, you'll find that this rule never gets run.
 
-The best way is to create a ``phony'' rule, which is a rule that is not tied to a file. This is the
-reason for the alias I specified at the beginning of the post:
+The best way is to create a ``phony'' rule, which is a rule that is not tied to
+a file. This is the reason for the alias I specified at the beginning of the
+post:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -541,13 +561,15 @@ You might have noticed the phony rule in the scaffold Shakefile:
 \end{Highlighting}
 \end{Shaded}
 
-If you run \texttt{shake\ clean}, it will remove all files in the \texttt{.shake/} directory after
-the rule has completed its execution. \texttt{removeFilesAfter} removes the files in the given base
-directory (\texttt{.shake}) matching the given wildcards (\texttt{{[}"//*"{]}}) after all rules have
-completed their course.
+If you run \texttt{shake\ clean}, it will remove all files in the
+\texttt{.shake/} directory after the rule has completed its execution.
+\texttt{removeFilesAfter} removes the files in the given base directory
+(\texttt{.shake}) matching the given wildcards (\texttt{{[}"//*"{]}}) after all
+rules have completed their course.
 
-This is useful for cleaning up \emph{shake}'s metadata files after you are done with your build, or
-if you want to run the task management system on a clean start.
+This is useful for cleaning up \emph{shake}'s metadata files after you are done
+with your build, or if you want to run the task management system on a clean
+start.
 
 \section{Completed File}\label{completed-file}
 
@@ -598,15 +620,17 @@ if you want to run the task management system on a clean start.
 
 If you look at the
 \href{http://hackage.haskell.org/packages/archive/shake/0.10.6/doc/html/Development-Shake.html}{Shake
-Documentation}, you will find a lot of ways you can build complex networks of dependencies.
+Documentation}, you will find a lot of ways you can build complex networks of
+dependencies.
 
 Hopefully there are enough use cases here to be useful in general applications.
 
 \subsection{Monadic Tricks}\label{monadic-tricks}
 
-Because everything is Haskell, you can easily generate rules using your basic monad iterators by
-taking advantage of Haskell's extensive standard library of monad functions. For example, if you
-want to generate multiple reports, you can use \texttt{forM\_}:
+Because everything is Haskell, you can easily generate rules using your basic
+monad iterators by taking advantage of Haskell's extensive standard library of
+monad functions. For example, if you want to generate multiple reports, you can
+use \texttt{forM\_}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -635,41 +659,47 @@ want to generate multiple reports, you can use \texttt{forM\_}:
 \end{Highlighting}
 \end{Shaded}
 
-Note however that you can get the same thing by just using wildcards (with \texttt{takeFileName}).
-But this is just an example, feel free to let your imagination roam!
+Note however that you can get the same thing by just using wildcards (with
+\texttt{takeFileName}). But this is just an example, feel free to let your
+imagination roam!
 
 \subsection{Looking Forward}\label{looking-forward}
 
-We've seen how \emph{Shake} is good at setting up systems for managing and executing dependencies.
-This is good for running simple system commands. However, there is a lot more about scripting and
-task automation than managing dependencies.
+We've seen how \emph{Shake} is good at setting up systems for managing and
+executing dependencies. This is good for running simple system commands.
+However, there is a lot more about scripting and task automation than managing
+dependencies.
 
-For example, almost everything we've done can be done with a simple Makefile. What does Haskell
-offer to the scripting scene?
+For example, almost everything we've done can be done with a simple Makefile.
+What does Haskell offer to the scripting scene?
 
 \subsubsection{Strong Typing}\label{strong-typing}
 
-As you'll know, one of the magical things about Haskell is that because of its expressive strong
-typing system, you leave the debugging to the compiler. If it compiles, it works exactly the way you
-want!
+As you'll know, one of the magical things about Haskell is that because of its
+expressive strong typing system, you leave the debugging to the compiler. If it
+compiles, it works exactly the way you want!
 
-This is pretty lacking in the bare-bones system we have in place now. Right now we are just firing
-off arbitrary system commands that are basically specified in strings with no type of typing. We can
-compile anything, whether there are bugs in it or not.
+This is pretty lacking in the bare-bones system we have in place now. Right now
+we are just firing off arbitrary system commands that are basically specified in
+strings with no type of typing. We can compile anything, whether there are bugs
+in it or not.
 
-Luckily \emph{Shake} is very good at integrating seamlessly with any kind of framework. We can leave
-this up to other frameworks.
+Luckily \emph{Shake} is very good at integrating seamlessly with any kind of
+framework. We can leave this up to other frameworks.
 
 One popular framework for this that is gaining in maturity is
-\href{http://hackage.haskell.org/package/shelly}{\emph{Shelly}} (A fork of an older project that is
-an \href{http://www.yesodweb.com/blog/2012/03/shelly-for-shell-scripts}{ongoing} Yesod Project
-\href{http://www.yesodweb.com/blog/2012/07/shelly-update}{experiment}), but you are welcome to using
-your own. At the present Haskell is still developing and growing in this aspect. I hope to
-eventually write an article about \emph{Shelly} integration with \emph{Shake}.
+\href{http://hackage.haskell.org/package/shelly}{\emph{Shelly}} (A fork of an
+older project that is an
+\href{http://www.yesodweb.com/blog/2012/03/shelly-for-shell-scripts}{ongoing}
+Yesod Project
+\href{http://www.yesodweb.com/blog/2012/07/shelly-update}{experiment}), but you
+are welcome to using your own. At the present Haskell is still developing and
+growing in this aspect. I hope to eventually write an article about
+\emph{Shelly} integration with \emph{Shake}.
 
 \subsubsection{Other}\label{other}
 
-These are just some ways to think about using \emph{Shake} in new more creative ways. Let me know if
-you think of any clever integrations in the comments!
+These are just some ways to think about using \emph{Shake} in new more creative
+ways. Let me know if you think of any clever integrations in the comments!
 
 \end{document}

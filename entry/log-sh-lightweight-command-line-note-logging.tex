@@ -94,26 +94,31 @@
 \textbf{\href{http://home.jle0.com:4111/entry/log-sh-lightweight-command-line-note-logging.html}{in
 Code}}.}
 
-What do you use to send off quick one-off notes and logs about a project you are working on? Found a
-nice link to a resource you'll want to look up later\ldots{}want to jot down a sudden realization?
+What do you use to send off quick one-off notes and logs about a project you are
+working on? Found a nice link to a resource you'll want to look up
+later\ldots{}want to jot down a sudden realization?
 
-Maybe you use some external note-taking software, like \emph{Evernote}. But wouldn't it be nice to
-have something that is completely in the command line? Do you really need to fire up an entire GUI
-just to write down one line, put down one link? And do you really need these notes to all be thrown
-in with your others?
+Maybe you use some external note-taking software, like \emph{Evernote}. But
+wouldn't it be nice to have something that is completely in the command line? Do
+you really need to fire up an entire GUI just to write down one line, put down
+one link? And do you really need these notes to all be thrown in with your
+others?
 
 You might be using a command line interface to a larger note-taking system like
-\emph{\href{http://geeknote.me/}{geeknote}}. But it's kind of a hassle to open up an entire text
-editor every time you want to make a small one-liner. Doesn't quite meld with the
-\href{http://www.faqs.org/docs/artu/ch01s06.html}{Unix philosophy}. Maybe you are comfortable simply
-appending to a text file with \texttt{\textgreater{}\textgreater{}}\ldots{}but what if you want to
-add things like timestamps?
+\emph{\href{http://geeknote.me/}{geeknote}}. But it's kind of a hassle to open
+up an entire text editor every time you want to make a small one-liner. Doesn't
+quite meld with the \href{http://www.faqs.org/docs/artu/ch01s06.html}{Unix
+philosophy}. Maybe you are comfortable simply appending to a text file with
+\texttt{\textgreater{}\textgreater{}}\ldots{}but what if you want to add things
+like timestamps?
 
-Here's introducing \textbf{\emph{\href{https://github.com/mstksg/log.sh}{log.sh}}}.
+Here's introducing
+\textbf{\emph{\href{https://github.com/mstksg/log.sh}{log.sh}}}.
 
 \section{\texorpdfstring{\href{https://github.com/mstksg/log.sh}{Log.sh}}{Log.sh}}\label{log.shlog.sh}
 
-\emph{\href{https://github.com/mstksg/log.sh}{log.sh}} is intended for these use cases:
+\emph{\href{https://github.com/mstksg/log.sh}{log.sh}} is intended for these use
+cases:
 
 \begin{itemize}
 \tightlist
@@ -181,8 +186,8 @@ which will handily add a cute \texttt{{[}\ {]}} before the item like so:
 
 \subsubsection{Editing your log file}\label{editing-your-log-file}
 
-The little \texttt{{[}\ {]}} is handy because you can open up the log file in a text editor of your
-choice and ``check'' it off.
+The little \texttt{{[}\ {]}} is handy because you can open up the log file in a
+text editor of your choice and ``check'' it off.
 
 That's actually very easy, because
 
@@ -192,13 +197,13 @@ That's actually very easy, because
 \end{Highlighting}
 \end{Shaded}
 
-will open the active log file in your favorite editor, specified by the \texttt{\$EDITOR}
-environment variable.
+will open the active log file in your favorite editor, specified by the
+\texttt{\$EDITOR} environment variable.
 
 \subsubsection{The Log File}\label{the-log-file}
 
-What is the ``active'' log file? Where is this log being stored? Ideally, it is either in the root
-directory of the relevant project, or in your home folder.
+What is the ``active'' log file? Where is this log being stored? Ideally, it is
+either in the root directory of the relevant project, or in your home folder.
 
 To create a log file in your current working directory, enter
 
@@ -211,10 +216,10 @@ To create a log file in your current working directory, enter
 This'll create a file \texttt{.log.log} in the directory.
 
 Now, if you are in any subdirectory, the default behavior is that
-\emph{\href{https://github.com/mstksg/log.sh}{log.sh}} will first check the current directory for a
-log file; if it doesn't find it, it goes up a directory and checks there, checking up and up until
-it finds a valid log file. That file is the ``active'' one, where all of your adds and edits will
-refer to.
+\emph{\href{https://github.com/mstksg/log.sh}{log.sh}} will first check the
+current directory for a log file; if it doesn't find it, it goes up a directory
+and checks there, checking up and up until it finds a valid log file. That file
+is the ``active'' one, where all of your adds and edits will refer to.
 
 \subsubsection{Log Contexts}\label{log-contexts}
 
@@ -224,26 +229,27 @@ If you try to enter a note from a subdirectory, you'll get something cool:
 [Sun Sep 29 16:10:38 PDT 2013]  (./subdir) logging from ./subdir!
 \end{verbatim}
 
-\emph{\href{https://github.com/mstksg/log.sh}{log.sh}} will automatically include the context of
-your log in your note body.
+\emph{\href{https://github.com/mstksg/log.sh}{log.sh}} will automatically
+include the context of your log in your note body.
 
 \subsection{Installation}\label{installation}
 
-Didn't want to bore you right off the bat with implementation/installation details. But here it is.
-The entire thing is open source, and written in bash.
+Didn't want to bore you right off the bat with implementation/installation
+details. But here it is. The entire thing is open source, and written in bash.
 
 Install by either cloning the github repo or downloading
-\href{https://github.com/mstksg/log.sh/releases}{the latest release}. Put the file \texttt{log.sh}
-into a directory in your \texttt{\$PATH}. If you wish, alias it to something short, like \texttt{l}
-or \texttt{n}.
+\href{https://github.com/mstksg/log.sh/releases}{the latest release}. Put the
+file \texttt{log.sh} into a directory in your \texttt{\$PATH}. If you wish,
+alias it to something short, like \texttt{l} or \texttt{n}.
 
 That should be it!
 
 \subsection{That's it!}\label{thats-it}
 
-That's really all there is to it! You can customize the filename of the log file created/searched
-for, or you can even specify the exact path of the log file you want to append to or edit using
-command line flags. More detail on how to do this in the documentation:
+That's really all there is to it! You can customize the filename of the log file
+created/searched for, or you can even specify the exact path of the log file you
+want to append to or edit using command line flags. More detail on how to do
+this in the documentation:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -251,13 +257,15 @@ command line flags. More detail on how to do this in the documentation:
 \end{Highlighting}
 \end{Shaded}
 
-Basically, the entire thing is meant to be as frictionless, fast, and thoughtless as possible. Enter
-in small notes to reference later in only the time it takes for you to actually write the note ---
-no need to mungle around with text editors and picking which file to append to and dealing with
-timestamps. \emph{\href{https://github.com/mstksg/log.sh}{log.sh}} has got you covered!
+Basically, the entire thing is meant to be as frictionless, fast, and
+thoughtless as possible. Enter in small notes to reference later in only the
+time it takes for you to actually write the note --- no need to mungle around
+with text editors and picking which file to append to and dealing with
+timestamps. \emph{\href{https://github.com/mstksg/log.sh}{log.sh}} has got you
+covered!
 
-I do recommend, if you use this, aliasing the command to something short. I personally use
-\texttt{n}, so I write notes by saying:
+I do recommend, if you use this, aliasing the command to something short. I
+personally use \texttt{n}, so I write notes by saying:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -265,8 +273,8 @@ I do recommend, if you use this, aliasing the command to something short. I pers
 \end{Highlighting}
 \end{Shaded}
 
-Hopefully this script ends up being as useful to you as it has to me. Feel free to leave any
-comments on questions/bugs/improvements, and I'm always happy to take contributions and pull
-requests.
+Hopefully this script ends up being as useful to you as it has to me. Feel free
+to leave any comments on questions/bugs/improvements, and I'm always happy to
+take contributions and pull requests.
 
 \end{document}
