@@ -1,23 +1,173 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Redirecting...</title>
-<link rel="canonical" href="http://home.jle0.com:4111/entry/preprocessor-tests.html.tex"/>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-ga('create', { trackingId: 'UA-443711-7', cookieDomain: 'jle0.com', redirect: 'http://home.jle0.com:4111/entry/preprocessor-tests.html.tex'});
-ga('send', { hitType: 'pageview', hitCallback: function() { document.location.href = 'http://home.jle0.com:4111/entry/preprocessor-tests.html.tex'; } });
-</script>
-</head>
-<body>
-  <p><strong>Redirecting...</strong></p>
-  <p><a href='http://home.jle0.com:4111/entry/preprocessor-tests.html.tex'>Click here if you are not redirected.</a></p>
-  <script>
-    setTimeout(function() { document.location.href = 'http://home.jle0.com:4111/entry/preprocessor-tests.html.tex'; }, 1000);
-  </script>
-</body>
-</html>
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Justin Le},
+            pdftitle={Pre-processor Tests},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+% Make links footnotes instead of hotlinks:
+\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\title{Pre-processor Tests}
+\author{Justin Le}
+\date{January 22, 2014}
+
+\begin{document}
+\maketitle
+
+\emph{Originally posted on
+\textbf{\href{http://home.jle0.com:4111/entry/preprocessor-tests.html}{in
+Code}}.}
+
+Testing the entry pre-processor. It is supposed to expand out code blocks.
+
+Lorum ipsum blah blah.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L116-135}
+\CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage}
+\OtherTok{onFor ::} \NormalTok{forall a}\FunctionTok{.}
+     \NormalTok{(a }\OtherTok{->} \DataTypeTok{Bool}\NormalTok{)  }\CommentTok{-- test to see if an input 'triggers'}
+  \OtherTok{->} \DataTypeTok{Int}          \CommentTok{-- amount of time to stay True for}
+  \OtherTok{->} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Bool}  \CommentTok{-- An Auto that takes an `a` and returns a `Bool`}
+\NormalTok{onFor p hold }\FunctionTok{=} \NormalTok{wait}
+  \KeywordTok{where}
+\OtherTok{    wait ::} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Bool}                 \CommentTok{-- the "waiting" state}
+    \NormalTok{wait }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}input }\OtherTok{->}
+      \KeywordTok{if} \NormalTok{p input                        }\CommentTok{-- if triggered,}
+        \KeywordTok{then} \NormalTok{(}\DataTypeTok{True}\NormalTok{, countdown (hold}\FunctionTok{-}\DecValTok{1}\NormalTok{)) }\CommentTok{-- jump to "countdown" state}
+        \KeywordTok{else} \NormalTok{(}\DataTypeTok{False}\NormalTok{, wait)              }\CommentTok{-- otherwise, stay waiting}
+
+\OtherTok{    countdown ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Auto} \NormalTok{a }\DataTypeTok{Bool}     \CommentTok{-- the "countdown" state}
+    \NormalTok{countdown n }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}input }\OtherTok{->}
+      \KeywordTok{if} \NormalTok{p input                        }\CommentTok{-- if re-triggered}
+        \KeywordTok{then} \NormalTok{(}\DataTypeTok{True}\NormalTok{, countdown (hold}\FunctionTok{-}\DecValTok{1}\NormalTok{)) }\CommentTok{-- countdown all over again}
+        \KeywordTok{else}
+          \KeywordTok{if} \NormalTok{n }\FunctionTok{==} \DecValTok{1}
+            \KeywordTok{then} \NormalTok{(}\DataTypeTok{False}\NormalTok{, wait)          }\CommentTok{-- If counted down, go wait again}
+            \KeywordTok{else} \NormalTok{(}\DataTypeTok{True}\NormalTok{, countdown (n}\FunctionTok{-}\DecValTok{1}\NormalTok{))  }\CommentTok{-- otherwise, count down.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L137-137}
+\KeywordTok{data} \DataTypeTok{Command} \NormalTok{k v }\FunctionTok{=} \DataTypeTok{Insert} \NormalTok{k v }\FunctionTok{|} \DataTypeTok{Lookup} \NormalTok{k }\FunctionTok{|} \DataTypeTok{Delete} \NormalTok{k}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data} \DataTypeTok{Command} \NormalTok{k v }\FunctionTok{=} \DataTypeTok{Insert} \NormalTok{k v }\FunctionTok{|} \DataTypeTok{Lookup} \NormalTok{k }\FunctionTok{|} \DataTypeTok{Delete} \NormalTok{k}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L137-163}
+\CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage}
+\KeywordTok{data} \DataTypeTok{Command} \NormalTok{k v }\FunctionTok{=} \DataTypeTok{Insert} \NormalTok{k v }\FunctionTok{|} \DataTypeTok{Lookup} \NormalTok{k }\FunctionTok{|} \DataTypeTok{Delete} \NormalTok{k}
+
+\OtherTok{autoMap ::} \NormalTok{forall k v}\FunctionTok{.} \DataTypeTok{Ord} \NormalTok{k}
+    \OtherTok{=>} \DataTypeTok{Int}              \CommentTok{-- the maximum capacity of the map}
+    \OtherTok{->} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Command} \NormalTok{k v) (}\DataTypeTok{Maybe} \NormalTok{v)}
+\NormalTok{autoMap cap }\FunctionTok{=} \NormalTok{go Map.empty}
+  \KeywordTok{where}
+\OtherTok{    go ::} \DataTypeTok{Map.Map} \NormalTok{k v }\OtherTok{->} \DataTypeTok{Auto} \NormalTok{(}\DataTypeTok{Command} \NormalTok{k v) (}\DataTypeTok{Maybe} \NormalTok{v)}
+    \NormalTok{go m }\FunctionTok{=} \DataTypeTok{ACons} \FunctionTok{$} \NormalTok{\textbackslash{}command }\OtherTok{->}
+      \KeywordTok{case} \NormalTok{command }\KeywordTok{of}
+        \DataTypeTok{Insert} \NormalTok{key val }\OtherTok{->}
+          \KeywordTok{if} \NormalTok{Map.size m }\FunctionTok{>=} \NormalTok{cap }\FunctionTok{&&} \NormalTok{key }\OtherTok{`Map.notMember`} \NormalTok{m}
+            \KeywordTok{then}
+              \NormalTok{( }\DataTypeTok{Nothing}\NormalTok{, go m )                 }\CommentTok{-- Map is full, no go!}
+            \KeywordTok{else}
+              \KeywordTok{let} \NormalTok{m' }\FunctionTok{=} \NormalTok{Map.insert key val m     }\CommentTok{-- go for it!}
+              \KeywordTok{in}  \NormalTok{( }\DataTypeTok{Just} \NormalTok{val, go m' )}
+        \DataTypeTok{Lookup} \NormalTok{key }\OtherTok{->}
+          \NormalTok{( key }\OtherTok{`Map.lookup`} \NormalTok{m, go m )}
+        \DataTypeTok{Delete} \NormalTok{key }\OtherTok{->}
+          \KeywordTok{let} \NormalTok{result  }\FunctionTok{=} \NormalTok{key }\OtherTok{`Map.lookup`} \NormalTok{m}
+              \NormalTok{m'      }\FunctionTok{=} \NormalTok{key }\OtherTok{`Map.delete`} \NormalTok{m}
+          \KeywordTok{in}  \NormalTok{( result, go m' )}
+\end{Highlighting}
+\end{Shaded}
+
+\href{https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs\#L137-163}{Autos}.
+
+\end{document}
