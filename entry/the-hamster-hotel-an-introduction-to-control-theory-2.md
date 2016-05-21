@@ -1,7 +1,7 @@
 The Hamster Hotel: An Introduction to Control Theory (Part 2)
 =============================================================
 
-(Originally posted by Justin Le [http://home.jle0.com:4111/] on October 1, 2013)
+(Posted by Justin Le on October 1, 2013<http://home.jle0.com:4111/entry/the-hamster-hotel-an-introduction-to-control-theory-2.html> )
 
 As we left it off in [part
 1](/entry/the-hamster-hotel-an-introduction-to-control-theory), our

@@ -1,7 +1,7 @@
 Auto: Building a declarative chat bot with implicit serialization
 =================================================================
 
-(Originally posted by Justin Le [http://home.jle0.com:4111/] on February 29, 2016)
+(Posted by Justin Le on February 29, 2016<http://home.jle0.com:4111/entry/auto-building-a-declarative-chatbot-with-implicit-serialization.html> )
 
 Today we’re going to look at building a declarative chatbot using the
 denotational components from the

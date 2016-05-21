@@ -1,7 +1,7 @@
 Deploying Medium to Large Haskell Apps to Heroku by Precompiling
 ================================================================
 
-(Originally posted by Justin Le [http://home.jle0.com:4111/] on October 7, 2013)
+(Posted by Justin Le on October 7, 2013<http://home.jle0.com:4111/entry/deploying-medium-to-large-haskell-apps-to-heroku.html> )
 
 If you do a search on how to deploy Haskell apps to Heroku these days,
 chances are you are going to find the very elegant method (here’s [one

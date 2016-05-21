@@ -1,7 +1,7 @@
 Inside My World (Ode to Functor and Monad)
 ==========================================
 
-(Originally posted by Justin Le [http://home.jle0.com:4111/] on May 19, 2014)
+(Posted by Justin Le on May 19, 2014<http://home.jle0.com:4111/entry/inside-my-world-ode-to-functor-and-monad.html> )
 
 I like Haskell because it lets me live inside my world.
 
