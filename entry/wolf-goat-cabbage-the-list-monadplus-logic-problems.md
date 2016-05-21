@@ -1,9 +1,10 @@
 Wolf, Goat, Cabbage: The List MonadPlus & Logic Problems
 ========================================================
 
-(Posted by Justin Le on December 26, 2013)
+[Read online!](http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.html)
 
-[Read online](http://home.jle0.com:4111/entry/wolf-goat-cabbage-the-list-monadplus-logic-problems.html)
+*Posted by [Justin Le](http://home.jle0.com:4111/) on December 26, 2013*
+
 Today we’re going to learn to solve the classic and ageless logic
 problems without any data structures besides List’s monadic properties
 as a MonadPlus!

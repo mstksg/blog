@@ -1,9 +1,10 @@
 Auto: Building a declarative chat bot with implicit serialization
 =================================================================
 
-(Posted by Justin Le on February 29, 2016)
+[Read online!](http://home.jle0.com:4111/entry/auto-building-a-declarative-chatbot-with-implicit-serialization.html)
 
-[Read online](http://home.jle0.com:4111/entry/auto-building-a-declarative-chatbot-with-implicit-serialization.html)
+*Posted by [Justin Le](http://home.jle0.com:4111/) on February 29, 2016*
+
 Today we’re going to look at building a declarative chatbot using the
 denotational components from the
 [auto](http://hackage.haskell.org/package/auto) library that is modular

@@ -1,9 +1,10 @@
 Looking forward: A Doctorate Program
 ====================================
 
-(Posted by Justin Le on June 1, 2014)
+[Read online!](http://home.jle0.com:4111/entry/looking-forward-a-doctorate-program.html)
 
-[Read online](http://home.jle0.com:4111/entry/looking-forward-a-doctorate-program.html)
+*Posted by [Justin Le](http://home.jle0.com:4111/) on June 1, 2014*
+
 So a bit of some personal news (which you can safely ignore if you’re
 not interested in my personal life!) — I’m excited to announce that I
 have decided to accept an offer to the Computational and Data Science

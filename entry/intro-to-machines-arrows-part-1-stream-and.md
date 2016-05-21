@@ -1,9 +1,10 @@
 Intro to Machines & Arrows (Part 1)
 ===================================
 
-(Posted by Justin Le)
+[Read online!](http://home.jle0.com:4111/entry/intro-to-machines-arrows-part-1-stream-and.html)
 
-[Read online](http://home.jle0.com:4111/entry/intro-to-machines-arrows-part-1-stream-and.html)
+*Posted by [Justin Le](http://home.jle0.com:4111/)*
+
 So I’m going to be running a series soon on computation and (physical)
 simulations using AFRP (Arrowized Functional Reactive Programming)
 principles.

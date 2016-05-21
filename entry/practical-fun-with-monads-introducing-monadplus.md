@@ -1,9 +1,10 @@
 Practical Fun with Monads — Introducing: MonadPlus!
 ===================================================
 
-(Posted by Justin Le on December 9, 2013)
+[Read online!](http://home.jle0.com:4111/entry/practical-fun-with-monads-introducing-monadplus.html)
 
-[Read online](http://home.jle0.com:4111/entry/practical-fun-with-monads-introducing-monadplus.html)
+*Posted by [Justin Le](http://home.jle0.com:4111/) on December 9, 2013*
+
 Monads. Haskell’s famous for them, but they are one of the most
 ill-understood concepts to the public. They are mostly shrouded in
 mystery because of their association with how Haskell models I/O. This
