@@ -109,7 +109,8 @@ stop by on irc at freenode's \#haskell, or give
 \section{Stuck in Maybe}\label{stuck-in-maybe}
 
 (Feel free to play along with the code in this section by
-\href{/not-found}{loading it into ghci}, the Haskell interpreter!)
+\href{https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs}{loading
+it into ghci}, the Haskell interpreter!)
 
 In Haskell, we have a type called \texttt{Maybe\ a}:
 
@@ -145,6 +146,7 @@ This type is useful for functions that might fail:
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L23-41}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \CommentTok{-- divideMaybe: Takes two integers and returns -- possibly -- their integer}
 \CommentTok{--      quotient. It succeeds if the denominator is not zero, and fails if}
@@ -226,6 +228,7 @@ That is\ldots{}I have all these functions that work only on
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L43-50}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{addThree ::} \DataTypeTok{Int} \OtherTok{->} \DataTypeTok{Int}
 \NormalTok{addThree }\FunctionTok{=} \NormalTok{(}\FunctionTok{+} \DecValTok{3}\NormalTok{)}
@@ -282,6 +285,7 @@ world:\footnote{In the standard libraries, \texttt{certaintify} and
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L76-82}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{certaintify ::} \DataTypeTok{Maybe} \NormalTok{a }\OtherTok{->} \NormalTok{a}
 \NormalTok{certaintify (}\DataTypeTok{Just} \NormalTok{x) }\FunctionTok{=} \NormalTok{x}
@@ -376,6 +380,7 @@ Let's make one! It'll apply the function to the value inside a
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L84-88}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{inMaybe ::} \NormalTok{(a }\OtherTok{->} \NormalTok{b) }\OtherTok{->} \NormalTok{(}\DataTypeTok{Maybe} \NormalTok{a }\OtherTok{->} \DataTypeTok{Maybe} \NormalTok{b)}
 \NormalTok{inMaybe f }\FunctionTok{=} \NormalTok{liftedF}
@@ -408,6 +413,7 @@ world. We could even write our \texttt{ageFromId}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L68-69}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{ageFromId ::} \DataTypeTok{ID} \OtherTok{->} \DataTypeTok{Maybe} \DataTypeTok{Int}
 \NormalTok{ageFromId i }\FunctionTok{=} \NormalTok{(inMaybe age) (personFromId i)}
@@ -639,6 +645,7 @@ We have enough to write this out ourselves:
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L90-94}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{liftInput ::} \NormalTok{(a }\OtherTok{->} \DataTypeTok{Maybe} \NormalTok{b) }\OtherTok{->} \NormalTok{(}\DataTypeTok{Maybe} \NormalTok{a }\OtherTok{->} \DataTypeTok{Maybe} \NormalTok{b)}
 \NormalTok{liftInput f }\FunctionTok{=} \NormalTok{liftedF}
@@ -668,6 +675,7 @@ uncertainty!
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/maybe.hs#L71-72}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{halfOfAge ::} \DataTypeTok{ID} \OtherTok{->} \DataTypeTok{Maybe} \DataTypeTok{Int}
 \NormalTok{halfOfAge i }\FunctionTok{=} \NormalTok{(liftInput halveMaybe) (ageFromId i)}
@@ -935,8 +943,9 @@ Haskell, and why having \texttt{fmap} and
 \subsection{The world of future
 values}\label{the-world-of-future-values}
 
-(Play along with this section too by \href{/not-found}{loading the
-source}!)
+(Play along with this section too by
+\href{https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs}{loading
+the source}!)
 
 In Haskell, we have a \texttt{Reader\ r} world. You can think of
 \texttt{(Reader\ r)\ a} as a little machine that ``waits'' for something
@@ -946,6 +955,7 @@ exist as soon as you give it an \texttt{r}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs#L17-27}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \CommentTok{-- futureLength: A future `Int` that will be the length of whatever the}
 \CommentTok{--      list it is waiting for will be.}
@@ -1019,6 +1029,7 @@ Oh --- but, because \texttt{Reader\ {[}a{]}} is a Functor, I can use
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs#L34-38}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{futureShorterThan ::} \DataTypeTok{Int} \OtherTok{->} \NormalTok{(}\DataTypeTok{Reader} \NormalTok{[a]) }\DataTypeTok{Bool}
 \NormalTok{futureShorterThan n }\FunctionTok{=} \NormalTok{fmap (}\FunctionTok{<} \NormalTok{n) futureLength}
@@ -1072,6 +1083,7 @@ use \texttt{futureHead\ ::\ (Reader\ {[}Int{]})\ Int}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/reader.hs#L40-41}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{futureShorterThanHead ::} \NormalTok{(}\DataTypeTok{Reader} \NormalTok{[}\DataTypeTok{Int}\NormalTok{]) }\DataTypeTok{Bool}
 \NormalTok{futureShorterThanHead }\FunctionTok{=} \NormalTok{futureShorterThan }\FunctionTok{=<<} \NormalTok{futureHead}
@@ -1112,8 +1124,9 @@ Who said futures were complicated, anyway?
 \subsection{\texorpdfstring{The world of
 ``IO''}{The world of IO}}\label{the-world-of-io}
 
-(The source code for this section is \href{/not-found}{also available
-online} for you to play with!)
+(The source code for this section is
+\href{https://github.com/mstksg/blog/tree/develop/code-samples/inside/io.hs}{also
+available online} for you to play with!)
 
 And now we go into the most infamous of Haskell worlds, \texttt{IO}.
 
@@ -1206,6 +1219,7 @@ a filename and returns a program that, when executed, promises an
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/inside/io.hs#L19-19}
 \CommentTok{-- interactive: https://www.fpcomplete.com/user/jle/inside-my-world}
 \OtherTok{wc ::} \DataTypeTok{String} \OtherTok{->} \DataTypeTok{IO} \DataTypeTok{Int}
 \end{Highlighting}

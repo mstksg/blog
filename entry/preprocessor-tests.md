@@ -11,6 +11,7 @@ blocks.
 Lorum ipsum blah blah.
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L116-135
 -- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage
 onFor :: forall a.
      (a -> Bool)  -- test to see if an input 'triggers'
@@ -36,6 +37,7 @@ onFor p hold = wait
 ```
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L137-137
 data Command k v = Insert k v | Lookup k | Delete k
 
 ```
@@ -45,6 +47,7 @@ data Command k v = Insert k v | Lookup k | Delete k
 ```
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L137-163
 -- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage
 data Command k v = Insert k v | Lookup k | Delete k
 
@@ -72,7 +75,7 @@ autoMap cap = go Map.empty
 
 ```
 
-[Autos](/not-found).
+[Autos](https://github.com/mstksg/blog/tree/develop/code-samples/machines/Auto.hs#L137-163).
 
 <!-- ~~~haskell -->
 <!-- !!!machines/Auto.hs -->

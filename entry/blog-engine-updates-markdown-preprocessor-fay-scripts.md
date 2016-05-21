@@ -24,6 +24,7 @@ Here it is in action:
 yields:
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/monad-plus/WolfGoatCabbage.hs#L37-58
 -- interactive: https://www.fpcomplete.com/user/jle/wolf-goat-cabbage
 makeMove :: Plan -> [Plan]
 makeMove p = do
@@ -80,6 +81,7 @@ So…writing the parser for the syntax specification was pretty easy due
 to parsec and parser combinators:
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/EntryPP.hs#L32-127
 data SampleSpec = SampleSpec  { sSpecFile       :: FilePath
                               , _sSpecLive      :: Maybe String
                               , _sSpecKeywords  :: [(String,Maybe Int)]
@@ -147,6 +149,7 @@ Contents generator) myself some day.
 Here is a characteristic example of fay code with fay-jquery (0.6.0.2):
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/entry.hs#L45-54
 appendTopLinks :: Fay ()
 appendTopLinks = do
   mainContent <- select ".main-content"
@@ -194,6 +197,7 @@ event binding, which needed the handlers *before* the object being
 binded.
 
 ``` {.haskell}
+-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/entry.hs#L112-119
 processCodeBlocks :: Fay ()
 processCodeBlocks = do
   blocks <- select ".main-content pre.sourceCode"
