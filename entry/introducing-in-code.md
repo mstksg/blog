@@ -1,7 +1,7 @@
 Introducing “in Code”!
 ======================
 
-(Posted by Justin Le on September 17, 2013<http://home.jle0.com:4111/entry/introducing-in-code.html> )
+(Posted by Justin Le on September 17, 2013 <http://home.jle0.com:4111/entry/introducing-in-code.html> )
 
 Throughout my time programming and developing, I’ve noticed that there
 are few legitimately useful sources of practical and beneficial

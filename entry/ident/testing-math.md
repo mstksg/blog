@@ -1,7 +1,7 @@
 Testing Math
 ============
 
-(Posted by Justin Le on November 18, 2013<http://home.jle0.com:4111/entry/ident/testing-math.html> )
+(Posted by Justin Le on November 18, 2013 <http://home.jle0.com:4111/entry/ident/testing-math.html> )
 
 I’m a person. $x^2$.
 

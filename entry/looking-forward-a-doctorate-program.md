@@ -1,7 +1,7 @@
 Looking forward: A Doctorate Program
 ====================================
 
-(Posted by Justin Le on June 1, 2014<http://home.jle0.com:4111/entry/looking-forward-a-doctorate-program.html> )
+(Posted by Justin Le on June 1, 2014 <http://home.jle0.com:4111/entry/looking-forward-a-doctorate-program.html> )
 
 So a bit of some personal news (which you can safely ignore if you’re
 not interested in my personal life!) — I’m excited to announce that I

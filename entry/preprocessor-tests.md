@@ -1,7 +1,7 @@
 Pre-processor Tests
 ===================
 
-(Posted by Justin Le on January 22, 2014<http://home.jle0.com:4111/entry/preprocessor-tests.html> )
+(Posted by Justin Le on January 22, 2014 <http://home.jle0.com:4111/entry/preprocessor-tests.html> )
 
 Testing the entry pre-processor. It is supposed to expand out code
 blocks.
