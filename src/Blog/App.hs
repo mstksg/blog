@@ -30,6 +30,8 @@ import           Data.List
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Ord
+import           Data.Reflection
+import           Data.Tagged
 import           Data.Time.LocalTime
 import           Hakyll
 import           Hakyll.Web.Sass
@@ -43,10 +45,10 @@ import qualified Data.Text.Lazy            as TL
 import qualified Data.Text.Lazy.Encoding   as TL
 
 
-app :: (?config :: Config)
+app :: Reifies s Config
     => ZonedTime
-    -> Rules ()
-app znow@(ZonedTime _ tz) = do
+    -> Tagged s (Rules ())
+app znow@(ZonedTime _ tz) = Tagged $ do
     match "static/**" $ do
       route   $ gsubRoute "static/" (\_ -> "")
       compile copyFileCompiler
