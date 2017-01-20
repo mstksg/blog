@@ -177,8 +177,8 @@ parsec and parser combinators:
 \begin{Highlighting}[]
 \CommentTok{-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/EntryPP.hs#L32-127}
 \KeywordTok{data} \DataTypeTok{SampleSpec} \FunctionTok{=} \DataTypeTok{SampleSpec}  \NormalTok{\{}\OtherTok{ sSpecFile       ::} \NormalTok{FilePath}
-                              \NormalTok{, _}\OtherTok{sSpecLive      ::} \DataTypeTok{Maybe} \DataTypeTok{String}
-                              \NormalTok{, _}\OtherTok{sSpecKeywords  ::} \NormalTok{[(}\DataTypeTok{String}\NormalTok{,}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{)]}
+                              \NormalTok{,}\OtherTok{ _sSpecLive      ::} \DataTypeTok{Maybe} \DataTypeTok{String}
+                              \NormalTok{,}\OtherTok{ _sSpecKeywords  ::} \NormalTok{[(}\DataTypeTok{String}\NormalTok{,}\DataTypeTok{Maybe} \DataTypeTok{Int}\NormalTok{)]}
                               \NormalTok{\} }\KeywordTok{deriving} \NormalTok{(}\DataTypeTok{Show}\NormalTok{)}
 
 \OtherTok{sampleSpec ::} \DataTypeTok{Parser} \DataTypeTok{SampleSpec}

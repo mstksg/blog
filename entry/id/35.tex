@@ -120,10 +120,10 @@ types.
 \KeywordTok{type} \DataTypeTok{Channel} \FunctionTok{=} \DataTypeTok{String}
 \KeywordTok{type} \DataTypeTok{Message} \FunctionTok{=} \DataTypeTok{String}
 
-\KeywordTok{data} \DataTypeTok{InMessage} \FunctionTok{=} \DataTypeTok{InMessage} \NormalTok{\{ _}\OtherTok{inMessageNick   ::} \DataTypeTok{Nick}
-                           \NormalTok{, _}\OtherTok{inMessageBody   ::} \DataTypeTok{Message}
-                           \NormalTok{, _}\OtherTok{inMessageSource ::} \DataTypeTok{Channel}
-                           \NormalTok{, _}\OtherTok{inMessageTime   ::} \DataTypeTok{UTCTime}
+\KeywordTok{data} \DataTypeTok{InMessage} \FunctionTok{=} \DataTypeTok{InMessage} \NormalTok{\{}\OtherTok{ _inMessageNick   ::} \DataTypeTok{Nick}
+                           \NormalTok{,}\OtherTok{ _inMessageBody   ::} \DataTypeTok{Message}
+                           \NormalTok{,}\OtherTok{ _inMessageSource ::} \DataTypeTok{Channel}
+                           \NormalTok{,}\OtherTok{ _inMessageTime   ::} \DataTypeTok{UTCTime}
                            \NormalTok{\} }\KeywordTok{deriving} \DataTypeTok{Show}
 
 \KeywordTok{newtype} \DataTypeTok{OutMessages} \FunctionTok{=} \DataTypeTok{OutMessages} \NormalTok{(}\DataTypeTok{Map} \DataTypeTok{Channel} \NormalTok{[}\DataTypeTok{Message}\NormalTok{]) }\KeywordTok{deriving} \DataTypeTok{Show}
@@ -157,7 +157,7 @@ Note that we get a free instance of \texttt{Monoid} on \texttt{ChatBot\ m}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\OtherTok{mappend ::} \DataTypeTok{ChatBot} \NormalTok{m }\OtherTok{->} \DataTypeTok{ChatBot} \NormalTok{m }\OtherTok{->} \DataTypeTok{ChatBot} \NormalTok{m}
+\NormalTok{mappend}\OtherTok{ ::} \DataTypeTok{ChatBot} \NormalTok{m }\OtherTok{->} \DataTypeTok{ChatBot} \NormalTok{m }\OtherTok{->} \DataTypeTok{ChatBot} \NormalTok{m}
 \end{Highlighting}
 \end{Shaded}
 
