@@ -19,11 +19,11 @@
 /output
 /bower_components
 
-/copy/entries
+/copy/entries/*
 /copy/entries-old
 /config/migrate
 /copy/tags
 /static/img/entries
 /code-samples
 
-!/bin/blog
+!/copy/entries/placeholder.md
