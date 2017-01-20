@@ -52,8 +52,8 @@ that I’ve struggled through in the past.">Tutorials</a><span class="info-separ
 <h2 id="setup">Setup</h2>
 <h3 id="installing-shake">Installing Shake</h3>
 <p>Installing <em>shake</em> is as simple as installing any other cabal package:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> update
-$ <span class="kw">cabal</span> install shake</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cabal</span> update
+$ <span class="ex">cabal</span> install shake</code></pre></div>
 <p>I’ll will be using <code>shake-0.10.6</code> for this post.</p>
 <h3 id="setting-up-the-shakefile">Setting up the Shakefile</h3>
 <p>We set up our Shakefile with a simple scaffold:</p>
@@ -155,13 +155,13 @@ This is a report.  Render me!
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">want [<span class="st">&quot;out/report.doc&quot;</span>,<span class="st">&quot;out/report.pdf&quot;</span>,<span class="st">&quot;out/report.html&quot;</span>]</code></pre></div>
 <p>That tells <em>shake</em> that when we run <code>main</code> with no arguments, we want those three files to be checked to be up to date.</p>
 <p>Now, to wrap it all together, we run:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">runhaskell</span> Shakefile</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">runhaskell</span> Shakefile</code></pre></div>
 <p>And let the magic happen!</p>
 <p>I run this enough times that I like to alias this:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># in ~/.bashrc</span>
-<span class="kw">alias</span> shake=runhaskell Shakefile</code></pre></div>
+<span class="bu">alias</span> shake=runhaskell Shakefile</code></pre></div>
 <p>Note that <code>want</code> specifies the <strong>default</strong> “wants”. You can specify your own collection by passing a parameter:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">runhaskell</span> Shakefile out/report.doc</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">runhaskell</span> Shakefile out/report.doc</code></pre></div>
 <h2 id="wildcards">Wildcards</h2>
 <p>You may have noticed that even though we had multiple images in the <code>img</code> folder, we required them all explicitly. This could cause problems. What if in the future, our documents used more images?</p>
 <p>We can define wildcards using <em>shake</em>’s <code>getDirectoryFiles</code>, which returns results of a wildcard search in an <code>Action</code> monad. <code>getDirectoryFiles</code> takes a directory base and a list of wildcards.</p>

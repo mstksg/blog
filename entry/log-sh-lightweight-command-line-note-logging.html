@@ -40,23 +40,23 @@ product can be useful to someone!">Projects</a><span class="info-separator"> &di
 <h3 id="usage">Usage</h3>
 <h4 id="entering-a-note">Entering a note</h4>
 <p>Don’t believe me? Here’s how you enter in a note:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">log.sh</span> hey, this is a note!</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">log.sh</span> hey, this is a note!</code></pre></div>
 <p>(Note no need to surround your log with quotes or anything.)</p>
 <p>That command will write the line</p>
 <pre><code>[Sun Sep 29 16:07:21 PDT 2013]  hey, this is a note!</code></pre>
 <p>to the active log file. As a cute trick, you can specify the flag <code>-t</code></p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">log.sh</span> -t buy milk</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">log.sh</span> -t buy milk</code></pre></div>
 <p>which will handily add a cute <code>[ ]</code> before the item like so:</p>
 <pre><code>[Sun Sep 29 16:14:03 PDT 2013]  [ ] buy milk</code></pre>
 <h4 id="editing-your-log-file">Editing your log file</h4>
 <p>The little <code>[ ]</code> is handy because you can open up the log file in a text editor of your choice and “check” it off.</p>
 <p>That’s actually very easy, because</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">log.sh</span> -e</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">log.sh</span> -e</code></pre></div>
 <p>will open the active log file in your favorite editor, specified by the <code>$EDITOR</code> environment variable.</p>
 <h4 id="the-log-file">The Log File</h4>
 <p>What is the “active” log file? Where is this log being stored? Ideally, it is either in the root directory of the relevant project, or in your home folder.</p>
 <p>To create a log file in your current working directory, enter</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">log.sh</span> -c</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">log.sh</span> -c</code></pre></div>
 <p>This’ll create a file <code>.log.log</code> in the directory.</p>
 <p>Now, if you are in any subdirectory, the default behavior is that <em><a href="https://github.com/mstksg/log.sh">log.sh</a></em> will first check the current directory for a log file; if it doesn’t find it, it goes up a directory and checks there, checking up and up until it finds a valid log file. That file is the “active” one, where all of your adds and edits will refer to.</p>
 <h4 id="log-contexts">Log Contexts</h4>
@@ -69,10 +69,10 @@ product can be useful to someone!">Projects</a><span class="info-separator"> &di
 <p>That should be it!</p>
 <h3 id="thats-it">That’s it!</h3>
 <p>That’s really all there is to it! You can customize the filename of the log file created/searched for, or you can even specify the exact path of the log file you want to append to or edit using command line flags. More detail on how to do this in the documentation:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">log.sh</span> -h</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">log.sh</span> -h</code></pre></div>
 <p>Basically, the entire thing is meant to be as frictionless, fast, and thoughtless as possible. Enter in small notes to reference later in only the time it takes for you to actually write the note — no need to mungle around with text editors and picking which file to append to and dealing with timestamps. <em><a href="https://github.com/mstksg/log.sh">log.sh</a></em> has got you covered!</p>
 <p>I do recommend, if you use this, aliasing the command to something short. I personally use <code>n</code>, so I write notes by saying:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">n</span> goodbye!</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">n</span> goodbye!</code></pre></div>
 <p>Hopefully this script ends up being as useful to you as it has to me. Feel free to leave any comments on questions/bugs/improvements, and I’m always happy to take contributions and pull requests.</p></div><footer><ul class="entry-series"></ul><ul class="tag-list"><li><a href="http://home.jle0.com:4111/entries/tagged/bash.html" class="tag-a-tag">#bash</a></li><li><a href="http://home.jle0.com:4111/entries/tagged/command-line.html" class="tag-a-tag">#command line</a></li><li><a href="http://home.jle0.com:4111/entries/tagged/shell-scripting.html" class="tag-a-tag">#shell scripting</a></li><li><a href="http://home.jle0.com:4111/entries/tagged/unix.html" class="tag-a-tag">#unix</a></li><li><a href="http://home.jle0.com:4111/entries/tagged/utilities.html" class="tag-a-tag">#utilities</a></li><li><a href="http://home.jle0.com:4111/entries/category/@projects.html" class="tag-a-category">@PROJECTS</a></li></ul><aside class="social-buttons"><div class="addthis_toolbox addthis_default_style addthis-buttons"><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a><a class="addthis_button_tweet"></a><a class="addthis_button_google_plusone" g:plusone:size="medium"></a><a class="addthis_counter addthis_pill_style"></a></div><div class="custom-social-buttons"><div class="custom-social-button"><a href="https://www.reddit.com/submit" onclick="window.location = &#39;https://www.reddit.com/submit?url=&#39;+ encodeURIComponent(window.location); return false"><img src="https://www.reddit.com/static/spreddit7.gif" alt="submit to reddit"></a></div></div></aside><nav class="next-prev-links"><ul><li class="prev-entry-link">&larr; <a href="http://home.jle0.com:4111/entry/deploying-medium-to-large-haskell-apps-to-heroku.html">Deploying Medium to Large Haskell Apps to Heroku by Precompiling</a> (Previous)</li><li class="next-entry-link">(Next) <a href="http://home.jle0.com:4111/entry/the-compromiseless-reconciliation-of-i-o-and-purity.html">The Compromiseless Reconciliation of I/O and Purity</a> &rarr;</li></ul></nav></footer></article><div class="post-entry"><div class="tile"><div id="disqus_thread"></div><script type="text/javascript">var disqus_config = function () {
     this.page.url = 'http://home.jle0.com:4111/entry/log-sh-lightweight-command-line-note-logging.html';
     this.page.identifier = 'log-sh';

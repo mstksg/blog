@@ -47,8 +47,8 @@ moveLegal p (<span class="dt">MoveThe</span> c)       <span class="fu">=</span> 
 <p>So…writing the parser for the syntax specification was pretty easy due to parsec and parser combinators:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- source: https://github.com/mstksg/blog/tree/develop/code-samples/source/EntryPP.hs#L32-127</span>
 <span class="kw">data</span> <span class="dt">SampleSpec</span> <span class="fu">=</span> <span class="dt">SampleSpec</span>  {<span class="ot"> sSpecFile       ::</span> FilePath
-                              , _<span class="ot">sSpecLive      ::</span> <span class="dt">Maybe</span> <span class="dt">String</span>
-                              , _<span class="ot">sSpecKeywords  ::</span> [(<span class="dt">String</span>,<span class="dt">Maybe</span> <span class="dt">Int</span>)]
+                              ,<span class="ot"> _sSpecLive      ::</span> <span class="dt">Maybe</span> <span class="dt">String</span>
+                              ,<span class="ot"> _sSpecKeywords  ::</span> [(<span class="dt">String</span>,<span class="dt">Maybe</span> <span class="dt">Int</span>)]
                               } <span class="kw">deriving</span> (<span class="dt">Show</span>)
 
 <span class="ot">sampleSpec ::</span> <span class="dt">Parser</span> <span class="dt">SampleSpec</span>
