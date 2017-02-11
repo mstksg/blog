@@ -11,7 +11,6 @@ import           Data.Foldable
 import           Data.Maybe
 import           Data.Monoid
 import           Data.String
-import           Hakyll
 import           Text.Blaze.Html5            ((!))
 import qualified Data.Text                   as T
 import qualified Text.Blaze.Html5            as H
@@ -20,83 +19,83 @@ import qualified Text.Blaze.Html5.Attributes as A
 
 renderLayout
     :: (?config :: Config)
-    => PageData
+    => [(T.Text, T.Text)]
+    -> PageData
     -> H.Html
-    -> Compiler (Item H.Html)
-renderLayout pd@PD{..} body =
-    makeItem $
-      H.docTypeHtml $ do
-        H.head $ do
-          H.title $ H.toHtml title
-          H.meta ! A.name "description" ! A.content (H.textValue confDesc)
+    -> H.Html
+renderLayout bar pd@PD{..} body =
+    H.docTypeHtml $ do
+      H.head $ do
+        H.title $ H.toHtml title
+        H.meta ! A.name "description" ! A.content (H.textValue confDesc)
 
-          H.meta ! A.httpEquiv "Content-Type" ! A.content "text/html;charset=utf-8"
-          H.meta ! A.name "viewport" ! A.content "width=device-width,initial-scale=1.0"
+        H.meta ! A.httpEquiv "Content-Type" ! A.content "text/html;charset=utf-8"
+        H.meta ! A.name "viewport" ! A.content "width=device-width,initial-scale=1.0"
 
-          viewOpenGraphMetas pd
+        viewOpenGraphMetas pd
 
+        H.link
+          ! A.rel "author"
+          ! A.href (H.textValue (authorRel confAuthorInfo))
+
+        H.link
+          ! A.rel "alternate"
+          ! A.type_ "application/rss+xml"
+          ! A.title (H.textValue (confTitle <> " (RSS Feed)"))
+          ! A.href (H.textValue confFeed)
+
+        forM_ pageDataCanonical $ \url ->
           H.link
-            ! A.rel "author"
-            ! A.href (H.textValue (authorRel confAuthorInfo))
+            ! A.rel "canonical"
+            ! A.href (fromString (renderUrl' url))
 
-          H.link
-            ! A.rel "alternate"
-            ! A.type_ "application/rss+xml"
-            ! A.title (H.textValue (confTitle <> " (RSS Feed)"))
-            ! A.href (H.textValue confFeed)
+        H.link
+          ! A.href (H.textValue (renderUrl "/favicon.ico"))
+          ! A.rel "shortcut icon"
 
-          forM_ pageDataCanonical $ \url ->
-            H.link
-              ! A.rel "canonical"
-              ! A.href (fromString (renderUrl' url))
+        forM_ allCss $ \u ->
+          H.link ! A.href (H.textValue u) ! A.rel "stylesheet" ! A.type_ "text/css"
 
-          H.link
-            ! A.href (H.textValue (renderUrl "/favicon.ico"))
-            ! A.rel "shortcut icon"
+        H.script ! A.type_ "text/javascript" $
+          H.toHtml $
+            T.unlines
+              [ "var page_data = {};"
+              , "var disqus_shortname='" <> devDisqus confDeveloperAPIs <> "';"
+              -- , "var addthis_config = {'data_track_addressbar':true};"
+              ]
 
-          forM_ allCss $ \u ->
-            H.link ! A.href (H.textValue u) ! A.rel "stylesheet" ! A.type_ "text/css"
+        googleAnalyticsJs
 
-          H.script ! A.type_ "text/javascript" $
-            H.toHtml $
-              T.unlines
-                [ "var page_data = {};"
-                , "var disqus_shortname='" <> devDisqus confDeveloperAPIs <> "';"
-                -- , "var addthis_config = {'data_track_addressbar':true};"
-                ]
+        forM_ allJs $ \u ->
+          H.script ! A.type_ "text/javascript" ! A.src (H.textValue u) $
+            mempty
 
-          googleAnalyticsJs
-
-          forM_ allJs $ \u ->
-            H.script ! A.type_ "text/javascript" ! A.src (H.textValue u) $
-              mempty
-
-          sequence_ pageDataHeaders
+        sequence_ pageDataHeaders
 
 
-        H.body $ do
+      H.body $ do
 
-            H.div ! A.id "fb-root"
-              $ facebookSdkJs
+          H.div ! A.id "fb-root"
+            $ facebookSdkJs
 
-            H.div ! A.id "header-container" $ do
-              H.div! A.id "navbar-container" ! A.class_ "tile" $
-                navBar
-              H.div ! A.id "header-content" $
-                mempty        -- ??
+          H.div ! A.id "header-container" $ do
+            H.div! A.id "navbar-container" ! A.class_ "tile" $
+              navBar bar
+            H.div ! A.id "header-content" $
+              mempty        -- ??
 
-            H.div ! A.id "body-container" ! A.class_ "container" $
-              H.div ! A.id "main-container" ! A.class_ "grid" $
-                body
+          H.div ! A.id "body-container" ! A.class_ "container" $
+            H.div ! A.id "main-container" ! A.class_ "grid" $
+              body
 
-            H.div ! A.id "footer-container" $
-              H.div ! A.id "footer-content" $
-                H.div ! A.class_ "tile" $ do
-                  H.div ! A.class_ "footer-copyright" $
-                    H.preEscapedToHtml $
-                      "&copy; " <> confCopyright
-                  H.div ! A.class_ "footer-follow social-follows" $
-                    viewSocialFollow
+          H.div ! A.id "footer-container" $
+            H.div ! A.id "footer-content" $
+              H.div ! A.class_ "tile" $ do
+                H.div ! A.class_ "footer-copyright" $
+                  H.preEscapedToHtml $
+                    "&copy; " <> confCopyright
+                H.div ! A.class_ "footer-follow social-follows" $
+                  viewSocialFollow
   where
     Config{..} = ?config
     cssList = [ "/css/toast.css"
@@ -112,8 +111,11 @@ renderLayout pd@PD{..} body =
               Nothing -> confTitle
 
 
-navBar :: (?config :: Config) => H.Html
-navBar = do
+navBar
+    :: (?config :: Config)
+    => [(T.Text, T.Text)]
+    -> H.Html
+navBar bar = do
     H.nav ! A.id "navbar-content" $ do
       H.div ! A.class_ "nav-info" $ do
         H.h1 ! A.class_ "site-title" $
@@ -123,15 +125,23 @@ navBar = do
           H.toHtml $ authorName (confAuthorInfo ?config)
 
       H.ul ! A.class_ "nav-links" $ do
-        H.li $
-          H.a ! A.href (H.textValue (renderUrl "/")) $
-            "home"
-        H.li $
-          H.a ! A.href (H.textValue (renderUrl "/entries.html")) $
-            "archives"
+        forM_ (defBar ++ bar) $ \(l,u) -> do
+          H.li $
+            H.a ! A.href (H.textValue (renderUrl u)) $ H.toHtml l
+
+          -- H.li $
+          --   H.a ! A.href (H.textValue (renderUrl "/")) $
+          --     "home"
+          -- H.li $
+          --   H.a ! A.href (H.textValue (renderUrl "/entries.html")) $
+          --     "archives"
 
         H.div ! A.class_ "clear" $
           mempty
+  where
+    defBar = [ ("home"    , "/"            )
+             , ("archives", "/entries.html")
+             ]
 
 googleAnalyticsJs :: (?config :: Config) => H.Html
 googleAnalyticsJs =

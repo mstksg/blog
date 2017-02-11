@@ -40,11 +40,11 @@ pageCompiler
     :: (?config :: Config)
     => Compiler (Item String)
 pageCompiler = do
-    i <- setVersion Nothing <$> getUnderlying
+    i <- setVersion (Just "page") <$> getUnderlying
     p <- loadSnapshotBody i "page"
     let pd = def { pageDataTitle   = Just $ pageTitle p
                  , pageDataDesc    = Just $ pageTitle p
-                 , pageDataCss     = [ "/css/page/entry.css"
+                 , pageDataCss     = [ "/css/page/page.css"
                                      , "/css/pygments.css"
                                      ]
                  , pageDataJs      = [ ]

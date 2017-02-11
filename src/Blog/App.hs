@@ -70,7 +70,6 @@ app znow@(ZonedTime _ tz) = do
         ETDevelopment -> compile copyFileCompiler
         ETProduction  -> compile compressJsCompiler
 
-
     match "copy/tags/**" $ do
       route   mempty
       compile getResourceString
@@ -89,7 +88,7 @@ app znow@(ZonedTime _ tz) = do
         route   mempty
         compile getResourceString
 
-    match "copy/pages/*" $ do
+    match "copy/pages/*" . version "page" $ do
       route   mempty
       compile $ do
         _ <- saveSnapshot "page" =<< compilePage

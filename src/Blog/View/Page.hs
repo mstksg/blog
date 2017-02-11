@@ -17,7 +17,7 @@ viewPage
     => Page
     -> H.Html
 viewPage Page{..} = do
-    H.div ! A.class_ "entry-section unit span-grid" ! mainSection $ do
+    H.div ! A.class_ "span-grid" ! mainSection $ do
       H.article ! A.class_ "tile article" $ do
         H.header $ do
 
