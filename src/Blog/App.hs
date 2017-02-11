@@ -9,12 +9,7 @@
 
 module Blog.App where
 
-import           Blog.Compiler.Archive
-import           Blog.Compiler.Entry
-import           Blog.Compiler.Home
-import           Blog.Compiler.Redirect
-import           Blog.Compiler.Tag
-import           Blog.Compiler.TagIndex
+import           Blog.Compiler
 import           Blog.Rule.Archive
 import           Blog.Types
 import           Blog.Util
@@ -94,6 +89,11 @@ app znow@(ZonedTime _ tz) = do
         route   mempty
         compile getResourceString
 
+    match "copy/pages/*" $ do
+      route   mempty
+      compile $ do
+        _ <- saveSnapshot "page" =<< compilePage
+        getResourceString
 
     match "copy/entries/*" $ do
       route   mempty
@@ -184,6 +184,13 @@ app znow@(ZonedTime _ tz) = do
         compile $ tagCompiler tt  t p
       tagsRules ts $ \_ _ -> indexRules
 
+    match "copy/pages/*" . version "html" $ do
+      route   . metadataRoute $ \m ->
+          maybe (setExtension "html" `composeRoutes` gsubRoute "copy/pages/" (\_ -> "/"))
+              (constRoute . (<.> "html"))
+            $ lookupString "url" m
+      compile $ pageCompiler
+
     match "copy/entries/*" . version "html" $ do
       route   $ routeEntry
       compile $ entryCompiler entriesSorted allTags
@@ -242,7 +249,6 @@ app znow@(ZonedTime _ tz) = do
           , "</newLocation>"
           , "</redirect>"
           ]
-
 
   where
     Config{..} = ?config

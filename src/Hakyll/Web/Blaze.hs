@@ -25,5 +25,5 @@ blazeCompiler pd body = do
         pd' = case pageDataCanonical pd of
                 Nothing -> pd { pageDataCanonical = r' }
                 Just _  -> pd
-        h   = renderLayout pd' body
-    makeItem $ H.renderHtml h
+    h <- renderLayout pd' body
+    makeItem $ H.renderHtml (itemBody h)

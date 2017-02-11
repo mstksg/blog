@@ -210,6 +210,17 @@ data Entry = Entry
 
 instance B.Binary Entry
 
+data Page = Page
+    { pageTitle       :: !T.Text
+    , pageContents    :: !T.Text
+    , pageUrl         :: !(Maybe T.Text)
+    , pageLink        :: !(Maybe T.Text)
+    }
+  deriving (Show, Generic, Typeable, Eq)
+-- TODO: entry image
+
+instance B.Binary Page
+
 data Tag = Tag
     { tagLabel       :: !T.Text
     , tagType        :: !TagType
